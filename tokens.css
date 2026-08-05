@@ -1,0 +1,101 @@
+/* Hallmark · macrostructure: Ecosystem Index · tone: modern-minimal · anchor hue: cobalt-blue */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 */
+/* Hallmark · studied: yes · DNA-source: URL https://amis.misa.vn/ · hero: H9 Tier-A DOM product hub · nav: N10 + N11 · footer: Ft5 */
+:root {
+  --font-display: var(--font-space-grotesk), 'Segoe UI', sans-serif;
+  --font-body: var(--font-be-vietnam), 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', monospace;
+
+  --color-canvas: oklch(97% 0.008 250);
+  --color-surface: oklch(99% 0.004 250);
+  --color-surface-subtle: oklch(94% 0.014 250);
+  --color-surface-strong: oklch(90% 0.02 250);
+  --color-ink: oklch(20% 0.035 250);
+  --color-ink-muted: oklch(43% 0.025 250);
+  --color-ink-soft: oklch(52% 0.02 250);
+  --color-line: oklch(88% 0.018 250);
+  --color-line-strong: oklch(78% 0.03 250);
+  --color-brand: oklch(56% 0.22 257);
+  --color-brand-hover: oklch(49% 0.2 257);
+  --color-brand-soft: oklch(94% 0.03 257);
+  --color-accent-ink: oklch(99% 0.004 250);
+  --color-data: oklch(66% 0.13 210);
+  --color-data-soft: oklch(95% 0.035 210);
+  --color-success: oklch(48% 0.12 160);
+  --color-success-soft: oklch(94% 0.035 160);
+  --color-warning: oklch(49% 0.12 75);
+  --color-warning-soft: oklch(95% 0.04 75);
+  --color-danger: oklch(51% 0.17 24);
+  --color-danger-soft: oklch(94% 0.035 24);
+  --color-focus: oklch(56% 0.22 257);
+  --color-overlay: oklch(20% 0.035 250 / 58%);
+  --color-shadow: oklch(20% 0.035 250 / 10%);
+  --color-dark-canvas: oklch(18% 0.03 250);
+  --color-dark-surface: oklch(22% 0.036 250);
+  --color-dark-surface-subtle: oklch(26% 0.04 250);
+  --color-dark-surface-strong: oklch(31% 0.045 250);
+  --color-dark-ink: oklch(97% 0.008 250);
+  --color-dark-ink-muted: oklch(79% 0.025 250);
+  --color-dark-ink-soft: oklch(66% 0.03 250);
+  --color-dark-line: oklch(35% 0.04 250);
+  --color-dark-line-strong: oklch(43% 0.045 250);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.75rem;
+  --text-hero: 2.55rem;
+
+  --leading-tight: 1.08;
+  --leading-snug: 1.25;
+  --leading-body: 1.65;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-round: 999px;
+
+  --shadow-sm: 0 1px 2px var(--color-shadow);
+  --shadow-md: 0 12px 32px var(--color-shadow);
+  --shadow-focus: 0 0 0 3px var(--color-brand-soft);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 140ms;
+  --dur-short: 180ms;
+  --dur-base: 220ms;
+  --dur-long: 360ms;
+
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-dialog: 300;
+  --rule-hair: 1px;
+
+  --container: 76rem;
+  --container-narrow: 48rem;
+  --header-height: 4.5rem;
+  --sidebar-width: 16rem;
+  --transition-fast: var(--dur-micro) var(--ease-out);
+  --transition-base: var(--dur-base) var(--ease-out);
+}

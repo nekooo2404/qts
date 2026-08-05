@@ -1,0 +1,11 @@
+{
+  "date": "2026-08-05",
+  "project": "QTS Technology",
+  "state": "existing-project",
+  "signals": [
+    "An implemented QTS public site and role-aware Portal already exist.",
+    "The user supplied https://amis.misa.vn/ as a public structural and UX reference.",
+    "Existing QTS tokens, typography, product surfaces, and content-integrity rules remain authoritative."
+  ],
+  "decision": "Study AMIS information architecture and interaction rhythm, then rebuild the homepage as an original QTS Ecosystem Index. Do not copy AMIS/MISA source, wording, brand identity, assets, claims, or product names."
+}
