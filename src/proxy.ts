@@ -7,6 +7,13 @@ const publicPortalRoutes = ['/portal/login', '/portal/forgot-password']
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
 
+  if (pathname === '/portal/admin' || pathname.startsWith('/portal/admin/')) {
+    const suffix = pathname.slice('/portal/admin'.length)
+    const adminUrl = new URL(`/admin${suffix}`, request.url)
+    adminUrl.search = search
+    return NextResponse.redirect(adminUrl, 308)
+  }
+
   if (publicPortalRoutes.includes(pathname)) {
     return NextResponse.next()
   }
@@ -18,9 +25,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  return NextResponse.next()
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-qts-pathname', pathname)
+  return NextResponse.next({ request: { headers: requestHeaders } })
 }
 
 export const config = {
-  matcher: ['/portal/:path*'],
+  matcher: ['/portal/:path*', '/admin/:path*'],
 }

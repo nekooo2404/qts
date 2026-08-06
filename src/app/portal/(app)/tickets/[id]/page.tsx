@@ -16,6 +16,7 @@ import { TicketReplyForm } from '@/components/portal/ticket-reply-form'
 import { TicketStatusForm } from '@/components/portal/ticket-status-form'
 import { TicketTimeline } from '@/components/portal/ticket-timeline'
 import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { allowedTicketTransitions } from '@/lib/domain/ticket-workflow'
 import { db } from '@/lib/db'
 import { formatDateTime } from '@/lib/utils'
@@ -44,7 +45,8 @@ export default async function PortalTicketDetailPage({
   const { id } = await params
   const ticket = await findTicketForUser(user, id)
   if (!ticket) notFound()
-  const canSupport = user.role === 'ADMIN' || user.role === 'STAFF'
+  const canReply = hasPermission(user, 'portal.tickets.reply')
+  const canSupport = hasPermission(user, 'portal.tickets.manage')
   const staff = canSupport
     ? await db.user.findMany({
         where: { active: true, role: { name: { in: ['ADMIN', 'STAFF'] } } },
@@ -52,7 +54,9 @@ export default async function PortalTicketDetailPage({
         orderBy: { name: 'asc' },
       })
     : []
-  const transitions = allowedTicketTransitions(user.role, ticket.status)
+  const transitions = canSupport
+    ? allowedTicketTransitions(user, ticket.status)
+    : []
 
   return (
     <div className="portal-page ticket-detail">
@@ -103,13 +107,22 @@ export default async function PortalTicketDetailPage({
                 <p>Phản hồi mới sẽ tạo thông báo cho bên liên quan.</p>
               </div>
             </header>
-            <TicketReplyForm ticketId={ticket.id} canUseInternal={canSupport} />
+            {canReply ? (
+              <TicketReplyForm
+                ticketId={ticket.id}
+                canUseInternal={canSupport}
+              />
+            ) : (
+              <p className="portal-panel__empty">
+                Bạn không có quyền gửi phản hồi cho ticket này.
+              </p>
+            )}
           </section>
         </div>
         <aside className="ticket-detail__aside">
           <section className="portal-panel">
             <h2>Điều phối ticket</h2>
-            {transitions.length > 0 || canSupport ? (
+            {canSupport ? (
               <TicketStatusForm
                 ticketId={ticket.id}
                 currentStatus={ticket.status}
@@ -120,7 +133,7 @@ export default async function PortalTicketDetailPage({
               />
             ) : (
               <p className="portal-panel__empty">
-                Ticket không có hành động trạng thái dành cho vai trò hiện tại.
+                Bạn không có quyền điều phối trạng thái hoặc phân công ticket.
               </p>
             )}
           </section>

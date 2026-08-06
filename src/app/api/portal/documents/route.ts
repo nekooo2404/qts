@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -16,7 +17,7 @@ import { documentSchema } from '@/lib/validation/forms'
 export async function POST(request: Request) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (auth.user.role === 'CUSTOMER')
+  if (!hasPermission(auth.user, 'portal.documents.upload'))
     return messageResponse('Bạn không có quyền tải tài liệu lên.', 403)
 
   try {
@@ -37,11 +38,26 @@ export async function POST(request: Request) {
       )
     if (project && project.organizationId !== result.data.organizationId)
       return messageResponse('Tổ chức và dự án không khớp.', 422)
+    if (
+      project &&
+      project.organizationId !== auth.user.organizationId &&
+      !hasPermission(auth.user, 'portal.documents.upload.all')
+    )
+      return messageResponse(
+        'Bạn không có quyền tải tài liệu lên tổ chức này.',
+        403,
+      )
 
-    const organization = await db.organization.findUnique({
-      where: { id: result.data.organizationId },
-      select: { id: true },
-    })
+    const canUploadToOrganization =
+      Boolean(project) ||
+      hasPermission(auth.user, 'portal.documents.upload.all') ||
+      result.data.organizationId === auth.user.organizationId
+    const organization = canUploadToOrganization
+      ? await db.organization.findUnique({
+          where: { id: result.data.organizationId },
+          select: { id: true },
+        })
+      : null
     if (!organization) return messageResponse('Tổ chức không tồn tại.', 422)
     const document = await db.document.create({
       data: {

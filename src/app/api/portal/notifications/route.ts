@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -15,15 +16,23 @@ import { notificationComposeSchema } from '@/lib/validation/forms'
 export async function POST(request: Request) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (auth.user.role === 'CUSTOMER')
+  if (!hasPermission(auth.user, 'portal.notifications.compose'))
     return messageResponse('Bạn không có quyền gửi thông báo hệ thống.', 403)
   try {
     const result = notificationComposeSchema.safeParse(
       await readJsonBody(request),
     )
     if (!result.success) return validationErrorResponse(result.error)
+    const canComposeForAll = hasPermission(
+      auth.user,
+      'portal.notifications.compose.all',
+    )
     const recipient = await db.user.findFirst({
-      where: { id: result.data.userId, active: true },
+      where: {
+        id: result.data.userId,
+        active: true,
+        ...(canComposeForAll ? {} : { role: { name: 'CUSTOMER' } }),
+      },
       select: { id: true, organizationId: true },
     })
     if (!recipient) return messageResponse('Người nhận không tồn tại.', 422)

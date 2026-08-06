@@ -23,17 +23,32 @@ const labels: Record<string, string> = {
   'audit-logs': 'Audit log',
 }
 
-export function PortalBreadcrumb() {
+export function PortalBreadcrumb({
+  basePath = '/portal',
+}: {
+  basePath?: string
+}) {
   const pathname = usePathname()
-  const segments = pathname.split('/').filter(Boolean).slice(1)
+  const segments = pathname
+    .replace(new RegExp(`^${basePath}`), '')
+    .split('/')
+    .filter(Boolean)
 
   return (
-    <nav className="portal-breadcrumb" aria-label="Breadcrumb portal">
-      <Link href="/portal/dashboard" aria-label="Tổng quan">
+    <nav
+      className="portal-breadcrumb"
+      aria-label={
+        basePath === '/admin' ? 'Breadcrumb quản trị' : 'Breadcrumb portal'
+      }
+    >
+      <Link
+        href={basePath === '/admin' ? '/admin' : '/portal/dashboard'}
+        aria-label="Tổng quan"
+      >
         <Home size={14} aria-hidden="true" />
       </Link>
       {segments.map((segment, index) => {
-        const href = `/portal/${segments.slice(0, index + 1).join('/')}`
+        const href = `${basePath}/${segments.slice(0, index + 1).join('/')}`
         const current = index === segments.length - 1
         const label = labels[segment] ?? (index > 0 ? 'Chi tiết' : segment)
         return (

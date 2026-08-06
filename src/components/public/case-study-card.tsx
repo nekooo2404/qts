@@ -11,14 +11,13 @@ type CaseStudyCardProps = {
     outcome: string
     industry: string
   }
-  index?: number
 }
 
-export function CaseStudyCard({ caseStudy, index = 0 }: CaseStudyCardProps) {
+export function CaseStudyCard({ caseStudy }: CaseStudyCardProps) {
   return (
     <article className="case-study-card">
       <div className="case-study-card__visual" aria-hidden="true">
-        <span>DEMO / {String(index + 1).padStart(2, '0')}</span>
+        <span>TÌNH HUỐNG MINH HỌA</span>
         <div>
           <i />
           <i />
@@ -28,7 +27,7 @@ export function CaseStudyCard({ caseStudy, index = 0 }: CaseStudyCardProps) {
       </div>
       <div className="case-study-card__body">
         <span className="case-study-card__industry">
-          {caseStudy.industry} · Dữ liệu demo
+          {caseStudy.industry} · Kịch bản minh họa
         </span>
         <h3>{caseStudy.title}</h3>
         <p>{caseStudy.excerpt}</p>
@@ -42,12 +41,12 @@ export function CaseStudyCard({ caseStudy, index = 0 }: CaseStudyCardProps) {
             <dd>{caseStudy.solution}</dd>
           </div>
           <div>
-            <dt>Kết quả</dt>
+            <dt>Đầu ra</dt>
             <dd>{caseStudy.outcome}</dd>
           </div>
         </dl>
         <Link className="inline-link" href={`/du-an/${caseStudy.slug}`}>
-          Xem case study <ArrowUpRight size={16} aria-hidden="true" />
+          Xem tình huống <ArrowUpRight size={16} aria-hidden="true" />
         </Link>
       </div>
     </article>

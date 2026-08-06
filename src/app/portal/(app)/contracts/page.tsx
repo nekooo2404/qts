@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/portal/empty-state'
 import { PortalPageHeader } from '@/components/portal/portal-page-header'
 import { StatusBadge } from '@/components/portal/status-badge'
 import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { resourceOrganizationFilter } from '@/server/repositories/portal'
@@ -15,8 +16,9 @@ export const metadata: Metadata = { title: 'Hợp đồng' }
 
 export default async function PortalContractsPage() {
   const user = await requirePortalUser()
+  const canDownloadContracts = hasPermission(user, 'portal.contracts.download')
   const contracts = await db.contract.findMany({
-    where: resourceOrganizationFilter(user),
+    where: resourceOrganizationFilter(user, 'contracts'),
     include: {
       organization: { select: { name: true } },
       project: { select: { id: true, name: true } },
@@ -47,9 +49,15 @@ export default async function PortalContractsPage() {
                 {contract.project?.name ?? contract.organization.name}
               </span>
               <StatusBadge status={contract.status} />
-              <a href={`/api/portal/contracts/${contract.id}/download`}>
-                <Download size={15} /> Tải file demo
-              </a>
+              {canDownloadContracts ? (
+                <a href={`/api/portal/contracts/${contract.id}/download`}>
+                  <Download size={15} /> Tải file demo
+                </a>
+              ) : (
+                <span className="data-disclaimer">
+                  Không có quyền tải xuống
+                </span>
+              )}
             </article>
           ))}
         >
@@ -91,13 +99,19 @@ export default async function PortalContractsPage() {
                   <StatusBadge status={contract.status} />
                 </td>
                 <td>
-                  <a
-                    className="icon-link"
-                    href={`/api/portal/contracts/${contract.id}/download`}
-                    aria-label={`Tải ${contract.code}`}
-                  >
-                    <Download size={17} />
-                  </a>
+                  {canDownloadContracts ? (
+                    <a
+                      className="icon-link"
+                      href={`/api/portal/contracts/${contract.id}/download`}
+                      aria-label={`Tải ${contract.code}`}
+                    >
+                      <Download size={17} />
+                    </a>
+                  ) : (
+                    <span className="data-disclaimer">
+                      Không có quyền tải xuống
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}

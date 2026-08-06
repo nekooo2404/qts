@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -22,6 +23,8 @@ function newTicketCode() {
 export async function POST(request: Request) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
+  if (!hasPermission(auth.user, 'portal.tickets.create'))
+    return messageResponse('Không có quyền tạo ticket.', 403)
 
   try {
     const result = ticketSchema.safeParse(await readJsonBody(request))

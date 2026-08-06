@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { PageHero } from '@/components/public/page-hero'
 import { createMetadata } from '@/lib/seo'
@@ -15,11 +16,11 @@ export default function TermsPage() {
       <PageHero
         eyebrow="Thông tin pháp lý"
         title="Điều khoản sử dụng"
-        description="Khung điều khoản cần được bộ phận pháp lý QTS rà soát trước khi công bố chính thức."
+        description="Các nguyên tắc sử dụng website và môi trường QTS Portal demo một cách phù hợp, an toàn và đúng phạm vi truy cập."
         breadcrumbs={[
           { label: 'Điều khoản sử dụng', href: '/dieu-khoan-su-dung' },
         ]}
-        note="Ngày hiệu lực: [Điền ngày]"
+        note="Cập nhật ngày 06/08/2026"
       />
       <article className="legal-content container--narrow">
         <section>
@@ -53,8 +54,14 @@ export default function TermsPage() {
         <section>
           <h2>5. Trách nhiệm và thay đổi</h2>
           <p>
-            Giới hạn trách nhiệm, luật áp dụng và quy trình thông báo thay đổi:
-            [Điền nội dung pháp lý đã được phê duyệt].
+            QTS có thể điều chỉnh chức năng và dữ liệu trong môi trường demo để
+            phục vụ kiểm thử. Phạm vi dịch vụ, trách nhiệm và cam kết thương mại
+            chỉ có hiệu lực khi được hai bên thống nhất bằng văn bản. Câu hỏi về
+            điều khoản có thể gửi qua{' '}
+            <Link className="inline-link" href="/lien-he">
+              biểu mẫu liên hệ
+            </Link>
+            .
           </p>
         </section>
       </article>

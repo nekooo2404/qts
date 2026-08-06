@@ -22,7 +22,17 @@ describe('portal permissions', () => {
   it('prevents customer cross-organization access', () => {
     expect(canAccessOrganization('CUSTOMER', 'org-a', 'org-a')).toBe(true)
     expect(canAccessOrganization('CUSTOMER', 'org-a', 'org-b')).toBe(false)
-    expect(canAccessOrganization('STAFF', null, 'org-b')).toBe(true)
+    expect(canAccessOrganization('STAFF', null, 'org-b')).toBe(false)
+    expect(
+      canAccessOrganization(
+        {
+          role: 'STAFF',
+          permissionKeys: ['portal.projects.assign.all'],
+        },
+        null,
+        'org-b',
+      ),
+    ).toBe(true)
   })
 
   it('lets only administrators manage public content', () => {

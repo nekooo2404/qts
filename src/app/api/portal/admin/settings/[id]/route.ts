@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -18,7 +19,7 @@ export async function PATCH(
 ) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (auth.user.role !== 'ADMIN')
+  if (!hasPermission(auth.user, 'admin.content.write'))
     return messageResponse('Bạn không có quyền quản lý nội dung.', 403)
   const { id } = await context.params
   try {

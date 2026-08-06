@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CircleAlert, CircleCheck, LoaderCircle, Send } from 'lucide-react'
+import { CircleAlert, CircleCheck, Clock3, Send } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -175,7 +175,6 @@ export function QuoteRequestForm({ compact = false }: QuoteRequestFormProps) {
               <option>Thiết kế website</option>
               <option>Phát triển phần mềm</option>
               <option>Tích hợp hệ thống</option>
-              <option>QTS Portal</option>
               <option>Bảo trì và vận hành</option>
               <option>Giải pháp theo yêu cầu</option>
             </select>
@@ -289,18 +288,14 @@ export function QuoteRequestForm({ compact = false }: QuoteRequestFormProps) {
         </p>
       )}
       <div className="form-grid__full">
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
           {isSubmitting ? (
-            <LoaderCircle
-              className="is-spinning"
-              size={18}
-              aria-hidden="true"
-            />
+            <Clock3 size={18} aria-hidden="true" />
           ) : (
             <Send size={18} aria-hidden="true" />
           )}
           {isSubmitting
-            ? 'Đang gửi...'
+            ? 'Đang gửi…'
             : compact
               ? 'Gửi yêu cầu tư vấn'
               : 'Gửi yêu cầu báo giá'}

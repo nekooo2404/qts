@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Check, LogIn } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 import { AdvantagesGrid } from '@/components/public/advantages-grid'
 import { BlogCard } from '@/components/public/blog-card'
 import { CaseStudyCard } from '@/components/public/case-study-card'
 import { HeroSection } from '@/components/public/hero-section'
 import { HomeFaq } from '@/components/public/home-faq'
-import { PortalPreview } from '@/components/public/portal-preview'
 import { ProcessTimeline } from '@/components/public/process-timeline'
 import { ProductCatalogue } from '@/components/public/product-catalogue'
 import { QuoteRequestForm } from '@/components/public/quote-request-form'
@@ -18,14 +17,15 @@ import { buttonVariants } from '@/components/ui/button'
 import {
   platformFacts,
   platformPrinciples,
-  portalCapabilities,
+  homeFaqs,
+  solutionTabs,
 } from '@/config/marketing'
 import { db } from '@/lib/db'
 import { createMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = createMetadata(
-  'Tư vấn, phát triển hệ thống và QTS Portal',
+  'Tư vấn, phát triển hệ thống số cho doanh nghiệp',
   'QTS tư vấn, thiết kế và phát triển website, phần mềm, tích hợp hệ thống và cổng thông tin cho doanh nghiệp.',
   '/',
 )
@@ -94,7 +94,7 @@ export default async function HomePage() {
             id="ecosystem-title"
             centered
           />
-          <ProductCatalogue />
+          <ProductCatalogue excludePortal />
           <div className="platform-section__actions">
             <Link
               className={cn(buttonVariants({ variant: 'primary' }))}
@@ -113,7 +113,7 @@ export default async function HomePage() {
       </section>
 
       <section
-        className="section section--surface"
+        className="section section--surface solutions-section"
         aria-labelledby="solutions-title"
       >
         <div className="container">
@@ -122,49 +122,7 @@ export default async function HomePage() {
             description="Chọn nhóm nhu cầu để xem cách QTS tổ chức quy trình, dữ liệu và bề mặt làm việc tương ứng."
             id="solutions-title"
           />
-          <SolutionTabs />
-        </div>
-      </section>
-
-      <section
-        className="section portal-story"
-        aria-labelledby="portal-story-title"
-      >
-        <div className="container portal-story__inner">
-          <div className="portal-story__copy">
-            <p className="portal-story__product-name">QTS Portal</p>
-            <h2 id="portal-story-title">
-              Một cổng thông tin kết nối dự án, hỗ trợ và tài liệu
-            </h2>
-            <p>
-              QTS Portal tập trung tiến độ, trao đổi và tài liệu vào một không
-              gian có phân quyền cho ADMIN, STAFF và CUSTOMER.
-            </p>
-            <ul>
-              {portalCapabilities.map((capability) => (
-                <li key={capability}>
-                  <Check size={16} aria-hidden="true" /> {capability}
-                </li>
-              ))}
-            </ul>
-            <div className="portal-story__actions">
-              <Link
-                className={cn(buttonVariants({ variant: 'primary' }))}
-                href="/san-pham/qts-portal"
-              >
-                Khám phá QTS Portal <ArrowRight size={17} aria-hidden="true" />
-              </Link>
-              <Link
-                className={cn(buttonVariants({ variant: 'secondary' }))}
-                href="/portal/login"
-              >
-                <LogIn size={17} aria-hidden="true" /> Đăng nhập Portal
-              </Link>
-            </div>
-          </div>
-          <div className="portal-story__preview">
-            <PortalPreview />
-          </div>
+          <SolutionTabs items={solutionTabs} />
         </div>
       </section>
 
@@ -202,12 +160,8 @@ export default async function HomePage() {
               id="case-study-title"
             />
             <div className="case-study-grid">
-              {caseStudies.map((caseStudy, index) => (
-                <CaseStudyCard
-                  caseStudy={caseStudy}
-                  index={index}
-                  key={caseStudy.id}
-                />
+              {caseStudies.map((caseStudy) => (
+                <CaseStudyCard caseStudy={caseStudy} key={caseStudy.id} />
               ))}
             </div>
             <div className="section-action">
@@ -227,8 +181,8 @@ export default async function HomePage() {
           <div className="stats-section__heading">
             <h2 id="stats-title">Phạm vi đang hoạt động trong bản demo</h2>
             <p>
-              Đây là số lượng cấu phần có thể kiểm tra trong hệ thống, không
-              phải số liệu thành tích kinh doanh.
+              Các nhãn dưới đây mô tả cấu phần có thể kiểm tra trong hệ thống,
+              không phải số liệu thành tích kinh doanh.
             </p>
           </div>
           <div className="stats-grid">
@@ -272,7 +226,7 @@ export default async function HomePage() {
             description="Phạm vi, chi phí và khả năng tích hợp chỉ được chốt sau khi QTS hiểu hệ thống đang vận hành và mục tiêu cần đạt."
             id="home-faq-title"
           />
-          <HomeFaq />
+          <HomeFaq items={homeFaqs} />
         </div>
       </section>
 

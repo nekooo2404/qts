@@ -1,25 +1,13 @@
 type StatCounterProps = {
-  target: number
-  prefix: string
-  suffix: string
+  value: string
   label: string
   note: string
 }
 
-export function StatCounter({
-  target,
-  prefix,
-  suffix,
-  label,
-  note,
-}: StatCounterProps) {
+export function StatCounter({ value, label, note }: StatCounterProps) {
   return (
     <div className="stat-counter">
-      <strong>
-        {prefix}
-        {target}
-        {suffix}
-      </strong>
+      <strong>{value}</strong>
       <span>{label}</span>
       <small>{note}</small>
     </div>

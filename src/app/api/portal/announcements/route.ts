@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -15,7 +16,7 @@ import { announcementSchema } from '@/lib/validation/forms'
 export async function POST(request: Request) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (auth.user.role !== 'ADMIN')
+  if (!hasPermission(auth.user, 'portal.announcements.manage'))
     return messageResponse('Chỉ quản trị viên được đăng bảng tin.', 403)
   try {
     const result = announcementSchema.safeParse(await readJsonBody(request))

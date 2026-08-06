@@ -18,7 +18,7 @@ const defaults: Preferences = {
   compactTables: false,
 }
 
-export function SettingsPanel() {
+export function SettingsPanel({ canUpdate = true }: { canUpdate?: boolean }) {
   const [preferences, setPreferences] = useState(defaults)
   const [saved, setSaved] = useState(false)
   useEffect(() => {
@@ -37,10 +37,12 @@ export function SettingsPanel() {
     return () => window.clearTimeout(timeout)
   }, [])
   function toggle(key: keyof Preferences) {
+    if (!canUpdate) return
     setSaved(false)
     setPreferences((current) => ({ ...current, [key]: !current[key] }))
   }
   function save() {
+    if (!canUpdate) return
     window.localStorage.setItem(
       'qts_portal_preferences',
       JSON.stringify(preferences),
@@ -67,6 +69,7 @@ export function SettingsPanel() {
               type="checkbox"
               checked={preferences.inApp}
               onChange={() => toggle('inApp')}
+              disabled={!canUpdate}
             />
           </label>
           <label>
@@ -80,6 +83,7 @@ export function SettingsPanel() {
               type="checkbox"
               checked={preferences.email}
               onChange={() => toggle('email')}
+              disabled={!canUpdate}
             />
           </label>
           <label>
@@ -94,6 +98,7 @@ export function SettingsPanel() {
               type="checkbox"
               checked={preferences.weeklyDigest}
               onChange={() => toggle('weeklyDigest')}
+              disabled={!canUpdate}
             />
           </label>
         </div>
@@ -116,15 +121,17 @@ export function SettingsPanel() {
               type="checkbox"
               checked={preferences.compactTables}
               onChange={() => toggle('compactTables')}
+              disabled={!canUpdate}
             />
           </label>
         </div>
       </section>
       <div className="settings-actions">
-        <Button onClick={save}>
+        <Button onClick={save} disabled={!canUpdate}>
           <Check size={17} /> Lưu cài đặt
         </Button>
         {saved && <span role="status">Đã lưu trên thiết bị này.</span>}
+        {!canUpdate && <span role="status">Bạn chỉ có quyền xem cài đặt.</span>}
       </div>
     </div>
   )

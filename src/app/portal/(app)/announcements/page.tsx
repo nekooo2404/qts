@@ -4,6 +4,7 @@ import { Megaphone, Plus } from 'lucide-react'
 import { AnnouncementForm } from '@/components/portal/announcement-form'
 import { PortalPageHeader } from '@/components/portal/portal-page-header'
 import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { formatDateTime } from '@/lib/utils'
 
@@ -60,7 +61,7 @@ export default async function PortalAnnouncementsPage() {
           </div>
         )}
       </div>
-      {user.role === 'ADMIN' && (
+      {hasPermission(user, 'portal.announcements.manage') && (
         <details className="portal-panel portal-create-panel">
           <summary>
             <Plus size={18} /> Đăng bảng tin

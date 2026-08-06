@@ -1,4 +1,8 @@
-import type { RoleName } from '@/lib/domain/permissions'
+import {
+  hasPermission,
+  type PermissionSubject,
+  type RoleName,
+} from '@/lib/domain/permissions'
 
 export type TicketStatus =
   | 'NEW'
@@ -26,17 +30,23 @@ const customerTransitions: Record<TicketStatus, TicketStatus[]> = {
   CLOSED: [],
 }
 
-export function allowedTicketTransitions(role: RoleName, status: TicketStatus) {
-  const transitions =
-    role === 'CUSTOMER'
-      ? customerTransitions[status]
-      : supportTransitions[status]
+export function allowedTicketTransitions(
+  role: RoleName | PermissionSubject,
+  status: TicketStatus,
+) {
+  const isCustomer =
+    typeof role === 'string'
+      ? role === 'CUSTOMER'
+      : !hasPermission(role, 'portal.tickets.manage')
+  const transitions = isCustomer
+    ? customerTransitions[status]
+    : supportTransitions[status]
 
   return [...transitions]
 }
 
 export function canTransitionTicket(
-  role: RoleName,
+  role: RoleName | PermissionSubject,
   from: TicketStatus,
   to: TicketStatus,
 ) {

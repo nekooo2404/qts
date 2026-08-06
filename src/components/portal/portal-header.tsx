@@ -13,10 +13,12 @@ import { PortalBreadcrumb } from '@/components/portal/portal-breadcrumb'
 import { PortalSearch } from '@/components/portal/portal-search'
 import { Button } from '@/components/ui/button'
 import type { AuthUser } from '@/lib/auth/session'
+import { hasPermission } from '@/lib/domain/permissions'
 
 type PortalHeaderProps = {
   user: AuthUser
   notifications: HeaderNotification[]
+  surface?: 'portal' | 'admin'
   dark: boolean
   onToggleTheme: () => void
   onOpenMobile: () => void
@@ -25,11 +27,13 @@ type PortalHeaderProps = {
 export function PortalHeader({
   user,
   notifications,
+  surface = 'portal',
   dark,
   onToggleTheme,
   onOpenMobile,
 }: PortalHeaderProps) {
   const router = useRouter()
+  const isAdminSurface = surface === 'admin'
 
   async function logout() {
     const response = await fetch('/api/auth/logout', { method: 'POST' })
@@ -47,13 +51,19 @@ export function PortalHeader({
           variant="ghost"
           size="icon"
           onClick={onOpenMobile}
-          aria-label="Mở điều hướng portal"
+          aria-label={
+            isAdminSurface ? 'Mở điều hướng quản trị' : 'Mở điều hướng portal'
+          }
         >
           <Menu size={20} />
         </Button>
-        <PortalBreadcrumb />
+        <PortalBreadcrumb basePath={isAdminSurface ? '/admin' : '/portal'} />
       </div>
-      <PortalSearch role={user.role} />
+      <PortalSearch
+        role={user.role}
+        permissions={user.permissionKeys ?? user.permissions}
+        surface={surface}
+      />
       <div className="portal-header__actions">
         <Button
           className="portal-icon-button"
@@ -66,7 +76,10 @@ export function PortalHeader({
         >
           {dark ? <Sun size={18} /> : <Moon size={18} />}
         </Button>
-        <NotificationMenu notifications={notifications} />
+        <NotificationMenu
+          notifications={notifications}
+          canManage={hasPermission(user, 'portal.notifications.manage')}
+        />
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <button type="button" className="portal-user-trigger">
@@ -83,11 +96,13 @@ export function PortalHeader({
               align="end"
               sideOffset={8}
             >
-              <DropdownMenu.Item asChild>
-                <Link href="/portal/profile">
-                  <UserRound size={16} /> Hồ sơ cá nhân
-                </Link>
-              </DropdownMenu.Item>
+              {hasPermission(user, 'portal.profile.read') && (
+                <DropdownMenu.Item asChild>
+                  <Link href="/portal/profile">
+                    <UserRound size={16} /> Hồ sơ cá nhân
+                  </Link>
+                </DropdownMenu.Item>
+              )}
               <DropdownMenu.Separator />
               <DropdownMenu.Item asChild>
                 <button type="button" onClick={logout}>

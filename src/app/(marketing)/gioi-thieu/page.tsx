@@ -60,8 +60,9 @@ export default function AboutPage() {
               triển, triển khai đến bảo trì hệ thống.
             </p>
             <p>
-              Thông tin về năm thành lập, quy mô đội ngũ, địa chỉ, chứng chỉ và
-              thành tích sẽ chỉ được công bố sau khi doanh nghiệp xác nhận.
+              Phạm vi được chia theo mốc có đầu ra, người phụ trách và tiêu chí
+              nghiệm thu để quyết định kỹ thuật luôn gắn với cách hệ thống sẽ
+              được sử dụng.
             </p>
           </div>
         </div>
@@ -91,8 +92,8 @@ export default function AboutPage() {
       <section className="section company-facts" aria-labelledby="facts-title">
         <div className="container">
           <SectionHeading
-            eyebrow="Thông tin doanh nghiệp"
-            title="Các trường đang chờ dữ liệu pháp lý được xác nhận"
+            eyebrow="Nhận diện doanh nghiệp"
+            title="Thông tin công khai đã được sử dụng nhất quán"
             id="facts-title"
           />
           <dl>
@@ -103,22 +104,6 @@ export default function AboutPage() {
             <div>
               <dt>Tên tiếng Anh</dt>
               <dd>QTS Technology Joint Stock Company</dd>
-            </div>
-            <div>
-              <dt>Địa chỉ</dt>
-              <dd>[Điền địa chỉ]</dd>
-            </div>
-            <div>
-              <dt>Mã số thuế</dt>
-              <dd>[Điền mã số thuế]</dd>
-            </div>
-            <div>
-              <dt>Điện thoại</dt>
-              <dd>[Điền số điện thoại]</dd>
-            </div>
-            <div>
-              <dt>Email</dt>
-              <dd>[Điền email]</dd>
             </div>
           </dl>
         </div>

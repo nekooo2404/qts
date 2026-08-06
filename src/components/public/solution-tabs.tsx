@@ -3,14 +3,24 @@
 import { useState } from 'react'
 import { Check } from 'lucide-react'
 
-import { solutionTabs } from '@/config/marketing'
+type SolutionTab = {
+  id: string
+  label: string
+  title: string
+  description: string
+  features: readonly string[]
+  focus: string
+}
 
-export function SolutionTabs() {
-  const [activeId, setActiveId] = useState<(typeof solutionTabs)[number]['id']>(
-    solutionTabs[0].id,
-  )
-  const active =
-    solutionTabs.find((tab) => tab.id === activeId) ?? solutionTabs[0]
+type SolutionTabsProps = {
+  items: readonly SolutionTab[]
+}
+
+export function SolutionTabs({ items }: SolutionTabsProps) {
+  const [activeId, setActiveId] = useState(items[0]?.id ?? '')
+  const active = items.find((tab) => tab.id === activeId) ?? items[0]
+
+  if (!active) return null
 
   return (
     <div className="solution-tabs">
@@ -19,7 +29,7 @@ export function SolutionTabs() {
         role="tablist"
         aria-label="Nhóm giải pháp"
       >
-        {solutionTabs.map((tab) => (
+        {items.map((tab) => (
           <button
             type="button"
             role="tab"
@@ -29,9 +39,7 @@ export function SolutionTabs() {
             tabIndex={active.id === tab.id ? 0 : -1}
             onClick={() => setActiveId(tab.id)}
             onKeyDown={(event) => {
-              const index = solutionTabs.findIndex(
-                (item) => item.id === active.id,
-              )
+              const index = items.findIndex((item) => item.id === active.id)
               const direction =
                 event.key === 'ArrowRight'
                   ? 1
@@ -42,14 +50,13 @@ export function SolutionTabs() {
                 event.key === 'Home'
                   ? 0
                   : event.key === 'End'
-                    ? solutionTabs.length - 1
+                    ? items.length - 1
                     : direction
-                      ? (index + direction + solutionTabs.length) %
-                        solutionTabs.length
+                      ? (index + direction + items.length) % items.length
                       : null
               if (nextIndex === null) return
               event.preventDefault()
-              const next = solutionTabs[nextIndex]
+              const next = items[nextIndex]
               setActiveId(next.id)
               document.getElementById(`solution-tab-${next.id}`)?.focus()
             }}
@@ -81,23 +88,21 @@ export function SolutionTabs() {
         <div className="solution-tabs__visual" aria-hidden="true">
           <header>
             <span>QTS / {active.label}</span>
-            <small>Dữ liệu minh họa</small>
+            <small>Mô hình tiếp cận</small>
           </header>
-          <div className="solution-tabs__score">
-            <span>Mức hoàn thành quy trình mẫu</span>
-            <strong>{active.accent}</strong>
-            <i
-              style={
-                { '--progress-width': active.accent } as React.CSSProperties
-              }
-            />
+          <div className="solution-tabs__focus">
+            <span>Trọng tâm thiết kế</span>
+            <strong>{active.focus}</strong>
+            <small>Phạm vi được chốt sau khảo sát</small>
           </div>
           <div className="solution-tabs__rows">
-            {active.features.map((feature, index) => (
+            {active.features.map((feature) => (
               <div key={feature}>
-                <span>{String(index + 1).padStart(2, '0')}</span>
+                <span className="solution-tabs__row-icon">
+                  <Check size={15} aria-hidden="true" />
+                </span>
                 <strong>{feature}</strong>
-                <small>{index === 0 ? 'Đang theo dõi' : 'Đã cấu hình'}</small>
+                <small>Điểm cần xác nhận</small>
               </div>
             ))}
           </div>

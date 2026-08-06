@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Clock3, Mail, MapPin, Phone } from 'lucide-react'
+import { CheckCircle2 } from 'lucide-react'
 
 import { ContactForm } from '@/components/public/contact-form'
 import { PageHero } from '@/components/public/page-hero'
@@ -23,32 +23,32 @@ export default function ContactPage() {
       <section className="section contact-page">
         <div className="container contact-page__grid">
           <aside>
-            <h2>Thông tin liên hệ</h2>
+            <h2>Chuẩn bị trước khi gửi</h2>
             <p>
-              Các trường doanh nghiệp dưới đây đang chờ dữ liệu được xác nhận.
+              Một yêu cầu có đủ bối cảnh giúp việc trao đổi tập trung vào đúng
+              phạm vi ngay từ đầu.
             </p>
-            <dl>
-              <div>
-                <MapPin size={18} aria-hidden="true" />
-                <dt>Địa chỉ</dt>
-                <dd>[Điền địa chỉ]</dd>
-              </div>
-              <div>
-                <Phone size={18} aria-hidden="true" />
-                <dt>Điện thoại</dt>
-                <dd>[Điền số điện thoại]</dd>
-              </div>
-              <div>
-                <Mail size={18} aria-hidden="true" />
-                <dt>Email</dt>
-                <dd>[Điền email]</dd>
-              </div>
-              <div>
-                <Clock3 size={18} aria-hidden="true" />
-                <dt>Thời gian làm việc</dt>
-                <dd>[Điền thời gian làm việc]</dd>
-              </div>
-            </dl>
+            <ul className="contact-page__guidance">
+              {[
+                ['Mục tiêu', 'Kết quả cần đạt và nhóm người dùng chính.'],
+                [
+                  'Hiện trạng',
+                  'Quy trình, dữ liệu hoặc hệ thống đang sử dụng.',
+                ],
+                [
+                  'Ràng buộc',
+                  'Mốc thời gian, tích hợp và tiêu chí cần ưu tiên.',
+                ],
+              ].map(([title, description]) => (
+                <li key={title}>
+                  <CheckCircle2 size={19} aria-hidden="true" />
+                  <span>
+                    <strong>{title}</strong>
+                    {description}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </aside>
           <div className="contact-page__form">
             <h2>Gửi yêu cầu liên hệ</h2>

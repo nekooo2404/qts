@@ -2,12 +2,16 @@ import 'server-only'
 
 import type { Prisma } from '@/generated/prisma/client'
 import type { AuthUser } from '@/lib/auth/session'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 
 const impossibleOrganizationId = '__no_organization__'
 
 export function projectScope(user: AuthUser): Prisma.ProjectWhereInput {
-  if (user.role === 'ADMIN') return {}
+  if (!hasPermission(user, 'portal.projects.read')) {
+    return { id: '__no_project_access__' }
+  }
+  if (hasPermission(user, 'portal.projects.read.all')) return {}
   if (user.role === 'STAFF') {
     return {
       OR: [
@@ -20,7 +24,10 @@ export function projectScope(user: AuthUser): Prisma.ProjectWhereInput {
 }
 
 export function taskScope(user: AuthUser): Prisma.TaskWhereInput {
-  if (user.role === 'ADMIN') return {}
+  if (!hasPermission(user, 'portal.tasks.read')) {
+    return { id: '__no_task_access__' }
+  }
+  if (hasPermission(user, 'portal.tasks.read.all')) return {}
   if (user.role === 'STAFF') {
     return {
       OR: [
@@ -38,21 +45,33 @@ export function taskScope(user: AuthUser): Prisma.TaskWhereInput {
 }
 
 export function ticketScope(user: AuthUser): Prisma.TicketWhereInput {
-  if (user.role === 'ADMIN' || user.role === 'STAFF') return {}
+  if (!hasPermission(user, 'portal.tickets.read')) {
+    return { id: '__no_ticket_access__' }
+  }
+  if (hasPermission(user, 'portal.tickets.read.all')) return {}
   return { organizationId: user.organizationId ?? impossibleOrganizationId }
 }
 
 export function organizationScope(
   user: AuthUser,
 ): Prisma.OrganizationWhereInput {
-  if (user.role === 'ADMIN' || user.role === 'STAFF') return {}
+  if (hasPermission(user, 'portal.projects.read.all')) return {}
   return { id: user.organizationId ?? impossibleOrganizationId }
 }
 
-export function resourceOrganizationFilter(user: AuthUser) {
-  return user.role === 'CUSTOMER'
-    ? { organizationId: user.organizationId ?? impossibleOrganizationId }
-    : {}
+export type ResourceKind = 'documents' | 'contracts' | 'invoices'
+
+export function resourceOrganizationFilter(
+  user: AuthUser,
+  resource: ResourceKind,
+) {
+  const readAllPermission = {
+    documents: 'portal.documents.read.all',
+    contracts: 'portal.contracts.read.all',
+    invoices: 'portal.invoices.read.all',
+  }[resource]
+  if (hasPermission(user, readAllPermission)) return {}
+  return { organizationId: user.organizationId ?? impossibleOrganizationId }
 }
 
 export async function getDashboardData(user: AuthUser) {
@@ -60,11 +79,16 @@ export async function getDashboardData(user: AuthUser) {
   const dueSoon = new Date(now)
   dueSoon.setDate(dueSoon.getDate() + 14)
 
+  const canViewProjects = hasPermission(user, 'portal.projects.read')
+  const canViewTasks = hasPermission(user, 'portal.tasks.read')
+  const canViewTickets = hasPermission(user, 'portal.tickets.read')
+  const canViewDocuments = hasPermission(user, 'portal.documents.read')
+  const canViewContracts = hasPermission(user, 'portal.contracts.read')
+  const canViewNotifications = hasPermission(user, 'portal.notifications.read')
+  const canViewAnnouncements = hasPermission(user, 'portal.announcements.read')
   const projectsWhere = projectScope(user)
   const tasksWhere = taskScope(user)
   const ticketsWhere = ticketScope(user)
-  const resourcesWhere = resourceOrganizationFilter(user)
-
   const [
     activeProjects,
     tasksDueSoon,
@@ -77,64 +101,94 @@ export async function getDashboardData(user: AuthUser) {
     notifications,
     announcements,
   ] = await Promise.all([
-    db.project.count({
-      where: { AND: [projectsWhere, { status: 'ACTIVE' }] },
-    }),
-    db.task.count({
-      where: {
-        AND: [
-          tasksWhere,
-          { dueDate: { gte: now, lte: dueSoon }, status: { not: 'DONE' } },
-        ],
-      },
-    }),
-    db.ticket.count({
-      where: {
-        AND: [ticketsWhere, { status: { notIn: ['RESOLVED', 'CLOSED'] } }],
-      },
-    }),
-    db.document.count({
-      where: {
-        ...resourcesWhere,
-        createdAt: { gte: new Date(now.getTime() - 30 * 86400000) },
-      },
-    }),
-    db.contract.count({ where: { ...resourcesWhere, status: 'ACTIVE' } }),
-    db.project.findMany({
-      where: projectsWhere,
-      include: {
-        organization: { select: { name: true } },
-        tasks: { select: { status: true, progress: true } },
-      },
-      orderBy: { updatedAt: 'desc' },
-      take: 5,
-    }),
-    db.task.groupBy({
-      by: ['status'],
-      where: tasksWhere,
-      _count: { _all: true },
-    }),
-    db.ticket.groupBy({
-      by: ['priority'],
-      where: ticketsWhere,
-      _count: { _all: true },
-    }),
-    db.notification.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: 'desc' },
-      take: 6,
-    }),
-    db.announcement.findMany({
-      where: {
-        active: true,
-        OR: [
-          { audience: 'ALL' },
-          { audience: user.role === 'CUSTOMER' ? 'CUSTOMER' : 'STAFF' },
-        ],
-      },
-      orderBy: { publishedAt: 'desc' },
-      take: 3,
-    }),
+    canViewProjects
+      ? db.project.count({
+          where: { AND: [projectsWhere, { status: 'ACTIVE' }] },
+        })
+      : Promise.resolve(0),
+    canViewTasks
+      ? db.task.count({
+          where: {
+            AND: [
+              tasksWhere,
+              { dueDate: { gte: now, lte: dueSoon }, status: { not: 'DONE' } },
+            ],
+          },
+        })
+      : Promise.resolve(0),
+    canViewTickets
+      ? db.ticket.count({
+          where: {
+            AND: [ticketsWhere, { status: { notIn: ['RESOLVED', 'CLOSED'] } }],
+          },
+        })
+      : Promise.resolve(0),
+    canViewDocuments
+      ? db.document.count({
+          where: {
+            ...resourceOrganizationFilter(user, 'documents'),
+            createdAt: { gte: new Date(now.getTime() - 30 * 86400000) },
+          },
+        })
+      : Promise.resolve(0),
+    canViewContracts
+      ? db.contract.count({
+          where: {
+            ...resourceOrganizationFilter(user, 'contracts'),
+            status: 'ACTIVE',
+          },
+        })
+      : Promise.resolve(0),
+    canViewProjects
+      ? db.project.findMany({
+          where: projectsWhere,
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            status: true,
+            progress: true,
+            dueDate: true,
+            organization: { select: { name: true } },
+          },
+          orderBy: { updatedAt: 'desc' },
+          take: 5,
+        })
+      : Promise.resolve([]),
+    canViewTasks
+      ? db.task.groupBy({
+          by: ['status'],
+          where: tasksWhere,
+          _count: { _all: true },
+        })
+      : Promise.resolve([]),
+    canViewTickets
+      ? db.ticket.groupBy({
+          by: ['priority'],
+          where: ticketsWhere,
+          _count: { _all: true },
+        })
+      : Promise.resolve([]),
+    canViewNotifications
+      ? db.notification.findMany({
+          where: { userId: user.id },
+          orderBy: { createdAt: 'desc' },
+          take: 6,
+        })
+      : Promise.resolve([]),
+    canViewAnnouncements
+      ? db.announcement.findMany({
+          where: {
+            active: true,
+            OR: [
+              { audience: 'ALL' },
+              { audience: user.role === 'CUSTOMER' ? 'CUSTOMER' : 'STAFF' },
+            ],
+          },
+          orderBy: { publishedAt: 'desc' },
+          take: 3,
+        })
+      : Promise.resolve([]),
   ])
 
   return {
@@ -156,6 +210,15 @@ export async function getDashboardData(user: AuthUser) {
     })),
     notifications,
     announcements,
+    capabilities: {
+      projects: canViewProjects,
+      tasks: canViewTasks,
+      tickets: canViewTickets,
+      documents: canViewDocuments,
+      contracts: canViewContracts,
+      notifications: canViewNotifications,
+      announcements: canViewAnnouncements,
+    },
   }
 }
 
@@ -179,14 +242,20 @@ export async function findProjectForUser(user: AuthUser, id: string) {
       },
       milestones: { orderBy: { dueDate: 'asc' } },
       tasks: {
+        where: taskScope(user),
         include: { assignee: { select: { name: true } } },
         orderBy: { dueDate: 'asc' },
       },
       documents: {
+        where: resourceOrganizationFilter(user, 'documents'),
         include: { uploadedBy: { select: { name: true } } },
         orderBy: { createdAt: 'desc' },
       },
-      tickets: { orderBy: { updatedAt: 'desc' }, take: 5 },
+      tickets: {
+        where: ticketScope(user),
+        orderBy: { updatedAt: 'desc' },
+        take: 5,
+      },
     },
   })
 }
@@ -202,7 +271,9 @@ export async function findTicketForUser(user: AuthUser, id: string) {
       },
       assignedTo: { select: { id: true, name: true } },
       messages: {
-        where: user.role === 'CUSTOMER' ? { internal: false } : {},
+        where: hasPermission(user, 'portal.tickets.manage')
+          ? {}
+          : { internal: false },
         include: {
           author: {
             select: { id: true, name: true, role: { select: { name: true } } },

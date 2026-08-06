@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { PageHero } from '@/components/public/page-hero'
 import { createMetadata } from '@/lib/seo'
@@ -15,11 +16,11 @@ export default function PrivacyPage() {
       <PageHero
         eyebrow="Thông tin pháp lý"
         title="Chính sách bảo mật"
-        description="Khung chính sách đang chờ thông tin pháp lý và đầu mối dữ liệu của doanh nghiệp được xác nhận."
+        description="Thông tin minh bạch về dữ liệu được thu thập, mục đích sử dụng và cách gửi yêu cầu liên quan đến dữ liệu."
         breadcrumbs={[
           { label: 'Chính sách bảo mật', href: '/chinh-sach-bao-mat' },
         ]}
-        note="Ngày hiệu lực: [Điền ngày]"
+        note="Cập nhật ngày 06/08/2026"
       />
       <article className="legal-content container--narrow">
         <section>
@@ -41,23 +42,30 @@ export default function PrivacyPage() {
           <h2>3. Lưu trữ và bảo vệ</h2>
           <p>
             Mật khẩu được băm; session dùng cookie HTTP-only; quyền truy cập dữ
-            liệu được kiểm tra tại server. Thời hạn lưu trữ chính thức: [Điền
-            thời hạn].
+            liệu được kiểm tra tại server. Bản demo chưa tự động xóa dữ liệu
+            theo thời hạn, vì vậy không gửi thông tin nhạy cảm qua biểu mẫu.
           </p>
         </section>
         <section>
           <h2>4. Quyền của người dùng</h2>
           <p>
-            Yêu cầu truy cập, chỉnh sửa hoặc xóa dữ liệu có thể gửi đến [Điền
-            email phụ trách dữ liệu]. Quy trình xử lý chính thức: [Điền thông
-            tin].
+            Bạn có thể gửi yêu cầu truy cập, chỉnh sửa hoặc xóa dữ liệu qua{' '}
+            <Link className="inline-link" href="/lien-he">
+              biểu mẫu liên hệ
+            </Link>
+            . QTS dùng kênh bạn cung cấp trong biểu mẫu để xác minh và phản hồi
+            yêu cầu.
           </p>
         </section>
         <section>
           <h2>5. Liên hệ</h2>
           <p>
-            Đơn vị kiểm soát dữ liệu: Công ty Cổ phần Công nghệ QTS. Địa chỉ:
-            [Điền địa chỉ]. Email: [Điền email].
+            Đơn vị vận hành website là Công ty Cổ phần Công nghệ QTS. Kênh tiếp
+            nhận công khai hiện tại là{' '}
+            <Link className="inline-link" href="/lien-he">
+              trang liên hệ QTS
+            </Link>
+            .
           </p>
         </section>
       </article>

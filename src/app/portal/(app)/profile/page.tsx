@@ -6,11 +6,13 @@ import { PortalPageHeader } from '@/components/portal/portal-page-header'
 import { ProfileForm } from '@/components/portal/profile-form'
 import { roleLabels } from '@/config/portal'
 import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 
 export const metadata: Metadata = { title: 'Hồ sơ' }
 
 export default async function PortalProfilePage() {
   const user = await requirePortalUser()
+  const canUpdateProfile = hasPermission(user, 'portal.profile.update')
   return (
     <div className="portal-page">
       <PortalPageHeader
@@ -59,6 +61,7 @@ export default async function PortalProfilePage() {
               </div>
             </header>
             <ProfileForm
+              canUpdate={canUpdateProfile}
               defaultValues={{
                 name: user.name,
                 phone: user.phone ?? '',
@@ -73,7 +76,7 @@ export default async function PortalProfilePage() {
                 <p>Tất cả phiên đăng nhập sẽ bị thu hồi sau khi đổi.</p>
               </div>
             </header>
-            <PasswordForm />
+            <PasswordForm canUpdate={canUpdateProfile} />
           </section>
         </div>
       </div>

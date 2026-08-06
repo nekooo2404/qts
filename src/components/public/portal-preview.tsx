@@ -18,7 +18,7 @@ export function PortalPreview({ compact = false }: PortalPreviewProps) {
     <div
       className={cn('portal-preview', compact && 'portal-preview--compact')}
       role="img"
-      aria-label="Bản xem trước giao diện QTS Portal"
+      aria-label="Bố cục minh họa giao diện QTS Portal"
     >
       <aside className="portal-preview__sidebar" aria-hidden="true">
         <span className="portal-preview__brand">Q</span>
@@ -34,7 +34,7 @@ export function PortalPreview({ compact = false }: PortalPreviewProps) {
         <header className="portal-preview__header">
           <div>
             <small>Tổng quan vận hành</small>
-            <strong>Xin chào, doanh nghiệp demo</strong>
+            <strong>Không gian dự án</strong>
           </div>
           <span className="portal-preview__notification">
             <Bell size={compact ? 12 : 15} aria-hidden="true" />
@@ -43,53 +43,45 @@ export function PortalPreview({ compact = false }: PortalPreviewProps) {
         </header>
         <div className="portal-preview__metrics">
           <div>
-            <span>Dự án đang chạy</span>
-            <strong>03</strong>
-            <small>Dữ liệu demo</small>
+            <span>Dự án</span>
+            <strong>Đang chạy</strong>
+            <small>Có người phụ trách</small>
           </div>
           <div>
-            <span>Tiến độ tổng</span>
-            <strong>58%</strong>
-            <small>Cập nhật theo mốc</small>
+            <span>Bàn giao</span>
+            <strong>Theo mốc</strong>
+            <small>Có đầu ra rõ ràng</small>
           </div>
           <div>
-            <span>Ticket mở</span>
-            <strong>02</strong>
-            <small>01 ưu tiên cao</small>
+            <span>Hỗ trợ</span>
+            <strong>Đã nhận</strong>
+            <small>Có lịch sử xử lý</small>
           </div>
         </div>
         <div className="portal-preview__workspace">
-          <section className="portal-preview__chart">
+          <section className="portal-preview__milestones">
             <div className="portal-preview__panel-title">
-              <strong>Tiến độ dự án</strong>
-              <span>6 tháng</span>
+              <strong>Luồng triển khai</strong>
+              <span>Theo từng mốc</span>
             </div>
-            <div className="portal-preview__bars" aria-hidden="true">
-              {[34, 48, 43, 62, 74, 82, 68, 88].map((height, index) => (
-                <i
-                  key={index}
-                  style={
-                    { '--bar-height': `${height}%` } as React.CSSProperties
-                  }
-                />
+            <div className="portal-preview__milestone-track" aria-hidden="true">
+              {['Khảo sát', 'Thiết kế', 'Xây dựng', 'Vận hành'].map((label) => (
+                <span key={label}>
+                  <i />
+                  {label}
+                </span>
               ))}
-            </div>
-            <div className="portal-preview__axis" aria-hidden="true">
-              <span>T1</span>
-              <span>T2</span>
-              <span>T3</span>
-              <span>T4</span>
             </div>
           </section>
           <section className="portal-preview__activity">
             <div className="portal-preview__panel-title">
               <strong>Công việc gần đây</strong>
-              <span>4 việc</span>
+              <span>Theo trạng thái</span>
             </div>
             {[
-              ['Duyệt luồng nghiệp vụ', 'Hoàn tất'],
-              ['Dashboard theo vai trò', '64%'],
-              ['Rà soát ticket', 'Đang duyệt'],
+              ['Xác nhận luồng nghiệp vụ', 'Đã thống nhất'],
+              ['Rà soát giao diện theo vai trò', 'Đang xử lý'],
+              ['Kiểm tra dữ liệu đầu vào', 'Chờ xác nhận'],
             ].map(([label, value], index) => (
               <div className="portal-preview__task" key={label}>
                 <CircleCheck
@@ -106,7 +98,7 @@ export function PortalPreview({ compact = false }: PortalPreviewProps) {
         <div className="portal-preview__ticket">
           <LifeBuoy size={compact ? 12 : 15} aria-hidden="true" />
           <span>
-            <strong>TK-2026-001</strong> Kiểm tra dữ liệu dashboard
+            <strong>Yêu cầu hỗ trợ</strong> Kiểm tra dữ liệu dashboard
           </span>
           <small>Đã tiếp nhận</small>
         </div>

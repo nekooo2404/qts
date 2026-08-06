@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { LoaderCircle, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -15,36 +15,60 @@ export function UserAccessForm({
   id,
   role,
   active,
+  isSelf = false,
+  canChangeRole = true,
 }: {
   id: string
   role: string
   active: boolean
+  isSelf?: boolean
+  canChangeRole?: boolean
 }) {
   const router = useRouter()
-  const [nextRole, setNextRole] = useState(role)
-  const [nextActive, setNextActive] = useState(active)
   const [pending, setPending] = useState(false)
   const [feedback, setFeedback] = useState<FormFeedbackValue>(null)
-  async function save() {
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const nextRole =
+      isSelf || !canChangeRole ? role : String(formData.get('role'))
+    const nextActive = isSelf ? active : formData.get('active') === 'on'
     setPending(true)
-    const result = await apiMutation(`/api/portal/admin/users/${id}`, 'PATCH', {
-      role: nextRole,
-      active: nextActive,
-    })
-    setFeedback({
-      type: result.ok ? 'success' : 'error',
-      message: result.message,
-    })
-    if (result.ok) router.refresh()
-    setPending(false)
+    try {
+      const result = await apiMutation(
+        `/api/portal/admin/users/${id}`,
+        'PATCH',
+        {
+          role: nextRole,
+          active: nextActive,
+        },
+      )
+      setFeedback({
+        type: result.ok ? 'success' : 'error',
+        message: result.message,
+      })
+      if (result.ok) router.refresh()
+    } catch {
+      setFeedback({
+        type: 'error',
+        message: 'Không thể cập nhật người dùng. Vui lòng thử lại.',
+      })
+    } finally {
+      setPending(false)
+    }
   }
   return (
-    <div className="user-access-form">
+    <form
+      className="user-access-form"
+      key={`${role}-${active}`}
+      onSubmit={save}
+    >
       <label>
         <span className="sr-only">Vai trò</span>
         <select
-          value={nextRole}
-          onChange={(event) => setNextRole(event.target.value)}
+          name="role"
+          defaultValue={role}
+          disabled={isSelf || !canChangeRole}
         >
           <option value="ADMIN">ADMIN</option>
           <option value="STAFF">STAFF</option>
@@ -54,15 +78,16 @@ export function UserAccessForm({
       <label className="compact-checkbox">
         <input
           type="checkbox"
-          checked={nextActive}
-          onChange={(event) => setNextActive(event.target.checked)}
+          name="active"
+          defaultChecked={active}
+          disabled={isSelf}
         />{' '}
         Hoạt động
       </label>
       <Button
         variant="ghost"
         size="icon"
-        onClick={save}
+        type="submit"
         disabled={pending}
         aria-label="Lưu quyền người dùng"
       >
@@ -73,6 +98,6 @@ export function UserAccessForm({
         )}
       </Button>
       <FormFeedback value={feedback} />
-    </div>
+    </form>
   )
 }

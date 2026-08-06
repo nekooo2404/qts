@@ -2,8 +2,11 @@ import 'server-only'
 
 import { redirect } from 'next/navigation'
 
-import type { RoleName } from '@/lib/domain/permissions'
-import { canAccessOrganization } from '@/lib/domain/permissions'
+import {
+  canAccessOrganization,
+  hasPermission,
+  type PermissionKey,
+} from '@/lib/domain/permissions'
 import { getCurrentUser, type AuthUser } from '@/lib/auth/session'
 
 export class ForbiddenError extends Error {
@@ -23,10 +26,17 @@ export async function requirePortalUser(): Promise<AuthUser> {
   return user
 }
 
-export function requireRole(user: AuthUser, roles: RoleName[]) {
-  if (!roles.includes(user.role)) {
+export function requirePermission(
+  user: AuthUser,
+  permission: PermissionKey | string,
+) {
+  if (!hasPermission(user, permission)) {
     throw new ForbiddenError()
   }
+}
+
+export function requireAdminAccess(user: AuthUser) {
+  requirePermission(user, 'admin.access')
 }
 
 export function requireOrganizationAccess(
@@ -34,11 +44,7 @@ export function requireOrganizationAccess(
   resourceOrganizationId: string,
 ) {
   if (
-    !canAccessOrganization(
-      user.role,
-      user.organizationId,
-      resourceOrganizationId,
-    )
+    !canAccessOrganization(user, user.organizationId, resourceOrganizationId)
   ) {
     throw new ForbiddenError()
   }

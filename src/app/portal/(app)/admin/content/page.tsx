@@ -15,12 +15,16 @@ import {
 } from '@/components/portal/content-editors'
 import { PortalPageHeader } from '@/components/portal/portal-page-header'
 import { StatusBadge } from '@/components/portal/status-badge'
+import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { formatDate } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Quản lý nội dung' }
 
 export default async function AdminContentPage() {
+  const currentUser = await requirePortalUser()
+  const canWrite = hasPermission(currentUser, 'admin.content.write')
   const [posts, services, caseStudies, settings] = await Promise.all([
     db.blogPost.findMany({
       include: { author: { select: { name: true } } },
@@ -51,12 +55,14 @@ export default async function AdminContentPage() {
           </div>
           <BookOpenText size={18} />
         </header>
-        <details className="cms-editor cms-editor--create" id="create-blog">
-          <summary>
-            <Plus size={17} /> Tạo bài viết mới
-          </summary>
-          <BlogPostForm />
-        </details>
+        {canWrite && (
+          <details className="cms-editor cms-editor--create" id="create-blog">
+            <summary>
+              <Plus size={17} /> Tạo bài viết mới
+            </summary>
+            <BlogPostForm />
+          </details>
+        )}
         <div className="cms-record-list">
           {posts.map((post) => (
             <details className="cms-editor" key={post.id}>
@@ -71,6 +77,7 @@ export default async function AdminContentPage() {
                 <StatusBadge status={post.status} />
               </summary>
               <BlogPostForm
+                readOnly={!canWrite}
                 postId={post.id}
                 defaultValues={{
                   title: post.title,
@@ -104,7 +111,7 @@ export default async function AdminContentPage() {
                 </span>
                 <StatusBadge status={service.active ? 'ACTIVE' : 'CANCELLED'} />
               </summary>
-              <ServiceEditor service={service} />
+              <ServiceEditor service={service} readOnly={!canWrite} />
             </details>
           ))}
         </div>
@@ -132,6 +139,7 @@ export default async function AdminContentPage() {
                 />
               </summary>
               <CaseStudyEditor
+                readOnly={!canWrite}
                 item={{
                   ...item,
                   publishedAt: item.publishedAt?.toISOString() ?? null,
@@ -151,7 +159,11 @@ export default async function AdminContentPage() {
         </header>
         <div className="cms-settings-grid">
           {settings.map((setting) => (
-            <SiteSettingEditor setting={setting} key={setting.id} />
+            <SiteSettingEditor
+              setting={setting}
+              key={setting.id}
+              readOnly={!canWrite}
+            />
           ))}
         </div>
       </section>

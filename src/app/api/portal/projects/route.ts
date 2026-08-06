@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
-import { canManageProjects } from '@/lib/domain/permissions'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -16,12 +16,21 @@ import { projectSchema } from '@/lib/validation/forms'
 export async function POST(request: Request) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (!canManageProjects(auth.user.role))
+  if (!hasPermission(auth.user, 'portal.projects.create'))
     return messageResponse('Bạn không có quyền tạo dự án.', 403)
 
   try {
     const result = projectSchema.safeParse(await readJsonBody(request))
     if (!result.success) return validationErrorResponse(result.error)
+
+    const canCreateInOrganization =
+      hasPermission(auth.user, 'portal.projects.assign.all') ||
+      auth.user.organizationId === result.data.organizationId
+    if (!canCreateInOrganization)
+      return messageResponse(
+        'Bạn không có quyền tạo dự án cho tổ chức này.',
+        403,
+      )
 
     const organization = await db.organization.findUnique({
       where: { id: result.data.organizationId },

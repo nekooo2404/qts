@@ -5,7 +5,8 @@ import { cache } from 'react'
 import { cookies } from 'next/headers'
 
 import { getSessionCookieName } from '@/lib/auth/constants'
-import type { RoleName } from '@/lib/domain/permissions'
+import { resolvePermissionKeys } from '@/lib/auth/permission-resolver'
+import type { PermissionKey, RoleName } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { sha256 } from '@/lib/security/hash'
 import { requestIp } from '@/lib/security/request'
@@ -23,6 +24,10 @@ export type AuthUser = {
   roleLabel: string
   organizationId: string | null
   organizationName: string | null
+  /** Effective role defaults after per-account ALLOW/DENY overrides. */
+  permissions: PermissionKey[]
+  /** Stable alias used by navigation and server guards. */
+  permissionKeys: PermissionKey[]
 }
 
 function sessionTtlDays() {
@@ -80,7 +85,19 @@ export const getCurrentUser = cache(async (): Promise<AuthUser | null> => {
     where: { tokenHash: sha256(token) },
     include: {
       user: {
-        include: { role: true, organization: true },
+        include: {
+          role: {
+            include: {
+              permissions: {
+                include: { permission: { select: { key: true } } },
+              },
+            },
+          },
+          permissionOverrides: {
+            include: { permission: { select: { key: true } } },
+          },
+          organization: true,
+        },
       },
     },
   })
@@ -91,6 +108,18 @@ export const getCurrentUser = cache(async (): Promise<AuthUser | null> => {
     }
     return null
   }
+
+  const permissionKeys = resolvePermissionKeys(
+    session.user.role.name,
+    session.user.role.permissions.map((item) => ({
+      key: item.permission.key,
+      effect: item.effect,
+    })),
+    session.user.permissionOverrides.map((item) => ({
+      key: item.permission.key,
+      effect: item.effect,
+    })),
+  )
 
   return {
     id: session.user.id,
@@ -103,6 +132,8 @@ export const getCurrentUser = cache(async (): Promise<AuthUser | null> => {
     roleLabel: session.user.role.label,
     organizationId: session.user.organizationId,
     organizationName: session.user.organization?.name ?? null,
+    permissions: permissionKeys,
+    permissionKeys,
   }
 })
 

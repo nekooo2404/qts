@@ -20,20 +20,16 @@ export default async function ProjectsPage() {
   return (
     <main id="main-content">
       <PageHero
-        eyebrow="Dự án & case study"
+        eyebrow="Tình huống dự án"
         title="Cách tiếp cận được trình bày qua từng tình huống"
-        description="Các case study hiện tại là dữ liệu demo, không đại diện cho khách hàng thật hoặc kết quả thương mại đã được xác nhận."
+        description="Các kịch bản dưới đây minh họa cách phân tích bài toán, tổ chức giải pháp và xác định đầu ra. Chúng không đại diện cho khách hàng hoặc kết quả thương mại."
         breadcrumbs={[{ label: 'Dự án', href: '/du-an' }]}
-        note="Dữ liệu demo - chờ nội dung dự án được phê duyệt"
+        note="Không sử dụng tên khách hàng hoặc kết quả thương mại"
       />
       <section className="section">
         <div className="container case-study-grid">
-          {caseStudies.map((caseStudy, index) => (
-            <CaseStudyCard
-              caseStudy={caseStudy}
-              index={index}
-              key={caseStudy.id}
-            />
+          {caseStudies.map((caseStudy) => (
+            <CaseStudyCard caseStudy={caseStudy} key={caseStudy.id} />
           ))}
         </div>
       </section>

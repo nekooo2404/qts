@@ -1,6 +1,6 @@
 # QTS Technology
 
-Ứng dụng full-stack gồm website doanh nghiệp QTS và cổng thông tin khách hàng QTS Portal. Website công khai tổ chức nội dung theo mô hình hệ sinh thái B2B, còn Portal cung cấp dashboard, dự án, công việc, ticket, tài liệu, hợp đồng, hóa đơn, thông báo và CMS theo vai trò.
+Ứng dụng full-stack gồm website doanh nghiệp QTS, QTS Portal và QTS Admin. Website công khai tổ chức nội dung theo mô hình hệ sinh thái B2B; Portal cung cấp dashboard, dự án, công việc, ticket, tài liệu, hợp đồng, hóa đơn, thông báo và hồ sơ; Admin là bề mặt quản trị riêng cho người dùng, nội dung, quyền truy cập và audit.
 
 Thiết kế tham khảo cấu trúc nội dung và nhịp trải nghiệm của AMIS MISA nhưng không sao chép mã nguồn, nội dung, tên sản phẩm, logo, hình ảnh hoặc nhận diện MISA. Toàn bộ bề mặt sản phẩm và dữ liệu demo thuộc hệ QTS.
 
@@ -10,16 +10,16 @@ Thiết kế tham khảo cấu trúc nội dung và nhịp trải nghiệm của
 - Tailwind CSS 4 cùng hệ component nội bộ/Radix UI
 - Lucide Icons, Framer Motion, React Hook Form và Zod
 - Prisma 7 với SQLite cho demo local
-- Xác thực session cookie lưu trong database, mật khẩu bcrypt và RBAC phía server
+- Xác thực session cookie lưu trong database, mật khẩu bcrypt và phân quyền server-side theo role baseline kết hợp override từng người dùng
 - Recharts, Vitest và Playwright
 - ESLint và Prettier
 
 ## Chức năng chính
 
 - Website: mega menu, hệ sinh thái sản phẩm/dịch vụ, giải pháp, dự án, blog, liên hệ và báo giá.
-- Portal: dashboard theo vai trò, projects, tasks, tickets, documents, contracts, invoices, notifications và profile.
-- Admin: user access, nội dung website, cấu hình và audit log.
-- Bảo mật: kiểm tra quyền ở repository/API, giới hạn phạm vi organization, validation Zod, honeypot/rate limit cho form công khai và security headers.
+- Portal: dashboard theo quyền hiệu lực, projects, tasks, tickets, documents, contracts, invoices, notifications và profile.
+- Admin: user access, workbench ALLOW/DENY theo từng tài khoản, nội dung website và audit log.
+- Bảo mật: kiểm tra quyền ở layout, repository và API; giới hạn phạm vi organization; validation Zod, honeypot/rate limit cho form công khai và security headers.
 - SEO/a11y: metadata, sitemap, robots, structured data, skip link, focus rõ, menu/dialog dùng bàn phím và reduced motion.
 
 ## Cấu trúc
@@ -32,17 +32,18 @@ prisma/
 src/
   app/
     (marketing)/     Website công khai
-    portal/          Portal auth, dashboard và admin
+    portal/          Portal auth, dashboard và workflow vận hành
+    admin/           Bề mặt QTS Admin độc lập
     api/             Route handlers
   components/
     public/          Header, catalogue, tabs, form, footer
     portal/          Dashboard, bảng, form và workflow
     shared/          Logo, error states
     ui/              Component primitives
-  config/            Nội dung marketing và cấu hình Portal
+  config/            Nội dung marketing, Portal và Admin
   lib/               Auth, DB, domain, validation, security
-  server/            Repository và truy vấn theo quyền
-tests/e2e/            10 luồng Playwright quan trọng
+  server/            Repository, resolver và truy vấn theo quyền
+tests/e2e/            33 kiểm thử Playwright (13 public + 10 workflow + 10 admin/portal)
 ```
 
 ## Yêu cầu môi trường
@@ -125,15 +126,15 @@ Seed bị khóa khi `NODE_ENV=production`.
 
 ## Lệnh kiểm tra
 
-| Lệnh                   | Chức năng                                     |
-| ---------------------- | --------------------------------------------- |
-| `npm run lint`         | ESLint, không chấp nhận warning               |
-| `npm run typecheck`    | TypeScript `--noEmit`                         |
-| `npm run test`         | Unit test Vitest                              |
-| `npm run test:e2e`     | Seed lại demo rồi chạy 12 kịch bản Playwright |
-| `npm run format:check` | Kiểm tra Prettier                             |
-| `npm run build`        | Production build                              |
-| `npm run check`        | Lint, typecheck, unit test và build           |
+| Lệnh                   | Chức năng                                                                                 |
+| ---------------------- | ----------------------------------------------------------------------------------------- |
+| `npm run lint`         | ESLint, không chấp nhận warning                                                           |
+| `npm run typecheck`    | TypeScript `--noEmit`                                                                     |
+| `npm run test`         | Unit test Vitest                                                                          |
+| `npm run test:e2e`     | Seed lại demo rồi chạy 33 kiểm thử Playwright (13 public + 10 workflow + 10 admin/portal) |
+| `npm run format:check` | Kiểm tra Prettier                                                                         |
+| `npm run build`        | Production build                                                                          |
+| `npm run check`        | Lint, typecheck, unit test và build                                                       |
 
 Playwright tự chạy ứng dụng tại `http://127.0.0.1:3100`. Lệnh E2E sẽ reset dữ liệu demo.
 
@@ -141,18 +142,21 @@ Playwright tự chạy ứng dụng tại `http://127.0.0.1:3100`. Lệnh E2E s�
 
 - `/`, `/gioi-thieu`, `/dich-vu`, `/san-pham`, `/giai-phap`
 - `/dich-vu/[slug]`, `/san-pham/[slug]`, `/giai-phap/[slug]`
-- `/du-an`, `/du-an/[slug]`, `/khach-hang`
+- `/du-an`, `/du-an/[slug]`
 - `/blog`, `/blog/[slug]`, `/tuyen-dung`
 - `/lien-he`, `/bao-gia`
 - `/chinh-sach-bao-mat`, `/dieu-khoan-su-dung`
 - `/403`, `/404`, `/500`
 
-## Route Portal
+## Route Portal và Admin
 
 - Auth: `/portal/login`, `/portal/forgot-password`
 - Công việc: `/portal/dashboard`, `/portal/projects`, `/portal/projects/[id]`, `/portal/tasks`, `/portal/tickets`, `/portal/tickets/[id]`
 - Hồ sơ doanh nghiệp: `/portal/documents`, `/portal/contracts`, `/portal/invoices`, `/portal/notifications`, `/portal/announcements`, `/portal/profile`, `/portal/settings`
-- Admin: `/portal/admin`, `/portal/admin/users`, `/portal/admin/roles`, `/portal/admin/content`, `/portal/admin/audit-logs`
+- Admin độc lập: `/admin`, `/admin/users`, `/admin/roles`, `/admin/content`, `/admin/audit-logs`
+- `/portal/admin/*` chỉ còn là alias tương thích và được redirect 308 sang `/admin/*`; không phải một bề mặt thứ ba.
+
+Mỗi tài khoản nhận quyền nền từ `RolePermission` và có thể được cấp hoặc từ chối riêng bằng `UserPermission`. Resolver mở rộng các điều kiện tiên quyết (ví dụ `update` cần `read`) và luôn làm cho `DENY` có hiệu lực xuyên suốt các quyền phụ thuộc. Layout, navigation, repository và mutation API đều dùng cùng permission key contract.
 
 ## Thay logo và nội dung công ty
 
@@ -160,15 +164,15 @@ Playwright tự chạy ứng dụng tại `http://127.0.0.1:3100`. Lệnh E2E s�
 - Khi có logo chính thức, đặt file tại `public/qts-logo.png`, dùng `next/image` trong component trên và cung cấp biến thể đủ tương phản cho nền sáng/tối.
 - Nội dung điều hướng, sản phẩm và giải pháp nằm tại `src/config/marketing.ts`.
 - CTA có thể chỉnh trong Portal Admin hoặc bảng `SiteSetting`.
-- Thay toàn bộ placeholder liên hệ trong footer và dữ liệu seed trước khi phát hành.
+- Giữ trống hoặc ẩn thông tin liên hệ chưa được xác minh; chỉ công bố dữ liệu thật sau khi đã duyệt.
 
-## Placeholder còn lại
+## Dữ liệu demo và công bố
 
-- Địa chỉ, điện thoại, email, mã số thuế và liên kết mạng xã hội QTS.
-- Tổ chức/khách hàng demo, case study và kết quả dự án mẫu.
-- Giá trị hợp đồng, hóa đơn và SLA trong Portal là dữ liệu demo.
-- QTS Work và QTS CRM được ghi rõ là mẫu định hướng; QTS Portal là bề mặt demo hoạt động.
-- Không có logo khách hàng, giải thưởng, chứng chỉ hoặc số liệu thành tích chưa được xác nhận.
+- Website công khai không hiển thị danh sách khách hàng, lời chứng thực hoặc thành tích thương mại khi chưa có nguồn được duyệt.
+- Tình huống trong mục dự án là kịch bản minh họa phương pháp, không phải hồ sơ khách hàng thật.
+- Giá trị hợp đồng, hóa đơn, SLA và tiến độ trong Portal là dữ liệu fixture dùng cho môi trường demo.
+- QTS Work và QTS CRM được ghi rõ là mẫu định hướng; QTS Portal và QTS Admin là hai bề mặt demo hoạt động, tách biệt khỏi trang chủ công khai.
+- Chỉ bổ sung logo, giải thưởng, chứng chỉ, số liệu hoặc thông tin liên hệ sau khi đã xác minh nguồn và quyền công bố.
 
 ## Chuyển SQLite sang PostgreSQL
 
@@ -200,4 +204,4 @@ Khi deploy:
 - Cấu hình `APP_URL`, `DATABASE_URL` và khóa encryption bằng secret manager.
 - Chạy `npx prisma migrate deploy` trước khi đưa phiên bản mới nhận traffic.
 - Tắt `SEED_DEMO`, bật HTTPS và kiểm tra cookie, security headers, backup/restore.
-- Thay mọi placeholder và chạy lại lint, typecheck, unit, E2E, build cùng browser accessibility audit.
+- Kiểm tra không còn trường chưa xác minh trên route công khai, rồi chạy lại lint, typecheck, unit, E2E, build cùng browser accessibility audit.

@@ -1,27 +1,47 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ArrowRight, Search, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { adminSurfaceLinks, adminSurfaceNavigation } from '@/config/admin'
+import { accountNavigation, portalNavigation } from '@/config/portal'
 import {
-  accountNavigation,
-  adminNavigation,
-  portalNavigation,
-} from '@/config/portal'
-import type { RoleName } from '@/lib/domain/permissions'
+  hasPermission,
+  permissionForPortalRoute,
+  type PermissionSubject,
+  type RoleName,
+} from '@/lib/domain/permissions'
 
-export function PortalSearch({ role }: { role: RoleName }) {
+export function PortalSearch({
+  role,
+  permissions,
+  surface = 'portal',
+}: {
+  role: RoleName
+  permissions?: readonly string[]
+  surface?: 'portal' | 'admin'
+}) {
   const [query, setQuery] = useState('')
-  const entries = useMemo(
-    () =>
-      [...portalNavigation, ...accountNavigation, ...adminNavigation].filter(
-        (item) => (item.roles as readonly string[]).includes(role),
-      ),
-    [role],
+  const inputRef = useRef<HTMLInputElement>(null)
+  const subject = useMemo<PermissionSubject>(
+    () => ({ role, permissions }),
+    [permissions, role],
   )
+  const entries = useMemo(() => {
+    if (surface === 'admin') {
+      return [...adminSurfaceNavigation, ...adminSurfaceLinks].filter((item) =>
+        'permission' in item ? hasPermission(subject, item.permission) : true,
+      )
+    }
+    return [...portalNavigation, ...accountNavigation].filter((item) => {
+      const permission = permissionForPortalRoute(item.href)
+      if (permission && permissions) return hasPermission(subject, permission)
+      return (item.roles as readonly string[]).includes(role)
+    })
+  }, [permissions, role, subject, surface])
   const results = entries.filter((item) =>
     item.label
       .toLocaleLowerCase('vi-VN')
@@ -33,18 +53,33 @@ export function PortalSearch({ role }: { role: RoleName }) {
       <Dialog.Trigger asChild>
         <button type="button" className="portal-search-trigger">
           <Search size={17} aria-hidden="true" />
-          <span>Tìm nhanh trong portal</span>
-          <kbd>/</kbd>
+          <span>
+            {surface === 'admin'
+              ? 'Tìm nhanh trong quản trị'
+              : 'Tìm nhanh trong portal'}
+          </span>
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="dialog-overlay" />
-        <Dialog.Content className="portal-search-dialog">
+        <Dialog.Content
+          className="portal-search-dialog"
+          onOpenAutoFocus={(event) => {
+            event.preventDefault()
+            inputRef.current?.focus()
+          }}
+        >
           <div className="search-dialog__header">
             <div>
-              <Dialog.Title>Tìm trong QTS Portal</Dialog.Title>
+              <Dialog.Title>
+                {surface === 'admin'
+                  ? 'Tìm trong QTS Admin'
+                  : 'Tìm trong QTS Portal'}
+              </Dialog.Title>
               <Dialog.Description>
-                Đi đến module phù hợp với vai trò của bạn.
+                {surface === 'admin'
+                  ? 'Đi đến khu vực quản trị phù hợp với quyền của bạn.'
+                  : 'Đi đến module phù hợp với quyền truy cập của bạn.'}
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
@@ -57,7 +92,7 @@ export function PortalSearch({ role }: { role: RoleName }) {
             <Search size={18} />
             <span className="sr-only">Từ khóa</span>
             <input
-              autoFocus
+              ref={inputRef}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Dự án, ticket, hóa đơn..."

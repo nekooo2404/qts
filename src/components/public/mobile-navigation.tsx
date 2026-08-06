@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ChevronDown, LogIn, Menu, X } from 'lucide-react'
+import { ChevronDown, Menu, X } from 'lucide-react'
 
 import { QtsLogo } from '@/components/shared/qts-logo'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -110,14 +110,6 @@ export function MobileNavigation() {
                 href="/lien-he"
               >
                 Nhận tư vấn
-              </Link>
-            </Dialog.Close>
-            <Dialog.Close asChild>
-              <Link
-                className={cn(buttonVariants({ variant: 'secondary' }))}
-                href="/portal/login"
-              >
-                <LogIn size={17} aria-hidden="true" /> Đăng nhập
               </Link>
             </Dialog.Close>
           </div>

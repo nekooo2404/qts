@@ -12,7 +12,7 @@ import { ProjectProgress } from '@/components/portal/project-progress'
 import { StatusBadge } from '@/components/portal/status-badge'
 import { buttonVariants } from '@/components/ui/button'
 import { requirePortalUser } from '@/lib/auth/guards'
-import { canManageProjects } from '@/lib/domain/permissions'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { cn, formatDate } from '@/lib/utils'
 import { projectScope } from '@/server/repositories/portal'
@@ -33,6 +33,8 @@ export default async function PortalProjectsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const user = await requirePortalUser()
+  const canCreateProjects = hasPermission(user, 'portal.projects.create')
+  const canAssignAllProjects = hasPermission(user, 'portal.projects.assign.all')
   const raw = await searchParams
   const q = typeof raw.q === 'string' ? raw.q.trim().slice(0, 100) : ''
   const status =
@@ -85,8 +87,11 @@ export default async function PortalProjectsPage({
       skip: (page - 1) * pageSize,
       take: pageSize,
     }),
-    canManageProjects(user.role)
+    canCreateProjects
       ? db.organization.findMany({
+          where: canAssignAllProjects
+            ? undefined
+            : { id: user.organizationId ?? '__no_organization__' },
           select: { id: true, name: true },
           orderBy: { name: 'asc' },
         })
@@ -101,7 +106,7 @@ export default async function PortalProjectsPage({
         title="Dự án"
         description="Theo dõi tiến độ, mốc bàn giao, thành viên và tài nguyên liên quan."
         actions={
-          canManageProjects(user.role) ? (
+          canCreateProjects ? (
             <Link className={cn(buttonVariants())} href="#create-project">
               <Plus size={17} aria-hidden /> Tạo dự án
             </Link>
@@ -276,7 +281,7 @@ export default async function PortalProjectsPage({
         pageCount={pageCount}
         params={{ q, status, sort, view }}
       />
-      {canManageProjects(user.role) && (
+      {canCreateProjects && (
         <details
           className="portal-panel portal-create-panel"
           id="create-project"

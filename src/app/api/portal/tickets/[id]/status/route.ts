@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { statusLabels } from '@/config/portal'
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
+import { hasPermission } from '@/lib/domain/permissions'
 import { canTransitionTicket } from '@/lib/domain/ticket-workflow'
 import { db } from '@/lib/db'
 import {
@@ -21,6 +22,8 @@ export async function PATCH(
 ) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
+  if (!hasPermission(auth.user, 'portal.tickets.manage'))
+    return messageResponse('Không có quyền quản lý ticket.', 403)
   const { id } = await context.params
 
   try {
@@ -48,7 +51,7 @@ export async function PATCH(
       result.data.assignedToId !== ticket.assignedToId
     if (
       statusChanged &&
-      !canTransitionTicket(auth.user.role, ticket.status, result.data.status)
+      !canTransitionTicket(auth.user, ticket.status, result.data.status)
     ) {
       return messageResponse(
         'Không thể chuyển ticket sang trạng thái đã chọn.',
@@ -57,7 +60,7 @@ export async function PATCH(
     }
     if (!statusChanged && !assigneeChanged)
       return messageResponse('Ticket chưa có thay đổi.', 409)
-    if (assigneeChanged && auth.user.role === 'CUSTOMER')
+    if (assigneeChanged && !hasPermission(auth.user, 'portal.tickets.manage'))
       return messageResponse('Bạn không có quyền gán người xử lý.', 403)
 
     if (result.data.assignedToId) {

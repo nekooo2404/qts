@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/portal/empty-state'
 import { PortalPageHeader } from '@/components/portal/portal-page-header'
 import { StatusBadge } from '@/components/portal/status-badge'
 import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { resourceOrganizationFilter } from '@/server/repositories/portal'
@@ -15,8 +16,9 @@ export const metadata: Metadata = { title: 'Hóa đơn' }
 
 export default async function PortalInvoicesPage() {
   const user = await requirePortalUser()
+  const canDownloadInvoices = hasPermission(user, 'portal.invoices.download')
   const invoices = await db.invoice.findMany({
-    where: resourceOrganizationFilter(user),
+    where: resourceOrganizationFilter(user, 'invoices'),
     include: {
       organization: { select: { name: true } },
       project: { select: { id: true, name: true } },
@@ -48,9 +50,15 @@ export default async function PortalInvoicesPage() {
                 {formatDate(invoice.dueDate)}
               </span>
               <StatusBadge status={invoice.status} />
-              <a href={`/api/portal/invoices/${invoice.id}/download`}>
-                <Download size={15} /> Tải file demo
-              </a>
+              {canDownloadInvoices ? (
+                <a href={`/api/portal/invoices/${invoice.id}/download`}>
+                  <Download size={15} /> Tải file demo
+                </a>
+              ) : (
+                <span className="data-disclaimer">
+                  Không có quyền tải xuống
+                </span>
+              )}
             </article>
           ))}
         >
@@ -87,13 +95,19 @@ export default async function PortalInvoicesPage() {
                   <StatusBadge status={invoice.status} />
                 </td>
                 <td>
-                  <a
-                    className="icon-link"
-                    href={`/api/portal/invoices/${invoice.id}/download`}
-                    aria-label={`Tải ${invoice.code}`}
-                  >
-                    <Download size={17} />
-                  </a>
+                  {canDownloadInvoices ? (
+                    <a
+                      className="icon-link"
+                      href={`/api/portal/invoices/${invoice.id}/download`}
+                      aria-label={`Tải ${invoice.code}`}
+                    >
+                      <Download size={17} />
+                    </a>
+                  ) : (
+                    <span className="data-disclaimer">
+                      Không có quyền tải xuống
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}

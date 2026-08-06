@@ -36,14 +36,14 @@ export default async function ProjectDetailPage({
   return (
     <main id="main-content">
       <PageHero
-        eyebrow={`${record.industry} · Case study demo`}
+        eyebrow={`${record.industry} · Tình huống minh họa`}
         title={record.title}
         description={record.excerpt}
         breadcrumbs={[
           { label: 'Dự án', href: '/du-an' },
           { label: record.title, href: `/du-an/${record.slug}` },
         ]}
-        note="Toàn bộ dữ liệu dự án và kết quả trên trang này là placeholder."
+        note="Kịch bản mô tả phương pháp, không phải hồ sơ khách hàng thật"
       />
       <section className="section case-detail">
         <div className="container case-detail__grid">
@@ -58,8 +58,8 @@ export default async function ProjectDetailPage({
             <p>{record.solution}</p>
           </article>
           <article>
-            <span>03 / Kết quả</span>
-            <h2>Chỉ công bố khi được xác nhận</h2>
+            <span>03 / Đầu ra</span>
+            <h2>Cấu phần cần kiểm chứng</h2>
             <p>{record.outcome}</p>
           </article>
         </div>

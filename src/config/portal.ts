@@ -1,20 +1,15 @@
 import {
   Bell,
-  BookOpenText,
   BriefcaseBusiness,
-  Building2,
   ClipboardList,
   FileCheck2,
   FileText,
   Gauge,
   LifeBuoy,
-  ScrollText,
   Megaphone,
   ReceiptText,
   Settings,
-  ShieldCheck,
   UserRound,
-  UsersRound,
 } from 'lucide-react'
 
 export const portalNavigation = [
@@ -86,39 +81,6 @@ export const accountNavigation = [
     href: '/portal/settings',
     icon: Settings,
     roles: ['ADMIN', 'STAFF', 'CUSTOMER'],
-  },
-] as const
-
-export const adminNavigation = [
-  {
-    label: 'Quản trị',
-    href: '/portal/admin',
-    icon: ShieldCheck,
-    roles: ['ADMIN'],
-  },
-  {
-    label: 'Người dùng',
-    href: '/portal/admin/users',
-    icon: UsersRound,
-    roles: ['ADMIN'],
-  },
-  {
-    label: 'Vai trò',
-    href: '/portal/admin/roles',
-    icon: Building2,
-    roles: ['ADMIN'],
-  },
-  {
-    label: 'Nội dung',
-    href: '/portal/admin/content',
-    icon: BookOpenText,
-    roles: ['ADMIN'],
-  },
-  {
-    label: 'Nhật ký',
-    href: '/portal/admin/audit-logs',
-    icon: ScrollText,
-    roles: ['ADMIN'],
   },
 ] as const
 

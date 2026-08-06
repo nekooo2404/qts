@@ -17,7 +17,7 @@ The QTS expression is exact, calm, and service-oriented: a cool light canvas, da
 
 - Display: Space Grotesk, weights 500-700, for page titles, section titles, numbers, and the QTS wordmark.
 - Body: Be Vietnam Pro, weights 400-700, for navigation, paragraphs, forms, tables, and controls.
-- Hero title uses discrete responsive sizes: 40.8px mobile, 60px tablet, 72px desktop, and 76px wide desktop.
+- Hero title uses discrete responsive sizes: 35.2px compact mobile, 60px tablet/desktop, and 76px wide desktop.
 - Compact portal surfaces use 12-24px text. Hero-scale type never appears inside cards, sidebars, dialogs, or tools.
 - Letter spacing is always `0`. Vietnamese words may wrap with `overflow-wrap: anywhere`.
 
@@ -34,13 +34,13 @@ The QTS expression is exact, calm, and service-oriented: a cool light canvas, da
 ## Public Macrostructure
 
 1. N10 morphing header with N11 grouped mega panels and a modal mobile drawer.
-2. H9 centered product hub with factual promise, benefits, two decisions, and a live QTS Portal surface.
+2. H9 centered product hub with factual promise, benefits, two decisions, and a neutral QTS technology topology.
 3. Compact capability rule followed by a five-group Ecosystem Index.
-4. Problem-led solution tabs, QTS Portal story, and six-stage implementation flow.
+4. Problem-led solution tabs, a technology operating model, and a six-stage implementation flow.
 5. Engineering principles, illustrative case studies, factual demo scope, and articles.
-6. FAQ, consultation form, then an Ft5 statement footer with a genuine sitemap.
+6. FAQ, consultation form, then an Ft5 statement + Ft3 index footer with a genuine sitemap.
 
-The Portal keeps the Workbench macrostructure: desktop rail, utility header, and dense role-aware stage.
+The authenticated product keeps two distinct Workbench surfaces: `/portal` for operational workflows and `/admin` for governance. Both use a desktop rail, utility header, and dense permission-aware stage; the public root never renders an authenticated Portal preview or login action.
 
 ## Layout And Components
 
@@ -48,15 +48,15 @@ The Portal keeps the Workbench macrostructure: desktop rail, utility header, and
 - Page sections are unframed full-width bands. Cards are for repeated entities, dialogs, and genuine tools; cards are never nested.
 - Product groups use borders and varied grid spans, not floating containers. Product rows expose an icon, name, description, and destination.
 - Radius is 4-8px for controls and records; only major product surfaces may use 12px.
-- Buttons are 40-44px minimum. Use icon plus text for commands and labelled icon-only controls for familiar utilities.
+- Buttons and practical controls are at least 44px high. Use icon plus text for commands and labelled icon-only controls for familiar utilities.
 - Form fields have visible labels, 44px targets, help or error text, and disabled loading states.
 - Tables retain header context and provide compact mobile records instead of page-level horizontal scrolling.
 - Empty, loading, error, and success states explain what happened and expose one relevant next action.
 
 ## Interaction And Motion
 
-- Mega menus open by click and switch by hover only after a group is already open; Escape restores focus to the trigger.
-- Tabs support arrows, Home, and End. Dialogs trap focus. Native FAQ disclosure remains keyboard-operable.
+- Mega menus open by pointer hover for fine pointers and by click/tap for coarse pointers; Escape restores focus to the trigger.
+- Tabs support arrows, Home, and End. Dialogs trap focus. FAQ disclosure buttons remain keyboard-operable.
 - Transitions use transform, opacity, background, border, or color with 140-360ms semantic timing tokens.
 - No `transition: all`, autoplay carousel, infinite decoration, or motion required to understand content.
 - `prefers-reduced-motion` reduces all nonessential transitions and animations.
@@ -64,7 +64,7 @@ The Portal keeps the Workbench macrostructure: desktop rail, utility header, and
 ## Content Integrity
 
 - Use concise Vietnamese action labels and honest scope language.
-- Unknown company facts remain bracketed placeholders such as `[Điền địa chỉ]`.
+- Unknown company facts are omitted from public routes until they are verified.
 - Demo metrics describe inspectable software scope, never business achievement.
 - Case studies are explicitly marked as illustrative until approved customer evidence exists.
 - Demo credentials live only in README and never appear in production UI.

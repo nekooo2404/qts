@@ -14,10 +14,12 @@ import { cn } from '@/lib/utils'
 export function PortalShell({
   user,
   notifications,
+  surface = 'portal',
   children,
 }: {
   user: AuthUser
   notifications: HeaderNotification[]
+  surface?: 'portal' | 'admin'
   children: ReactNode
 }) {
   const [collapsed, setCollapsed] = useState(false)
@@ -28,12 +30,14 @@ export function PortalShell({
     <div
       className={cn(
         'portal-shell',
+        surface === 'admin' && 'portal-shell--admin',
         collapsed && 'portal-shell--collapsed',
         dark && 'portal-shell--dark',
       )}
     >
       <PortalSidebar
         user={user}
+        surface={surface}
         collapsed={collapsed}
         onToggle={() => setCollapsed((value) => !value)}
       />
@@ -41,6 +45,7 @@ export function PortalShell({
         <PortalHeader
           user={user}
           notifications={notifications}
+          surface={surface}
           dark={dark}
           onToggleTheme={() => setDark((value) => !value)}
           onOpenMobile={() => setMobileOpen(true)}
@@ -66,6 +71,7 @@ export function PortalShell({
             </Dialog.Close>
             <PortalSidebar
               user={user}
+              surface={surface}
               mobile
               onNavigate={() => setMobileOpen(false)}
             />

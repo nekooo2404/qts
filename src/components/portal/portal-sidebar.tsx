@@ -7,16 +7,18 @@ import type { ComponentType } from 'react'
 
 import { QtsLogo } from '@/components/shared/qts-logo'
 import { Button } from '@/components/ui/button'
-import {
-  accountNavigation,
-  adminNavigation,
-  portalNavigation,
-} from '@/config/portal'
+import { adminSurfaceLinks, adminSurfaceNavigation } from '@/config/admin'
+import { accountNavigation, portalNavigation } from '@/config/portal'
 import type { AuthUser } from '@/lib/auth/session'
+import {
+  hasPermission,
+  permissionForPortalRoute,
+} from '@/lib/domain/permissions'
 import { cn } from '@/lib/utils'
 
 type PortalSidebarProps = {
   user: AuthUser
+  surface?: 'portal' | 'admin'
   collapsed?: boolean
   onToggle?: () => void
   onNavigate?: () => void
@@ -25,45 +27,64 @@ type PortalSidebarProps = {
 
 export function PortalSidebar({
   user,
+  surface = 'portal',
   collapsed = false,
   onToggle,
   onNavigate,
   mobile = false,
 }: PortalSidebarProps) {
   const pathname = usePathname()
+  const isAdminSurface = surface === 'admin'
   const renderItems = (
     items: readonly {
       label: string
       href: string
       icon: ComponentType<{ size?: number; 'aria-hidden'?: boolean }>
-      roles: readonly string[]
+      roles?: readonly string[]
+      permission?: string
     }[],
   ) =>
-    items
-      .filter((item) => item.roles.includes(user.role))
-      .map((item) => {
-        const active =
-          pathname === item.href || pathname.startsWith(`${item.href}/`)
-        const Icon = item.icon
-        return (
-          <Link
-            href={item.href}
-            className={cn(active && 'is-active')}
-            aria-current={active ? 'page' : undefined}
-            onClick={onNavigate}
-            key={item.href}
-          >
-            <Icon size={18} aria-hidden />
-            <span>{item.label}</span>
-          </Link>
-        )
-      })
+    items.map((item) => {
+      let allowed = true
+      if (item.permission) {
+        allowed = hasPermission(user, item.permission)
+      } else {
+        const routePermission = permissionForPortalRoute(item.href)
+        if (routePermission && user.permissions) {
+          allowed = hasPermission(user, routePermission)
+        } else if (item.roles) {
+          allowed = item.roles.includes(user.role)
+        }
+      }
+      if (!allowed) return null
+      const active =
+        pathname === item.href || pathname.startsWith(`${item.href}/`)
+      const Icon = item.icon
+      return (
+        <Link
+          href={item.href}
+          className={cn(active && 'is-active')}
+          aria-current={active ? 'page' : undefined}
+          onClick={onNavigate}
+          key={item.href}
+        >
+          <Icon size={18} aria-hidden />
+          <span>{item.label}</span>
+        </Link>
+      )
+    })
 
   return (
-    <aside className={cn('portal-sidebar', mobile && 'portal-sidebar--mobile')}>
+    <aside
+      className={cn(
+        'portal-sidebar',
+        isAdminSurface && 'portal-sidebar--admin',
+        mobile && 'portal-sidebar--mobile',
+      )}
+    >
       <div className="portal-sidebar__brand">
         <QtsLogo
-          href="/portal/dashboard"
+          href={isAdminSurface ? '/admin' : '/portal/dashboard'}
           inverse
           compact={collapsed && !mobile}
         />
@@ -82,15 +103,30 @@ export function PortalSidebar({
           </Button>
         )}
       </div>
-      <nav aria-label="Điều hướng portal">
-        <span className="portal-sidebar__label">Vận hành</span>
-        {renderItems(portalNavigation)}
-        <span className="portal-sidebar__label">Tài khoản</span>
-        {renderItems(accountNavigation)}
-        {user.role === 'ADMIN' && (
+      <nav
+        aria-label={
+          isAdminSurface ? 'Điều hướng quản trị' : 'Điều hướng portal'
+        }
+      >
+        {isAdminSurface ? (
           <>
-            <span className="portal-sidebar__label">Quản trị</span>
-            {renderItems(adminNavigation)}
+            <span className="portal-sidebar__label">Điều hành</span>
+            {renderItems(adminSurfaceNavigation)}
+            <span className="portal-sidebar__label">Chuyển bề mặt</span>
+            {renderItems(adminSurfaceLinks)}
+          </>
+        ) : (
+          <>
+            <span className="portal-sidebar__label">Vận hành</span>
+            {renderItems(portalNavigation)}
+            <span className="portal-sidebar__label">Tài khoản</span>
+            {renderItems(accountNavigation)}
+            {hasPermission(user, 'admin.access') && (
+              <>
+                <span className="portal-sidebar__label">Quản trị</span>
+                {renderItems([adminSurfaceNavigation[0]])}
+              </>
+            )}
           </>
         )}
       </nav>
@@ -98,7 +134,11 @@ export function PortalSidebar({
         <span>{user.name.slice(0, 1).toUpperCase()}</span>
         <div>
           <strong>{user.name}</strong>
-          <small>{user.organizationName ?? 'QTS Portal'}</small>
+          <small>
+            {isAdminSurface
+              ? 'QTS Admin'
+              : (user.organizationName ?? 'QTS Portal')}
+          </small>
         </div>
       </div>
     </aside>

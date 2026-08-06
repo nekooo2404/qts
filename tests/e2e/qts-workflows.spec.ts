@@ -151,19 +151,35 @@ test('7. form liên hệ gửi thành công', async ({ page }) => {
   await expect(page.getByRole('status')).toContainText('QTS đã nhận thông tin')
 })
 
-test('8. mega menu desktop hỗ trợ mở và Escape', async ({ page }) => {
+test('8. mega menu desktop tự mở khi hover và hỗ trợ Escape', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
   const trigger = page.getByRole('button', {
     name: 'Hệ sinh thái',
     exact: true,
   })
-  await trigger.click()
+  const solutionTrigger = page.getByRole('button', {
+    name: 'Giải pháp',
+    exact: true,
+  })
+
+  await trigger.hover()
   await expect(trigger).toHaveAttribute('aria-expanded', 'true')
   await expect(page.getByLabel('Menu Hệ sinh thái')).toBeVisible()
-  await page.keyboard.press('Escape')
+
+  await solutionTrigger.hover()
   await expect(trigger).toHaveAttribute('aria-expanded', 'false')
-  await expect(trigger).toBeFocused()
+  await expect(solutionTrigger).toHaveAttribute('aria-expanded', 'true')
+  await expect(page.getByLabel('Menu Giải pháp')).toBeVisible()
+
+  await page.keyboard.press('Escape')
+  await expect(solutionTrigger).toHaveAttribute('aria-expanded', 'false')
+  await expect(solutionTrigger).toBeFocused()
+
+  await trigger.click()
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true')
 })
 
 test('9. mobile menu dạng accordion điều hướng được', async ({ page }) => {
@@ -175,8 +191,12 @@ test('9. mobile menu dạng accordion điều hướng được', async ({ page 
   const products = dialog.getByRole('button', { name: 'Hệ sinh thái' })
   await products.click()
   await expect(products).toHaveAttribute('aria-expanded', 'true')
-  await dialog.getByRole('link', { name: 'QTS Portal', exact: true }).click()
-  await expect(page).toHaveURL(/\/san-pham\/qts-portal$/)
+  await expect(
+    dialog.getByRole('link', { name: 'QTS Portal', exact: true }),
+  ).toHaveCount(0)
+  await dialog.getByRole('button', { name: 'Đóng menu' }).click()
+  await page.goto('/portal/login')
+  await expect(page).toHaveURL(/\/portal\/login$/)
 })
 
 test('10. đăng xuất thu hồi phiên hiện tại', async ({ page }) => {

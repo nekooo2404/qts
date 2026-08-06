@@ -14,9 +14,8 @@ const columns = [
     ],
   },
   {
-    title: 'Sản phẩm',
+    title: 'Hệ sinh thái',
     links: [
-      ['QTS Portal', '/san-pham/qts-portal'],
       ['QTS Work (định hướng)', '/san-pham/qts-work'],
       ['QTS CRM (định hướng)', '/san-pham/qts-crm'],
     ],
@@ -31,12 +30,13 @@ const columns = [
     ],
   },
   {
-    title: 'Công ty & tài nguyên',
+    title: 'Công ty & hỗ trợ',
     links: [
       ['Giới thiệu', '/gioi-thieu'],
       ['Dự án', '/du-an'],
       ['Blog', '/blog'],
-      ['Câu chuyện khách hàng', '/khach-hang'],
+      ['Tuyển dụng', '/tuyen-dung'],
+      ['Liên hệ', '/lien-he'],
     ],
   },
 ] as const
@@ -54,24 +54,10 @@ export function PublicFooter() {
         <div className="public-footer__brand">
           <QtsLogo inverse />
           <p>Kiến tạo hệ thống số - Tăng tốc vận hành</p>
-          <dl>
-            <div>
-              <dt>Địa chỉ</dt>
-              <dd>[Điền địa chỉ]</dd>
-            </div>
-            <div>
-              <dt>Điện thoại</dt>
-              <dd>[Điền số điện thoại]</dd>
-            </div>
-            <div>
-              <dt>Email</dt>
-              <dd>[Điền email]</dd>
-            </div>
-            <div>
-              <dt>Mã số thuế</dt>
-              <dd>[Điền mã số thuế]</dd>
-            </div>
-          </dl>
+          <Link className="public-footer__brand-link" href="/lien-he">
+            Gửi yêu cầu liên hệ
+            <ArrowUpRight size={17} aria-hidden="true" />
+          </Link>
         </div>
         <div className="public-footer__index">
           {columns.map((column) => (
@@ -86,23 +72,6 @@ export function PublicFooter() {
               </ul>
             </section>
           ))}
-          <section>
-            <h2>Hỗ trợ</h2>
-            <ul>
-              <li>
-                <Link href="/lien-he">Liên hệ</Link>
-              </li>
-              <li>
-                <Link href="/bao-gia">Báo giá</Link>
-              </li>
-              <li>
-                <Link href="/portal/login">QTS Portal</Link>
-              </li>
-              <li>
-                <span>Mạng xã hội: [Điền liên kết]</span>
-              </li>
-            </ul>
-          </section>
         </div>
       </div>
       <div className="container public-footer__bottom">

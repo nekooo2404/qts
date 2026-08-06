@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@/lib/auth/session'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { messageResponse } from '@/lib/http/response'
 import { resourceOrganizationFilter } from '@/server/repositories/portal'
@@ -9,9 +10,11 @@ export async function GET(
 ) {
   const user = await getCurrentUser()
   if (!user) return messageResponse('Phiên đăng nhập đã hết hạn.', 401)
+  if (!hasPermission(user, 'portal.contracts.download'))
+    return messageResponse('Không có quyền tải hợp đồng.', 403)
   const { id } = await context.params
   const contract = await db.contract.findFirst({
-    where: { id, ...resourceOrganizationFilter(user) },
+    where: { id, ...resourceOrganizationFilter(user, 'contracts') },
     include: { organization: { select: { name: true } } },
   })
   if (!contract)

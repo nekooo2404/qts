@@ -15,7 +15,6 @@ const staticRoutes = [
   '/san-pham',
   '/giai-phap',
   '/du-an',
-  '/khach-hang',
   '/blog',
   '/tuyen-dung',
   '/lien-he',

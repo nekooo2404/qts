@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@/lib/auth/session'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { messageResponse } from '@/lib/http/response'
 import { resourceOrganizationFilter } from '@/server/repositories/portal'
@@ -9,9 +10,11 @@ export async function GET(
 ) {
   const user = await getCurrentUser()
   if (!user) return messageResponse('Phiên đăng nhập đã hết hạn.', 401)
+  if (!hasPermission(user, 'portal.invoices.download'))
+    return messageResponse('Không có quyền tải hóa đơn.', 403)
   const { id } = await context.params
   const invoice = await db.invoice.findFirst({
-    where: { id, ...resourceOrganizationFilter(user) },
+    where: { id, ...resourceOrganizationFilter(user, 'invoices') },
     include: { organization: { select: { name: true } } },
   })
   if (!invoice)

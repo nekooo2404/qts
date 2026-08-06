@@ -14,6 +14,11 @@ enum RoleName {
   CUSTOMER
 }
 
+enum PermissionEffect {
+  ALLOW
+  DENY
+}
+
 enum ProjectStatus {
   PLANNING
   ACTIVE
@@ -105,8 +110,37 @@ model Role {
   name      RoleName @unique
   label     String
   users     User[]
+  permissions RolePermission[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id          String             @id @default(cuid())
+  key         String             @unique
+  label       String
+  description String
+  module      String
+  action      String
+  roleDefaults RolePermission[]
+  userOverrides UserPermission[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([module])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  effect       PermissionEffect @default(ALLOW)
+  role         Role             @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission       @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
 }
 
 model Organization {
@@ -139,6 +173,7 @@ model User {
   active               Boolean         @default(true)
   roleId               String
   role                 Role            @relation(fields: [roleId], references: [id])
+  permissionOverrides  UserPermission[]
   organizationId       String?
   organization         Organization?   @relation(fields: [organizationId], references: [id])
   sessions             Session[]
@@ -160,6 +195,19 @@ model User {
 
   @@index([roleId])
   @@index([organizationId])
+}
+
+model UserPermission {
+  userId       String
+  permissionId String
+  effect       PermissionEffect @default(ALLOW)
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission       @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@id([userId, permissionId])
+  @@index([permissionId])
 }
 
 model Session {

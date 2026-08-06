@@ -7,6 +7,7 @@ import { FileUploader } from '@/components/portal/file-uploader'
 import { PortalPageHeader } from '@/components/portal/portal-page-header'
 import { buttonVariants } from '@/components/ui/button'
 import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { cn, formatDate, formatFileSize } from '@/lib/utils'
 import {
@@ -22,12 +23,17 @@ export default async function PortalDocumentsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const user = await requirePortalUser()
+  const canDownloadDocuments = hasPermission(user, 'portal.documents.download')
+  const canUploadToAllOrganizations = hasPermission(
+    user,
+    'portal.documents.upload.all',
+  )
   const raw = await searchParams
   const q = typeof raw.q === 'string' ? raw.q.trim().slice(0, 100) : ''
   const [documents, organizations, projects] = await Promise.all([
     db.document.findMany({
       where: {
-        ...resourceOrganizationFilter(user),
+        ...resourceOrganizationFilter(user, 'documents'),
         ...(q
           ? {
               OR: [
@@ -45,13 +51,16 @@ export default async function PortalDocumentsPage({
       },
       orderBy: { createdAt: 'desc' },
     }),
-    user.role !== 'CUSTOMER'
+    hasPermission(user, 'portal.documents.upload')
       ? db.organization.findMany({
+          where: canUploadToAllOrganizations
+            ? {}
+            : { id: user.organizationId ?? '__no_organization__' },
           select: { id: true, name: true },
           orderBy: { name: 'asc' },
         })
       : Promise.resolve([]),
-    user.role !== 'CUSTOMER'
+    hasPermission(user, 'portal.documents.upload')
       ? db.project.findMany({
           where: projectScope(user),
           select: { id: true, name: true, organizationId: true },
@@ -103,14 +112,20 @@ export default async function PortalDocumentsPage({
               <span>
                 {document.project?.name ?? document.organization.name}
               </span>
-              <a
-                className={cn(
-                  buttonVariants({ variant: 'secondary', size: 'small' }),
-                )}
-                href={`/api/portal/documents/${document.id}/download`}
-              >
-                <Download size={15} /> Tải bản demo
-              </a>
+              {canDownloadDocuments ? (
+                <a
+                  className={cn(
+                    buttonVariants({ variant: 'secondary', size: 'small' }),
+                  )}
+                  href={`/api/portal/documents/${document.id}/download`}
+                >
+                  <Download size={15} /> Tải bản demo
+                </a>
+              ) : (
+                <span className="data-disclaimer">
+                  Không có quyền tải xuống
+                </span>
+              )}
             </article>
           ))}
         >
@@ -140,20 +155,26 @@ export default async function PortalDocumentsPage({
                 <td>{formatDate(document.createdAt)}</td>
                 <td>{document.organization.name}</td>
                 <td>
-                  <a
-                    className="icon-link"
-                    href={`/api/portal/documents/${document.id}/download`}
-                    aria-label={`Tải ${document.name}`}
-                  >
-                    <Download size={17} />
-                  </a>
+                  {canDownloadDocuments ? (
+                    <a
+                      className="icon-link"
+                      href={`/api/portal/documents/${document.id}/download`}
+                      aria-label={`Tải ${document.name}`}
+                    >
+                      <Download size={17} />
+                    </a>
+                  ) : (
+                    <span className="data-disclaimer">
+                      Không có quyền tải xuống
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </DataTable>
       )}
-      {user.role !== 'CUSTOMER' && (
+      {hasPermission(user, 'portal.documents.upload') && (
         <details className="portal-panel portal-create-panel">
           <summary>Upload tài liệu demo</summary>
           <div className="portal-create-panel__body">

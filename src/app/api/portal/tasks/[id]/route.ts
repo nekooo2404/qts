@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
-import { canManageTasks } from '@/lib/domain/permissions'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -20,29 +20,30 @@ export async function PATCH(
 ) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (!canManageTasks(auth.user.role))
+  if (!hasPermission(auth.user, 'portal.tasks.update'))
     return messageResponse('Bạn không có quyền cập nhật công việc.', 403)
   const { id } = await context.params
 
   try {
-    const task = await db.task.findFirst({
-      where: { AND: [taskScope(auth.user), { id }] },
-      select: { id: true },
-    })
-    if (!task)
-      return messageResponse(
-        'Không tìm thấy công việc hoặc bạn không có quyền truy cập.',
-        404,
-      )
     const result = taskUpdateSchema.safeParse(await readJsonBody(request))
     if (!result.success) return validationErrorResponse(result.error)
-    await db.task.update({
-      where: { id },
-      data: {
-        status: result.data.status,
-        progress: result.data.status === 'DONE' ? 100 : result.data.progress,
-      },
-    })
+    const updated = await db.$transaction(
+      (tx) =>
+        tx.task.updateMany({
+          where: { AND: [taskScope(auth.user), { id }] },
+          data: {
+            status: result.data.status,
+            progress:
+              result.data.status === 'DONE' ? 100 : result.data.progress,
+          },
+        }),
+      { isolationLevel: 'Serializable' },
+    )
+    if (updated.count !== 1)
+      return messageResponse(
+        'Không tìm thấy công việc hoặc bạn không còn quyền truy cập.',
+        404,
+      )
     await recordAudit({
       request,
       userId: auth.user.id,

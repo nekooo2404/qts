@@ -6,6 +6,11 @@ import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import { hash } from 'bcryptjs'
 
 import { PrismaClient } from '../src/generated/prisma/client'
+import {
+  PERMISSION_CATALOG,
+  ROLE_DEFAULT_PERMISSION_KEYS,
+  type RoleName,
+} from '../src/lib/domain/permissions'
 
 const databaseUrl = process.env.DATABASE_URL
 
@@ -32,6 +37,10 @@ function daysFromNow(days: number) {
   return date
 }
 
+function permissionId(key: string) {
+  return `permission-${key.replaceAll('.', '-')}`
+}
+
 async function resetDemoData() {
   await prisma.$transaction(async (tx) => {
     await tx.auditLog.deleteMany()
@@ -54,117 +63,153 @@ async function resetDemoData() {
     await tx.caseStudy.deleteMany()
     await tx.contactLead.deleteMany()
     await tx.quoteRequest.deleteMany()
+    await tx.userPermission.deleteMany()
     await tx.user.deleteMany()
+    await tx.rolePermission.deleteMany()
+    await tx.permission.deleteMany()
     await tx.organization.deleteMany()
     await tx.role.deleteMany()
   })
 }
 
 async function seed() {
-  await resetDemoData()
-
-  const [adminPassword, staffPassword, customerPassword] = await Promise.all([
+  const passwordHashes = Promise.all([
     hash('QtsAdmin123!', 12),
     hash('QtsStaff123!', 12),
     hash('QtsCustomer123!', 12),
   ])
 
-  const adminRole = await prisma.role.create({
-    data: { id: 'role-admin', name: 'ADMIN', label: 'Quản trị viên' },
-  })
-  const staffRole = await prisma.role.create({
-    data: { id: 'role-staff', name: 'STAFF', label: 'Nhân sự QTS' },
-  })
-  const customerRole = await prisma.role.create({
-    data: { id: 'role-customer', name: 'CUSTOMER', label: 'Khách hàng' },
+  await resetDemoData()
+
+  const [adminRole, staffRole, customerRole, passwords] = await Promise.all([
+    prisma.role.create({
+      data: { id: 'role-admin', name: 'ADMIN', label: 'Quản trị viên' },
+    }),
+    prisma.role.create({
+      data: { id: 'role-staff', name: 'STAFF', label: 'Nhân sự QTS' },
+    }),
+    prisma.role.create({
+      data: { id: 'role-customer', name: 'CUSTOMER', label: 'Khách hàng' },
+    }),
+    passwordHashes,
+  ])
+  const [adminPassword, staffPassword, customerPassword] = passwords
+
+  await prisma.permission.createMany({
+    data: PERMISSION_CATALOG.map((permission) => ({
+      id: permissionId(permission.key),
+      key: permission.key,
+      label: permission.label,
+      description: permission.description,
+      module: permission.module,
+      action: permission.action,
+    })),
   })
 
-  const qtsOrganization = await prisma.organization.create({
-    data: {
-      id: 'org-qts',
-      name: 'QTS Technology',
-      slug: 'qts-technology',
-      address: '[Điền địa chỉ]',
-      phone: '[Điền số điện thoại]',
-      website: '[Điền website chính thức]',
-    },
-  })
-  const demoOrganization = await prisma.organization.create({
-    data: {
-      id: 'org-demo-client',
-      name: '[Doanh nghiệp demo]',
-      slug: 'doanh-nghiep-demo',
-      address: '[Địa chỉ doanh nghiệp demo]',
-      phone: '0900000000',
-      website: '[Website doanh nghiệp demo]',
-    },
+  const rolesByName: Record<RoleName, { id: string }> = {
+    ADMIN: adminRole,
+    STAFF: staffRole,
+    CUSTOMER: customerRole,
+  }
+  await prisma.rolePermission.createMany({
+    data: (
+      Object.entries(ROLE_DEFAULT_PERMISSION_KEYS) as Array<
+        [RoleName, readonly string[]]
+      >
+    ).flatMap(([roleName, keys]) =>
+      keys.map((key) => ({
+        roleId: rolesByName[roleName].id,
+        permissionId: permissionId(key),
+        effect: 'ALLOW' as const,
+      })),
+    ),
   })
 
-  const admin = await prisma.user.create({
-    data: {
-      id: 'user-admin',
-      email: 'admin@qts.local',
-      passwordHash: adminPassword,
-      name: 'Quản trị viên demo',
-      title: 'Quản trị hệ thống',
-      roleId: adminRole.id,
-      organizationId: qtsOrganization.id,
-    },
-  })
-  const staff = await prisma.user.create({
-    data: {
-      id: 'user-staff',
-      email: 'staff@qts.local',
-      passwordHash: staffPassword,
-      name: 'Nhân sự QTS demo',
-      title: 'Điều phối dự án',
-      roleId: staffRole.id,
-      organizationId: qtsOrganization.id,
-    },
-  })
-  const customer = await prisma.user.create({
-    data: {
-      id: 'user-customer',
-      email: 'customer@qts.local',
-      passwordHash: customerPassword,
-      name: 'Khách hàng demo',
-      title: 'Đại diện doanh nghiệp',
-      roleId: customerRole.id,
-      organizationId: demoOrganization.id,
-    },
-  })
+  const [qtsOrganization, demoOrganization] = await Promise.all([
+    prisma.organization.create({
+      data: {
+        id: 'org-qts',
+        name: 'QTS Technology',
+        slug: 'qts-technology',
+      },
+    }),
+    prisma.organization.create({
+      data: {
+        id: 'org-demo-client',
+        name: 'Doanh nghiệp minh họa',
+        slug: 'doanh-nghiep-demo',
+      },
+    }),
+  ])
 
-  const project = await prisma.project.create({
-    data: {
-      id: 'project-demo-portal',
-      code: 'QTS-2026-001',
-      name: 'Cổng vận hành doanh nghiệp demo',
-      description:
-        'Dự án mẫu minh họa quy trình theo dõi tiến độ, tài liệu và hỗ trợ trong QTS Portal.',
-      status: 'ACTIVE',
-      priority: 'HIGH',
-      progress: 58,
-      startDate: daysFromNow(-55),
-      dueDate: daysFromNow(45),
-      organizationId: demoOrganization.id,
-      createdById: staff.id,
-    },
-  })
+  const [admin, staff, customer] = await Promise.all([
+    prisma.user.create({
+      data: {
+        id: 'user-admin',
+        email: 'admin@qts.local',
+        passwordHash: adminPassword,
+        name: 'Quản trị viên demo',
+        title: 'Quản trị hệ thống',
+        roleId: adminRole.id,
+        organizationId: qtsOrganization.id,
+      },
+    }),
+    prisma.user.create({
+      data: {
+        id: 'user-staff',
+        email: 'staff@qts.local',
+        passwordHash: staffPassword,
+        name: 'Nhân sự QTS demo',
+        title: 'Điều phối dự án',
+        roleId: staffRole.id,
+        organizationId: qtsOrganization.id,
+      },
+    }),
+    prisma.user.create({
+      data: {
+        id: 'user-customer',
+        email: 'customer@qts.local',
+        passwordHash: customerPassword,
+        name: 'Khách hàng demo',
+        title: 'Đại diện doanh nghiệp',
+        roleId: customerRole.id,
+        organizationId: demoOrganization.id,
+      },
+    }),
+  ])
 
-  await prisma.project.create({
-    data: {
-      id: 'project-internal-qts',
-      code: 'QTS-INT-001',
-      name: 'Không gian nội bộ QTS',
-      description:
-        'Bản ghi phục vụ kiểm thử phân tách dữ liệu giữa các tổ chức.',
-      status: 'PLANNING',
-      priority: 'LOW',
-      progress: 10,
-      organizationId: qtsOrganization.id,
-      createdById: admin.id,
-    },
-  })
+  const [project] = await Promise.all([
+    prisma.project.create({
+      data: {
+        id: 'project-demo-portal',
+        code: 'QTS-2026-001',
+        name: 'Cổng vận hành doanh nghiệp demo',
+        description:
+          'Kịch bản minh họa quy trình theo dõi tiến độ, tài liệu và hỗ trợ trong QTS Portal.',
+        status: 'ACTIVE',
+        priority: 'HIGH',
+        progress: 58,
+        startDate: daysFromNow(-55),
+        dueDate: daysFromNow(45),
+        organizationId: demoOrganization.id,
+        createdById: staff.id,
+      },
+    }),
+    prisma.project.create({
+      data: {
+        id: 'project-internal-qts',
+        code: 'QTS-INT-001',
+        name: 'Không gian nội bộ QTS',
+        description:
+          'Bản ghi phục vụ kiểm thử phân tách dữ liệu giữa các tổ chức.',
+        status: 'PLANNING',
+        priority: 'LOW',
+        progress: 10,
+        organizationId: qtsOrganization.id,
+        createdById: admin.id,
+      },
+    }),
+  ])
 
   await prisma.projectMember.createMany({
     data: [
@@ -183,28 +228,30 @@ async function seed() {
     ],
   })
 
-  const discovery = await prisma.milestone.create({
-    data: {
-      id: 'milestone-discovery',
-      projectId: project.id,
-      name: 'Khảo sát và thiết kế giải pháp',
-      description: 'Thống nhất phạm vi, luồng nghiệp vụ và nguyên mẫu.',
-      status: 'COMPLETED',
-      progress: 100,
-      dueDate: daysFromNow(-28),
-    },
-  })
-  const delivery = await prisma.milestone.create({
-    data: {
-      id: 'milestone-delivery',
-      projectId: project.id,
-      name: 'Phát triển và kiểm thử',
-      description: 'Triển khai các module theo thứ tự ưu tiên đã thống nhất.',
-      status: 'IN_PROGRESS',
-      progress: 52,
-      dueDate: daysFromNow(24),
-    },
-  })
+  const [discovery, delivery] = await Promise.all([
+    prisma.milestone.create({
+      data: {
+        id: 'milestone-discovery',
+        projectId: project.id,
+        name: 'Khảo sát và thiết kế giải pháp',
+        description: 'Thống nhất phạm vi, luồng nghiệp vụ và nguyên mẫu.',
+        status: 'COMPLETED',
+        progress: 100,
+        dueDate: daysFromNow(-28),
+      },
+    }),
+    prisma.milestone.create({
+      data: {
+        id: 'milestone-delivery',
+        projectId: project.id,
+        name: 'Phát triển và kiểm thử',
+        description: 'Triển khai các module theo thứ tự ưu tiên đã thống nhất.',
+        status: 'IN_PROGRESS',
+        progress: 52,
+        dueDate: daysFromNow(24),
+      },
+    }),
+  ])
 
   const completedTask = await prisma.task.create({
     data: {
@@ -458,15 +505,15 @@ async function seed() {
       {
         id: 'case-study-demo-1',
         slug: 'nen-tang-van-hanh-doanh-nghiep-mau',
-        title: '[Dự án mẫu 01] Nền tảng vận hành doanh nghiệp',
+        title: 'Nền tảng vận hành doanh nghiệp',
         excerpt:
           'Tình huống minh họa cách QTS tiếp cận một hệ thống có nhiều vai trò và luồng phê duyệt.',
         challenge:
-          '[Mô tả bài toán thực tế sẽ được bổ sung khi có case study được phê duyệt.]',
+          'Một hệ thống vận hành cần phân tách quyền truy cập, phối hợp nhiều vai trò và lưu lịch sử phê duyệt trong cùng một luồng.',
         solution:
           'Minh họa kiến trúc module, phân quyền theo tổ chức và lộ trình bàn giao theo mốc.',
         outcome:
-          '[Kết quả định lượng chỉ được công bố sau khi khách hàng xác nhận.]',
+          'Đầu ra minh họa gồm sơ đồ vai trò, danh mục module và kế hoạch bàn giao theo mốc.',
         industry: 'Doanh nghiệp',
         featured: true,
         publishedAt: daysFromNow(-18),
@@ -474,30 +521,30 @@ async function seed() {
       {
         id: 'case-study-demo-2',
         slug: 'cong-thong-tin-giao-duc-mau',
-        title: '[Dự án mẫu 02] Cổng thông tin giáo dục',
+        title: 'Cổng thông tin giáo dục',
         excerpt:
           'Tình huống minh họa trải nghiệm tra cứu, quản trị nội dung và tích hợp dữ liệu.',
         challenge:
-          '[Mô tả bài toán thực tế sẽ được bổ sung khi có case study được phê duyệt.]',
+          'Một cổng thông tin cần giúp người dùng tra cứu nội dung rõ ràng, đồng thời giữ quy trình biên tập và dữ liệu tích hợp có kiểm soát.',
         solution:
           'Minh họa cấu trúc nội dung dễ tìm, vai trò biên tập và các điểm tích hợp có giám sát.',
         outcome:
-          '[Kết quả định lượng chỉ được công bố sau khi khách hàng xác nhận.]',
+          'Đầu ra minh họa gồm cây nội dung, quy trình biên tập và bản đồ các điểm tích hợp.',
         industry: 'Giáo dục',
         publishedAt: daysFromNow(-12),
       },
       {
         id: 'case-study-demo-3',
         slug: 'thuong-mai-va-quan-ly-don-hang-mau',
-        title: '[Dự án mẫu 03] Website thương mại và quản lý đơn hàng',
+        title: 'Website thương mại và quản lý đơn hàng',
         excerpt:
           'Tình huống minh họa cách kết nối trải nghiệm mua hàng với quy trình xử lý đơn và báo cáo vận hành.',
         challenge:
-          '[Mô tả bài toán thực tế sẽ được bổ sung khi có case study được phê duyệt.]',
+          'Một website thương mại cần liên kết hành trình mua hàng với trạng thái xử lý đơn và dữ liệu phục vụ vận hành.',
         solution:
           'Minh họa luồng đặt hàng, kiểm soát trạng thái và bảng theo dõi dữ liệu tập trung.',
         outcome:
-          '[Kết quả định lượng chỉ được công bố sau khi khách hàng xác nhận.]',
+          'Đầu ra minh họa gồm hành trình đặt hàng, bộ trạng thái và góc nhìn dữ liệu vận hành.',
         industry: 'Thương mại',
         publishedAt: daysFromNow(-6),
       },

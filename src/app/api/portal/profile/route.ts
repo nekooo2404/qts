@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -15,6 +16,8 @@ import { profileSchema } from '@/lib/validation/forms'
 export async function PATCH(request: Request) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
+  if (!hasPermission(auth.user, 'portal.profile.update'))
+    return messageResponse('Không có quyền cập nhật hồ sơ.', 403)
   try {
     const result = profileSchema.safeParse(await readJsonBody(request))
     if (!result.success) return validationErrorResponse(result.error)

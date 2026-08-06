@@ -19,8 +19,10 @@ export type HeaderNotification = {
 
 export function NotificationMenu({
   notifications,
+  canManage = true,
 }: {
   notifications: HeaderNotification[]
+  canManage?: boolean
 }) {
   const router = useRouter()
   const unread = notifications.filter((item) => !item.readAt).length
@@ -54,9 +56,11 @@ export function NotificationMenu({
               <strong>Thông báo</strong>
               <small>{unread} chưa đọc</small>
             </div>
-            <button type="button" onClick={markAllRead} disabled={!unread}>
-              <CheckCheck size={15} aria-hidden="true" /> Đọc tất cả
-            </button>
+            {canManage && (
+              <button type="button" onClick={markAllRead} disabled={!unread}>
+                <CheckCheck size={15} aria-hidden="true" /> Đọc tất cả
+              </button>
+            )}
           </div>
           <div className="notification-dropdown__list">
             {notifications.length ? (

@@ -12,6 +12,7 @@ import { TicketCreateForm } from '@/components/portal/ticket-create-form'
 import { buttonVariants } from '@/components/ui/button'
 import { statusLabels } from '@/config/portal'
 import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { cn, formatDateTime } from '@/lib/utils'
 import { projectScope, ticketScope } from '@/server/repositories/portal'
@@ -46,6 +47,7 @@ export default async function PortalTicketsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const user = await requirePortalUser()
+  const canCreateTickets = hasPermission(user, 'portal.tickets.create')
   const raw = await searchParams
   const q = typeof raw.q === 'string' ? raw.q.trim().slice(0, 100) : ''
   const status =
@@ -91,11 +93,13 @@ export default async function PortalTicketsPage({
       skip: (page - 1) * pageSize,
       take: pageSize,
     }),
-    db.project.findMany({
-      where: projectScope(user),
-      select: { id: true, code: true, name: true },
-      orderBy: { updatedAt: 'desc' },
-    }),
+    canCreateTickets
+      ? db.project.findMany({
+          where: projectScope(user),
+          select: { id: true, code: true, name: true },
+          orderBy: { updatedAt: 'desc' },
+        })
+      : Promise.resolve([]),
   ])
   const pageCount = Math.max(1, Math.ceil(count / pageSize))
 
@@ -106,9 +110,11 @@ export default async function PortalTicketsPage({
         title="Ticket hỗ trợ"
         description="Tạo yêu cầu, theo dõi SLA demo và giữ toàn bộ lịch sử trao đổi trong một luồng."
         actions={
-          <Link className={cn(buttonVariants())} href="#create-ticket">
-            <Plus size={17} /> Tạo ticket
-          </Link>
+          canCreateTickets ? (
+            <Link className={cn(buttonVariants())} href="#create-ticket">
+              <Plus size={17} /> Tạo ticket
+            </Link>
+          ) : undefined
         }
       />
       <form className="portal-toolbar" method="get">
@@ -232,18 +238,24 @@ export default async function PortalTicketsPage({
         pageCount={pageCount}
         params={{ q, status, priority }}
       />
-      <details className="portal-panel portal-create-panel" id="create-ticket">
-        <summary>
-          <Plus size={18} /> Tạo ticket hỗ trợ
-        </summary>
-        <div className="portal-create-panel__body">
-          <h2>Mô tả yêu cầu</h2>
-          <p>
-            Không đưa mật khẩu, token hoặc dữ liệu nhạy cảm vào nội dung ticket.
-          </p>
-          <TicketCreateForm projects={projects} />
-        </div>
-      </details>
+      {canCreateTickets && (
+        <details
+          className="portal-panel portal-create-panel"
+          id="create-ticket"
+        >
+          <summary>
+            <Plus size={18} /> Tạo ticket hỗ trợ
+          </summary>
+          <div className="portal-create-panel__body">
+            <h2>Mô tả yêu cầu</h2>
+            <p>
+              Không đưa mật khẩu, token hoặc dữ liệu nhạy cảm vào nội dung
+              ticket.
+            </p>
+            <TicketCreateForm projects={projects} />
+          </div>
+        </details>
+      )}
     </div>
   )
 }

@@ -9,8 +9,13 @@ export function sanitizeNextPath(value: unknown) {
     const target = new URL(value, 'http://qts.local')
     const isPortalPath =
       target.pathname === '/portal' || target.pathname.startsWith('/portal/')
+    const isAdminPath =
+      target.pathname === '/admin' || target.pathname.startsWith('/admin/')
 
-    if (target.origin !== 'http://qts.local' || !isPortalPath) {
+    if (
+      target.origin !== 'http://qts.local' ||
+      (!isPortalPath && !isAdminPath)
+    ) {
       return DEFAULT_PORTAL_PATH
     }
 

@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -19,6 +20,8 @@ export async function POST(
 ) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
+  if (!hasPermission(auth.user, 'portal.tickets.reply'))
+    return messageResponse('Không có quyền phản hồi ticket.', 403)
   const { id } = await context.params
 
   try {
@@ -30,13 +33,15 @@ export async function POST(
       )
     const result = ticketMessageSchema.safeParse(await readJsonBody(request))
     if (!result.success) return validationErrorResponse(result.error)
-    if (auth.user.role === 'CUSTOMER' && result.data.internal)
+    if (
+      !hasPermission(auth.user, 'portal.tickets.manage') &&
+      result.data.internal
+    )
       return messageResponse('Khách hàng không thể tạo ghi chú nội bộ.', 403)
 
-    const recipientId =
-      auth.user.role === 'CUSTOMER'
-        ? ticket.assignedTo?.id
-        : ticket.createdBy.id
+    const recipientId = !hasPermission(auth.user, 'portal.tickets.manage')
+      ? ticket.assignedTo?.id
+      : ticket.createdBy.id
     const message = await db.$transaction(async (tx) => {
       const created = await tx.ticketMessage.create({
         data: {

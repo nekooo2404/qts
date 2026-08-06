@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
-import { canManageProjects } from '@/lib/domain/permissions'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -20,14 +20,14 @@ export async function PATCH(
 ) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (!canManageProjects(auth.user.role))
+  if (!hasPermission(auth.user, 'portal.projects.update'))
     return messageResponse('Bạn không có quyền cập nhật dự án.', 403)
   const { id } = await context.params
 
   try {
     const current = await db.project.findFirst({
       where: { AND: [projectScope(auth.user), { id }] },
-      select: { id: true },
+      select: { id: true, organizationId: true },
     })
     if (!current)
       return messageResponse(
@@ -37,14 +37,35 @@ export async function PATCH(
     const result = projectSchema.safeParse(await readJsonBody(request))
     if (!result.success) return validationErrorResponse(result.error)
 
+    const canAssignAllProjects = hasPermission(
+      auth.user,
+      'portal.projects.assign.all',
+    )
+    if (
+      !canAssignAllProjects &&
+      result.data.organizationId !== current.organizationId
+    )
+      return messageResponse(
+        'Chỉ người có quyền xem toàn bộ dự án mới có thể chuyển tổ chức.',
+        403,
+      )
+
     const organization = await db.organization.findUnique({
       where: { id: result.data.organizationId },
       select: { id: true },
     })
     if (!organization)
       return messageResponse('Khách hàng đã chọn không tồn tại.', 422)
-    await db.project.update({
-      where: { id },
+    const updated = await db.project.updateMany({
+      where: {
+        AND: [
+          projectScope(auth.user),
+          { id },
+          ...(canAssignAllProjects
+            ? []
+            : [{ organizationId: current.organizationId }]),
+        ],
+      },
       data: {
         code: result.data.code,
         name: result.data.name,
@@ -59,6 +80,11 @@ export async function PATCH(
         organizationId: result.data.organizationId,
       },
     })
+    if (updated.count !== 1)
+      return messageResponse(
+        'Không tìm thấy dự án hoặc bạn không còn quyền cập nhật.',
+        404,
+      )
     await recordAudit({
       request,
       userId: auth.user.id,
@@ -90,16 +116,26 @@ export async function DELETE(
 ) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (auth.user.role !== 'ADMIN')
-    return messageResponse('Chỉ quản trị viên được xóa dự án.', 403)
+  if (!hasPermission(auth.user, 'portal.projects.delete'))
+    return messageResponse('Bạn không có quyền xóa dự án.', 403)
   const { id } = await context.params
-  const current = await db.project.findUnique({
-    where: { id },
-    select: { id: true, code: true },
-  })
+  const current = await db.$transaction(
+    async (tx) => {
+      const candidate = await tx.project.findFirst({
+        where: { AND: [projectScope(auth.user), { id }] },
+        select: { id: true, code: true },
+      })
+      if (!candidate) return null
+
+      const deleted = await tx.project.deleteMany({
+        where: { AND: [projectScope(auth.user), { id }] },
+      })
+      return deleted.count === 1 ? candidate : null
+    },
+    { isolationLevel: 'Serializable' },
+  )
   if (!current) return messageResponse('Không tìm thấy dự án.', 404)
 
-  await db.project.delete({ where: { id } })
   await recordAudit({
     request,
     userId: auth.user.id,

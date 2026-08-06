@@ -20,7 +20,7 @@ export function TestimonialCard({
         <span>{role}</span>
       </figcaption>
       <small>
-        Dữ liệu placeholder - chưa phải xác nhận của khách hàng thật.
+        Tình huống minh họa; chưa phải lời chứng thực của khách hàng.
       </small>
     </figure>
   )

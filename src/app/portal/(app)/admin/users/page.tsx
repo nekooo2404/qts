@@ -1,16 +1,26 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { ShieldCheck } from 'lucide-react'
 
 import { DataTable } from '@/components/portal/data-table'
 import { PortalPageHeader } from '@/components/portal/portal-page-header'
 import { StatusBadge } from '@/components/portal/status-badge'
 import { UserAccessForm } from '@/components/portal/user-access-form'
 import { roleLabels } from '@/config/portal'
+import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { formatDate } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Quản lý người dùng' }
 
 export default async function AdminUsersPage() {
+  const currentUser = await requirePortalUser()
+  const canUpdateUsers = hasPermission(currentUser, 'admin.users.update')
+  const canManagePermissions = hasPermission(
+    currentUser,
+    'admin.permissions.manage',
+  )
   const users = await db.user.findMany({
     include: {
       role: { select: { name: true } },
@@ -23,7 +33,7 @@ export default async function AdminUsersPage() {
       <PortalPageHeader
         eyebrow="Identity & access"
         title="Người dùng"
-        description="Quản lý vai trò và trạng thái tài khoản. Server luôn giữ ít nhất một ADMIN hoạt động."
+        description="Quản lý vai trò và trạng thái tài khoản. Server luôn giữ ít nhất một người có quyền quản lý phân quyền."
       />
       <DataTable
         label="Danh sách người dùng"
@@ -34,11 +44,24 @@ export default async function AdminUsersPage() {
               {user.email} · {user.organization?.name ?? 'Chưa có tổ chức'}
             </span>
             <StatusBadge status={user.active ? 'ACTIVE' : 'CANCELLED'} />
-            <UserAccessForm
-              id={user.id}
-              role={user.role.name}
-              active={user.active}
-            />
+            {canUpdateUsers && (
+              <UserAccessForm
+                id={user.id}
+                role={user.role.name}
+                active={user.active}
+                isSelf={user.id === currentUser.id}
+                canChangeRole={canManagePermissions}
+              />
+            )}
+            {canManagePermissions && (
+              <Link
+                className="admin-user-permissions-link"
+                href={`/admin/roles?user=${encodeURIComponent(user.id)}`}
+              >
+                <ShieldCheck size={15} aria-hidden="true" />
+                Quyền riêng
+              </Link>
+            )}
           </article>
         ))}
       >
@@ -66,11 +89,24 @@ export default async function AdminUsersPage() {
               </td>
               <td>{formatDate(user.createdAt)}</td>
               <td>
-                <UserAccessForm
-                  id={user.id}
-                  role={user.role.name}
-                  active={user.active}
-                />
+                {canUpdateUsers && (
+                  <UserAccessForm
+                    id={user.id}
+                    role={user.role.name}
+                    active={user.active}
+                    isSelf={user.id === currentUser.id}
+                    canChangeRole={canManagePermissions}
+                  />
+                )}
+                {canManagePermissions && (
+                  <Link
+                    className="admin-user-permissions-link"
+                    href={`/admin/roles?user=${encodeURIComponent(user.id)}`}
+                  >
+                    <ShieldCheck size={15} aria-hidden="true" />
+                    Quyền riêng
+                  </Link>
+                )}
               </td>
             </tr>
           ))}

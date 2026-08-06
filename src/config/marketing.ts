@@ -12,20 +12,18 @@ export type MenuGroup = {
 export const publicNavigation: Array<{
   label: string
   href?: string
+  description?: string
   groups?: MenuGroup[]
 }> = [
   {
     label: 'Hệ sinh thái',
     href: '/san-pham',
+    description:
+      'Khám phá sản phẩm và dịch vụ theo từng lớp của hệ thống vận hành.',
     groups: [
       {
         title: 'Nền tảng vận hành',
         links: [
-          {
-            label: 'QTS Portal',
-            href: '/san-pham/qts-portal',
-            description: 'Kết nối dự án, hỗ trợ và tài liệu.',
-          },
           {
             label: 'QTS Work · Định hướng',
             href: '/san-pham/qts-work',
@@ -79,21 +77,48 @@ export const publicNavigation: Array<{
   {
     label: 'Giải pháp',
     href: '/giai-phap',
+    description:
+      'Chọn điểm bắt đầu theo lĩnh vực hoặc bài toán cần giải quyết.',
     groups: [
       {
         title: 'Theo lĩnh vực',
         links: [
-          { label: 'Doanh nghiệp', href: '/giai-phap/doanh-nghiep' },
-          { label: 'Giáo dục', href: '/giai-phap/giao-duc' },
-          { label: 'Thương mại', href: '/giai-phap/thuong-mai' },
-          { label: 'Cơ quan, tổ chức', href: '/giai-phap/co-quan-to-chuc' },
+          {
+            label: 'Doanh nghiệp',
+            href: '/giai-phap/doanh-nghiep',
+            description: 'Chuẩn hóa quy trình và góc nhìn điều hành.',
+          },
+          {
+            label: 'Giáo dục',
+            href: '/giai-phap/giao-duc',
+            description: 'Tổ chức nội dung, dịch vụ và dữ liệu quản trị.',
+          },
+          {
+            label: 'Thương mại',
+            href: '/giai-phap/thuong-mai',
+            description: 'Kết nối trải nghiệm mua hàng và vận hành đơn.',
+          },
+          {
+            label: 'Cơ quan, tổ chức',
+            href: '/giai-phap/co-quan-to-chuc',
+            description: 'Phân quyền, phê duyệt và quản lý tài liệu.',
+          },
         ],
       },
       {
         title: 'Theo nhu cầu',
         links: [
-          { label: 'Vận hành doanh nghiệp', href: '/giai-phap/doanh-nghiep' },
-          { label: 'Giải pháp theo yêu cầu', href: '/bao-gia' },
+          {
+            label: 'Vận hành doanh nghiệp',
+            href: '/giai-phap/doanh-nghiep',
+            description:
+              'Tập trung công việc, dữ liệu và báo cáo theo vai trò.',
+          },
+          {
+            label: 'Giải pháp theo yêu cầu',
+            href: '/bao-gia',
+            description: 'Xác định phạm vi từ quy trình và ràng buộc thực tế.',
+          },
         ],
       },
     ],
@@ -102,13 +127,27 @@ export const publicNavigation: Array<{
   {
     label: 'Kiến thức',
     href: '/blog',
+    description:
+      'Đọc hướng dẫn và tình huống minh họa về sản phẩm, dữ liệu và vận hành.',
     groups: [
       {
         title: 'Tài nguyên',
         links: [
-          { label: 'Blog công nghệ', href: '/blog' },
-          { label: 'Case study', href: '/du-an' },
-          { label: 'Câu hỏi thường gặp', href: '/#faq' },
+          {
+            label: 'Blog công nghệ',
+            href: '/blog',
+            description: 'Góc nhìn thực tế về thiết kế và xây hệ thống.',
+          },
+          {
+            label: 'Tình huống dự án',
+            href: '/du-an',
+            description: 'Các kịch bản minh họa cách tiếp cận của QTS.',
+          },
+          {
+            label: 'Câu hỏi thường gặp',
+            href: '/#faq',
+            description: 'Phạm vi, tích hợp, chi phí và cách phối hợp.',
+          },
         ],
       },
     ],
@@ -116,6 +155,8 @@ export const publicNavigation: Array<{
   {
     label: 'Hỗ trợ',
     href: '/lien-he',
+    description:
+      'Chọn kênh phù hợp để trao đổi nhu cầu hoặc theo dõi công việc.',
     groups: [
       {
         title: 'Làm việc cùng QTS',
@@ -130,11 +171,6 @@ export const publicNavigation: Array<{
             href: '/bao-gia',
             description: 'Cung cấp phạm vi để nhận đề xuất phù hợp.',
           },
-          {
-            label: 'QTS Portal',
-            href: '/portal/login',
-            description: 'Theo dõi dự án, ticket, tài liệu và thông báo.',
-          },
         ],
       },
     ],
@@ -142,14 +178,27 @@ export const publicNavigation: Array<{
   {
     label: 'Công ty',
     href: '/gioi-thieu',
+    description:
+      'Tìm hiểu định hướng, nguyên tắc làm việc và cơ hội đồng hành cùng QTS.',
     groups: [
       {
         title: 'QTS Technology',
         links: [
-          { label: 'Giới thiệu', href: '/gioi-thieu' },
-          { label: 'Khách hàng', href: '/khach-hang' },
-          { label: 'Tuyển dụng', href: '/tuyen-dung' },
-          { label: 'Liên hệ', href: '/lien-he' },
+          {
+            label: 'Giới thiệu',
+            href: '/gioi-thieu',
+            description: 'Định hướng và nguyên tắc triển khai hệ thống.',
+          },
+          {
+            label: 'Tuyển dụng',
+            href: '/tuyen-dung',
+            description: 'Các vị trí và cách làm việc tại QTS.',
+          },
+          {
+            label: 'Liên hệ',
+            href: '/lien-he',
+            description: 'Gửi bối cảnh để bắt đầu một cuộc trao đổi.',
+          },
         ],
       },
     ],
@@ -397,30 +446,22 @@ export const platformPrinciples = [
 
 export const platformFacts = [
   {
-    target: 3,
-    prefix: '',
-    suffix: '',
+    value: 'Theo vai trò',
     label: 'Vai trò truy cập',
     note: 'ADMIN · STAFF · CUSTOMER',
   },
   {
-    target: 8,
-    prefix: '',
-    suffix: '',
+    value: 'Theo module',
     label: 'Nhóm nghiệp vụ',
-    note: 'Trong QTS Portal demo',
+    note: 'Trong bản demo nội bộ',
   },
   {
-    target: 6,
-    prefix: '',
-    suffix: '',
+    value: 'Theo mốc',
     label: 'Giai đoạn triển khai',
     note: 'Từ nhu cầu đến vận hành',
   },
   {
-    target: 1,
-    prefix: '',
-    suffix: '',
+    value: 'Một luồng',
     label: 'Không gian phối hợp',
     note: 'Dự án · hỗ trợ · tài liệu',
   },
@@ -428,30 +469,29 @@ export const platformFacts = [
 
 export const homeFaqs = [
   {
-    question: 'QTS phù hợp với doanh nghiệp ở giai đoạn nào?',
+    question: 'QTS phù hợp với giai đoạn nào?',
     answer:
       'QTS bắt đầu từ bài toán và quy trình hiện tại. Phạm vi có thể là một website, một luồng nghiệp vụ riêng hoặc cổng phối hợp nhiều bộ phận; quy mô chỉ được chốt sau bước khảo sát.',
   },
   {
-    question: 'Chi phí triển khai được xác định như thế nào?',
+    question: 'Chi phí được xác định ra sao?',
     answer:
       'Chi phí phụ thuộc phạm vi chức năng, mức tích hợp, dữ liệu cần chuyển đổi và yêu cầu vận hành. Trang báo giá thu thập các thông tin này để QTS phản hồi bằng đề xuất có phạm vi rõ ràng.',
   },
   {
-    question: 'Có thể tích hợp với hệ thống đang sử dụng không?',
+    question: 'Có thể tích hợp hệ thống hiện có?',
     answer:
       'Có thể khi hệ thống nguồn cung cấp API hoặc cơ chế trao đổi dữ liệu phù hợp. QTS sẽ đánh giá hợp đồng dữ liệu, quyền truy cập, tần suất đồng bộ và phương án khôi phục trước khi triển khai.',
   },
   {
-    question: 'Khách hàng theo dõi tiến độ và yêu cầu hỗ trợ ở đâu?',
+    question: 'Theo dõi dự án và hỗ trợ ở đâu?',
     answer:
-      'QTS Portal tập trung milestone, công việc, ticket, tài liệu, hợp đồng và thông báo theo quyền của từng tài khoản.',
+      'Cổng phối hợp tập trung milestone, công việc, ticket, tài liệu, hợp đồng và thông báo theo quyền của từng tài khoản.',
   },
   {
-    question:
-      'Dữ liệu trên website demo có phải số liệu doanh nghiệp thật không?',
+    question: 'Số liệu trên website đến từ đâu?',
     answer:
-      'Không. Mọi tên khách hàng, case study và chỉ số chưa được xác nhận đều được đánh dấu là dữ liệu demo hoặc placeholder; chúng phải được thay trước khi xuất bản chính thức.',
+      'Các nhãn về vai trò, module và mốc triển khai mô tả những cấu phần có thể kiểm tra trong bản demo. QTS không công bố chỉ số kinh doanh, khách hàng hoặc kết quả dự án khi chưa có nguồn và quyền công bố.',
   },
 ] as const
 
@@ -544,7 +584,7 @@ export const solutionTabs = [
       'Luồng phê duyệt',
       'Thông báo tập trung',
     ],
-    accent: '58%',
+    focus: 'Theo dõi theo vai trò',
   },
   {
     id: 'commerce',
@@ -553,7 +593,7 @@ export const solutionTabs = [
     description:
       'Thiết kế hành trình rõ ràng và kết nối phần giao diện với hệ thống quản trị phía sau.',
     features: ['Nội dung dễ tìm', 'Tối ưu chuyển đổi', 'Quản trị tập trung'],
-    accent: '72%',
+    focus: 'Hành trình và quản trị',
   },
   {
     id: 'software',
@@ -566,7 +606,7 @@ export const solutionTabs = [
       'Kiến trúc module',
       'Kiểm thử theo luồng',
     ],
-    accent: '64%',
+    focus: 'Vai trò và trạng thái',
   },
   {
     id: 'data',
@@ -575,7 +615,7 @@ export const solutionTabs = [
     description:
       'Đồng bộ có quy tắc, theo dõi lỗi và trình bày chỉ số từ nguồn dữ liệu được xác nhận.',
     features: ['API có hợp đồng', 'Theo dõi đồng bộ', 'Dashboard có nguồn'],
-    accent: '81%',
+    focus: 'Hợp đồng dữ liệu',
   },
   {
     id: 'operations-support',
@@ -584,7 +624,7 @@ export const solutionTabs = [
     description:
       'Tập trung yêu cầu, lịch sử xử lý và kế hoạch cải tiến trên một kênh phối hợp rõ ràng.',
     features: ['Ticket hỗ trợ', 'Theo dõi thay đổi', 'Báo cáo vận hành'],
-    accent: '69%',
+    focus: 'Lịch sử và hỗ trợ',
   },
 ] as const
 
@@ -644,46 +684,6 @@ export const qtsAdvantages = [
     'Đồng hành sau triển khai',
     'Ticket, tài liệu và lịch sử hỗ trợ nằm trong cùng một cổng thông tin.',
   ],
-] as const
-
-export const placeholderStats = [
-  {
-    target: 24,
-    prefix: '[',
-    suffix: '+]',
-    label: 'Dự án mẫu',
-    note: 'Dữ liệu minh họa',
-  },
-  {
-    target: 18,
-    prefix: '[',
-    suffix: '+]',
-    label: 'Khách hàng mẫu',
-    note: 'Dữ liệu minh họa',
-  },
-  {
-    target: 42,
-    prefix: '[',
-    suffix: '+]',
-    label: 'Module phần mềm',
-    note: 'Dữ liệu minh họa',
-  },
-  {
-    target: 96,
-    prefix: '[',
-    suffix: '+]',
-    label: 'Yêu cầu hỗ trợ',
-    note: 'Dữ liệu minh họa',
-  },
-] as const
-
-export const customerPlaceholders = [
-  '[Khách hàng mẫu 01]',
-  '[Khách hàng mẫu 02]',
-  '[Tổ chức mẫu 03]',
-  '[Doanh nghiệp mẫu 04]',
-  '[Đơn vị mẫu 05]',
-  '[Khách hàng mẫu 06]',
 ] as const
 
 export const portalCapabilities = [

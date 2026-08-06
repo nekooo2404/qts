@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache'
 
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
-import { canManageTasks } from '@/lib/domain/permissions'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import {
   messageResponse,
@@ -17,7 +17,7 @@ import { taskSchema } from '@/lib/validation/forms'
 export async function POST(request: Request) {
   const auth = await authorizeMutation(request)
   if (auth.error) return auth.error
-  if (!canManageTasks(auth.user.role))
+  if (!hasPermission(auth.user, 'portal.tasks.create'))
     return messageResponse('Bạn không có quyền tạo công việc.', 403)
 
   try {

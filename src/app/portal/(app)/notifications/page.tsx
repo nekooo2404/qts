@@ -6,6 +6,7 @@ import { NotificationActions } from '@/components/portal/notification-actions'
 import { NotificationComposer } from '@/components/portal/notification-composer'
 import { PortalPageHeader } from '@/components/portal/portal-page-header'
 import { requirePortalUser } from '@/lib/auth/guards'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { cn, formatDateTime } from '@/lib/utils'
 
@@ -19,20 +20,32 @@ const typeIcons = {
 
 export default async function PortalNotificationsPage() {
   const user = await requirePortalUser()
+  const canComposeNotifications = hasPermission(
+    user,
+    'portal.notifications.compose',
+  )
+  const canComposeForAll = hasPermission(
+    user,
+    'portal.notifications.compose.all',
+  )
+  const canManageNotifications = hasPermission(
+    user,
+    'portal.notifications.manage',
+  )
   const [notifications, recipients] = await Promise.all([
     db.notification.findMany({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
     }),
-    user.role === 'CUSTOMER'
+    !canComposeNotifications
       ? Promise.resolve([])
       : db.user.findMany({
           where: {
             active: true,
             id: { not: user.id },
-            ...(user.role === 'STAFF'
-              ? { role: { name: 'CUSTOMER' as const } }
-              : {}),
+            ...(canComposeForAll
+              ? {}
+              : { role: { name: 'CUSTOMER' as const } }),
           },
           select: {
             id: true,
@@ -50,7 +63,11 @@ export default async function PortalNotificationsPage() {
         eyebrow="Inbox"
         title="Thông báo"
         description={`${unread} thông báo chưa đọc. Mỗi liên kết chỉ mở tài nguyên mà tài khoản hiện có quyền truy cập.`}
-        actions={unread ? <NotificationActions all /> : undefined}
+        actions={
+          canManageNotifications && unread ? (
+            <NotificationActions all />
+          ) : undefined
+        }
       />
       <div className="notification-page-list">
         {notifications.length ? (
@@ -76,7 +93,7 @@ export default async function PortalNotificationsPage() {
                     </Link>
                   )}
                 </div>
-                {!notification.readAt && (
+                {!notification.readAt && canManageNotifications && (
                   <NotificationActions id={notification.id} />
                 )}
               </article>
@@ -90,7 +107,7 @@ export default async function PortalNotificationsPage() {
           </div>
         )}
       </div>
-      {user.role !== 'CUSTOMER' && (
+      {canComposeNotifications && recipients.length > 0 && (
         <details className="portal-panel portal-create-panel">
           <summary>
             <Send size={18} /> Gửi thông báo cho khách hàng

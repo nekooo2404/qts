@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Check, LogIn } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
 
 import { EcosystemHeroVisual } from '@/components/public/ecosystem-hero-visual'
 import { buttonVariants } from '@/components/ui/button'
@@ -15,7 +15,7 @@ export function HeroSection() {
             <span>kết nối dự án và vận hành</span>
           </h1>
           <p className="home-hero__domains">
-            {['Website', 'Phần mềm', 'Dữ liệu', 'Portal', 'Hạ tầng'].map(
+            {['Website', 'Phần mềm', 'Dữ liệu', 'Tích hợp', 'Hạ tầng'].map(
               (domain, index) => (
                 <span key={domain}>
                   {index > 0 && <i aria-hidden="true" />}
@@ -54,9 +54,6 @@ export function HeroSection() {
               Xem hệ sinh thái
             </Link>
           </div>
-          <Link className="home-hero__portal-link" href="/portal/login">
-            <LogIn size={16} aria-hidden="true" /> Đăng nhập QTS Portal
-          </Link>
         </div>
         <div className="home-hero__visual">
           <EcosystemHeroVisual />

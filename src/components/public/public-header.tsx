@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronDown, LogIn } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 
 import { MegaMenu } from '@/components/public/mega-menu'
 import { MobileNavigation } from '@/components/public/mobile-navigation'
@@ -18,6 +18,8 @@ export function PublicHeader() {
   const headerRef = useRef<HTMLElement>(null)
   const triggerRefs = useRef(new Map<string, HTMLButtonElement>())
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const lastPointerTypeRef = useRef<string | null>(null)
+  const restoreFocusRef = useRef(false)
   const [menuState, setMenuState] = useState<{
     label: string | null
     path: string
@@ -51,6 +53,7 @@ export function PublicHeader() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && activeMenu) {
         const trigger = triggerRefs.current.get(activeMenu)
+        restoreFocusRef.current = true
         setMenuState({ label: null, path: pathname })
         trigger?.focus()
       }
@@ -133,10 +136,8 @@ export function PublicHeader() {
               <div
                 className="desktop-nav__item"
                 key={item.label}
-                onPointerEnter={() => {
-                  if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
-                  if (activeMenu && activeMenu !== item.label)
-                    openMenu(item.label)
+                onPointerEnter={(event) => {
+                  if (event.pointerType === 'mouse') openMenu(item.label)
                 }}
                 onPointerLeave={scheduleMenuClose}
                 onBlur={(event) => {
@@ -156,9 +157,31 @@ export function PublicHeader() {
                   }}
                   type="button"
                   className={active ? 'is-active' : undefined}
-                  onClick={() =>
-                    expanded ? closeMenu() : openMenu(item.label)
-                  }
+                  onPointerDown={(event) => {
+                    lastPointerTypeRef.current = event.pointerType
+                  }}
+                  onPointerCancel={() => {
+                    lastPointerTypeRef.current = null
+                  }}
+                  onFocus={() => {
+                    if (restoreFocusRef.current) {
+                      restoreFocusRef.current = false
+                      return
+                    }
+                    openMenu(item.label)
+                  }}
+                  onClick={() => {
+                    const pointerType = lastPointerTypeRef.current
+                    lastPointerTypeRef.current = null
+
+                    if (pointerType === 'mouse') {
+                      openMenu(item.label)
+                      return
+                    }
+
+                    if (expanded) closeMenu()
+                    else openMenu(item.label)
+                  }}
                   onKeyDown={(event) => {
                     if (event.key === 'ArrowDown') {
                       event.preventDefault()
@@ -180,6 +203,10 @@ export function PublicHeader() {
                     id={menuId}
                     label={item.label}
                     href={item.href}
+                    summary={
+                      item.description ??
+                      `Khám phá các nội dung trong nhóm ${item.label}.`
+                    }
                     groups={item.groups}
                   />
                 )}
@@ -189,14 +216,6 @@ export function PublicHeader() {
         </nav>
         <div className="public-header__actions">
           <SearchDialog />
-          <Link
-            className={cn(
-              buttonVariants({ variant: 'secondary', size: 'small' }),
-            )}
-            href="/portal/login"
-          >
-            <LogIn size={16} aria-hidden="true" /> Đăng nhập
-          </Link>
           <Link
             className={cn(
               buttonVariants({ variant: 'primary', size: 'small' }),

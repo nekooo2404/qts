@@ -4,10 +4,34 @@ import { ArrowRight } from 'lucide-react'
 import { ProductCard } from '@/components/public/product-card'
 import { platformGroups } from '@/config/marketing'
 
-export function ProductCatalogue() {
+export function ProductCatalogue({
+  excludePortal = false,
+}: {
+  excludePortal?: boolean
+}) {
+  const groups = excludePortal
+    ? platformGroups.flatMap((group) => {
+        const products = group.products.filter(
+          (product) => product.href !== '/san-pham/qts-portal',
+        )
+        return products.length
+          ? [
+              {
+                ...group,
+                description:
+                  group.id === 'work-platforms'
+                    ? 'Các nền tảng làm việc được ghi rõ trạng thái và lộ trình kết nối.'
+                    : group.description,
+                products,
+              },
+            ]
+          : []
+      })
+    : platformGroups
+
   return (
     <div className="product-catalogue">
-      {platformGroups.map((group) => (
+      {groups.map((group) => (
         <section className="product-catalogue__group" key={group.id}>
           <header>
             <div>

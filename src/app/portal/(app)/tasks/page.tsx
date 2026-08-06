@@ -20,7 +20,7 @@ import { TaskUpdateForm } from '@/components/portal/task-update-form'
 import { buttonVariants } from '@/components/ui/button'
 import { statusLabels } from '@/config/portal'
 import { requirePortalUser } from '@/lib/auth/guards'
-import { canManageTasks } from '@/lib/domain/permissions'
+import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { cn, formatDate } from '@/lib/utils'
 import { projectScope, taskScope } from '@/server/repositories/portal'
@@ -48,7 +48,8 @@ export default async function PortalTasksPage({
       ? raw.status
       : ''
   const view = raw.view === 'list' ? 'list' : 'kanban'
-  const canManage = canManageTasks(user.role)
+  const canCreateTasks = hasPermission(user, 'portal.tasks.create')
+  const canUpdateTasks = hasPermission(user, 'portal.tasks.update')
   const where = {
     AND: [
       taskScope(user),
@@ -77,7 +78,7 @@ export default async function PortalTasksPage({
       },
       orderBy: [{ dueDate: 'asc' }, { updatedAt: 'desc' }],
     }),
-    canManage
+    canCreateTasks
       ? db.project.findMany({
           where: projectScope(user),
           select: {
@@ -98,7 +99,7 @@ export default async function PortalTasksPage({
         title="Công việc"
         description="Quan sát luồng thực hiện, deadline và mức hoàn thành trong một bề mặt làm việc."
         actions={
-          canManage ? (
+          canCreateTasks ? (
             <Link className={cn(buttonVariants())} href="#create-task">
               <Plus size={17} /> Tạo công việc
             </Link>
@@ -198,7 +199,7 @@ export default async function PortalTasksPage({
                             <Paperclip size={14} /> Tệp demo
                           </span>
                         </div>
-                        {canManage && (
+                        {canUpdateTasks && (
                           <TaskUpdateForm
                             id={task.id}
                             status={task.status}
@@ -226,7 +227,7 @@ export default async function PortalTasksPage({
               </span>
               <StatusBadge status={task.status} />
               <PriorityBadge priority={task.priority} />
-              {canManage && (
+              {canUpdateTasks && (
                 <TaskUpdateForm
                   id={task.id}
                   status={task.status}
@@ -245,7 +246,7 @@ export default async function PortalTasksPage({
               <th>Ưu tiên</th>
               <th>Trạng thái</th>
               <th>Tiến độ</th>
-              {canManage && <th>Cập nhật</th>}
+              {canUpdateTasks && <th>Cập nhật</th>}
             </tr>
           </thead>
           <tbody>
@@ -268,7 +269,7 @@ export default async function PortalTasksPage({
                 <td>
                   <ProjectProgress value={task.progress} />
                 </td>
-                {canManage && (
+                {canUpdateTasks && (
                   <td>
                     <TaskUpdateForm
                       id={task.id}
@@ -282,7 +283,7 @@ export default async function PortalTasksPage({
           </tbody>
         </DataTable>
       )}
-      {canManage && (
+      {canCreateTasks && (
         <details className="portal-panel portal-create-panel" id="create-task">
           <summary>
             <Plus size={18} /> Tạo công việc mới
