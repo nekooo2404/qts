@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { Building2, Mail, ShieldCheck } from 'lucide-react'
 
-import { PasswordForm } from '@/components/portal/password-form'
-import { PortalPageHeader } from '@/components/portal/portal-page-header'
-import { ProfileForm } from '@/components/portal/profile-form'
-import { roleLabels } from '@/config/portal'
+import { PasswordForm } from '@client/components/portal/password-form'
+import { PortalPageHeader } from '@client/components/portal/portal-page-header'
+import { ProfileForm } from '@client/components/portal/profile-form'
+import { roleLabels } from '@client/config/portal'
 import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { IdentityPlatformAuditConsole } from '@/components/admin/identity-platform-audit-console'
-import { PortalPageHeader } from '@/components/portal/portal-page-header'
+import { PortalPageHeader } from '@client/components/portal/portal-page-header'
 
 export const metadata: Metadata = {
   title: 'Identity audit trail',

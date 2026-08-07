@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { ScrollText } from 'lucide-react'
 
-import { DataTable } from '@/components/portal/data-table'
-import { PortalPageHeader } from '@/components/portal/portal-page-header'
+import { DataTable } from '@client/components/portal/data-table'
+import { PortalPageHeader } from '@client/components/portal/portal-page-header'
 import { db } from '@/lib/db'
 import { formatDateTime } from '@/lib/utils'
 

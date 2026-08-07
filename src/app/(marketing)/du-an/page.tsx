@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
-import { CaseStudyCard } from '@/components/public/case-study-card'
-import { PageHero } from '@/components/public/page-hero'
+import { CaseStudyCard } from '@client/components/public/case-study-card'
+import { PageHero } from '@client/components/public/page-hero'
 import { db } from '@/lib/db'
 import { createMetadata } from '@/lib/seo'
 

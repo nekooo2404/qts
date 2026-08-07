@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Compass, Eye, Handshake, ShieldCheck } from 'lucide-react'
 
-import { PageHero } from '@/components/public/page-hero'
-import { SectionHeading } from '@/components/public/section-heading'
+import { PageHero } from '@client/components/public/page-hero'
+import { SectionHeading } from '@client/components/public/section-heading'
 import { createMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = createMetadata(

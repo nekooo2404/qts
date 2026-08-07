@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { OfferingDetail } from '@/components/public/offering-detail'
-import { PortalPreview } from '@/components/public/portal-preview'
-import { productDetails } from '@/config/marketing'
+import { OfferingDetail } from '@client/components/public/offering-detail'
+import { PortalPreview } from '@client/components/public/portal-preview'
+import { productDetails } from '@client/config/marketing'
 import { createMetadata } from '@/lib/seo'
 
 type ProductSlug = keyof typeof productDetails

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { CheckCircle2 } from 'lucide-react'
 
-import { ContactForm } from '@/components/public/contact-form'
-import { PageHero } from '@/components/public/page-hero'
+import { ContactForm } from '@client/components/public/contact-form'
+import { PageHero } from '@client/components/public/page-hero'
 import { createMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = createMetadata(

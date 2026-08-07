@@ -1,4 +1,4 @@
-import { LoadingSkeleton } from '@/components/portal/loading-skeleton'
+import { LoadingSkeleton } from '@client/components/portal/loading-skeleton'
 
 export default function PortalLoading() {
   return (

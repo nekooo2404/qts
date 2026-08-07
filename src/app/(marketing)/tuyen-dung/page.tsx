@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BriefcaseBusiness, Mail } from 'lucide-react'
 
-import { PageHero } from '@/components/public/page-hero'
+import { PageHero } from '@client/components/public/page-hero'
 import { buttonVariants } from '@/components/ui/button'
 import { createMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'

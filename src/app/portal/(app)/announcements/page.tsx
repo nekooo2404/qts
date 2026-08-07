@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Megaphone, Plus } from 'lucide-react'
 
-import { AnnouncementForm } from '@/components/portal/announcement-form'
-import { PortalPageHeader } from '@/components/portal/portal-page-header'
+import { AnnouncementForm } from '@client/components/portal/announcement-form'
+import { PortalPageHeader } from '@client/components/portal/portal-page-header'
 import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'

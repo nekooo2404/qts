@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { PortalShell } from '@/components/portal/portal-shell'
+import { PortalShell } from '@client/components/portal/portal-shell'
 import {
   hasPermission,
   permissionForPortalRoute,

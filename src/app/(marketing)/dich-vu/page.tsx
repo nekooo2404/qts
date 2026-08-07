@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
-import { PageHero } from '@/components/public/page-hero'
-import { ServiceCard } from '@/components/public/service-card'
-import { serviceDetails } from '@/config/marketing'
+import { PageHero } from '@client/components/public/page-hero'
+import { ServiceCard } from '@client/components/public/service-card'
+import { serviceDetails } from '@client/config/marketing'
 import { createMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = createMetadata(

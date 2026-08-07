@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 
-import { statusLabels } from '@/config/portal'
+import { statusLabels } from '@client/config/portal'
 import { recordAudit } from '@/lib/audit'
 import { authorizeMutation } from '@/lib/auth/api'
 import { hasPermission } from '@/lib/domain/permissions'

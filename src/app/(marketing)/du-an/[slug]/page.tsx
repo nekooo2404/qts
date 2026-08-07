@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CheckCircle2 } from 'lucide-react'
 
-import { PageHero } from '@/components/public/page-hero'
+import { PageHero } from '@client/components/public/page-hero'
 import { db } from '@/lib/db'
 import { createMetadata } from '@/lib/seo'
 

@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import {
   FormFeedback,
   type FormFeedbackValue,
-} from '@/components/portal/form-feedback'
+} from '@client/components/portal/form-feedback'
 import {
   applyPermissionDenials,
   expandPermissionKeys,

@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 
-import { PageHero } from '@/components/public/page-hero'
-import { solutionDetails } from '@/config/marketing'
+import { PageHero } from '@client/components/public/page-hero'
+import { solutionDetails } from '@client/config/marketing'
 import { createMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = createMetadata(

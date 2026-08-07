@@ -7,14 +7,14 @@ import {
   Settings2,
 } from 'lucide-react'
 
-import { BlogPostForm } from '@/components/portal/blog-post-form'
+import { BlogPostForm } from '@client/components/portal/blog-post-form'
 import {
   CaseStudyEditor,
   ServiceEditor,
   SiteSettingEditor,
-} from '@/components/portal/content-editors'
-import { PortalPageHeader } from '@/components/portal/portal-page-header'
-import { StatusBadge } from '@/components/portal/status-badge'
+} from '@client/components/portal/content-editors'
+import { PortalPageHeader } from '@client/components/portal/portal-page-header'
+import { StatusBadge } from '@client/components/portal/status-badge'
 import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'

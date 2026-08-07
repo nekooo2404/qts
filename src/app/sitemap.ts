@@ -4,7 +4,7 @@ import {
   productDetails,
   serviceDetails,
   solutionDetails,
-} from '@/config/marketing'
+} from '@client/config/marketing'
 import { db } from '@/lib/db'
 import { getAppUrl } from '@/lib/seo'
 

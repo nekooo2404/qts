@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
-import { BlogCard } from '@/components/public/blog-card'
-import { PageHero } from '@/components/public/page-hero'
+import { BlogCard } from '@client/components/public/blog-card'
+import { PageHero } from '@client/components/public/page-hero'
 import { db } from '@/lib/db'
 import { createMetadata } from '@/lib/seo'
 

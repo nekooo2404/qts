@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { PageHero } from '@/components/public/page-hero'
+import { PageHero } from '@client/components/public/page-hero'
 import { createMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = createMetadata(

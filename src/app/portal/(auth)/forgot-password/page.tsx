@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
-import { ForgotPasswordForm } from '@/components/portal/forgot-password-form'
+import { ForgotPasswordForm } from '@client/components/portal/forgot-password-form'
 
 export default function ForgotPasswordPage() {
   return (

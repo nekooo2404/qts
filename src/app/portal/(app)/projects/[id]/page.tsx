@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { ProjectDetailSections } from '@/components/portal/project-detail-sections'
+import { ProjectDetailSections } from '@client/components/portal/project-detail-sections'
 import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'

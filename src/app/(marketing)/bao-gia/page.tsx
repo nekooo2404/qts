@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
-import { PageHero } from '@/components/public/page-hero'
-import { QuoteRequestForm } from '@/components/public/quote-request-form'
+import { PageHero } from '@client/components/public/page-hero'
+import { QuoteRequestForm } from '@client/components/public/quote-request-form'
 import { createMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = createMetadata(

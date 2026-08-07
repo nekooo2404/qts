@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { LoginForm } from '@/components/portal/login-form'
+import { LoginForm } from '@client/components/portal/login-form'
 import { sanitizeNextPath } from '@/lib/security/request'
 
 export default async function LoginPage({

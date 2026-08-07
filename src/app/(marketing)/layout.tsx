@@ -1,5 +1,5 @@
-import { PublicFooter } from '@/components/public/public-footer'
-import { PublicHeader } from '@/components/public/public-header'
+import { PublicFooter } from '@client/components/public/public-footer'
+import { PublicHeader } from '@client/components/public/public-header'
 import { StructuredData } from '@/components/shared/structured-data'
 import { organizationJsonLd } from '@/lib/seo'
 

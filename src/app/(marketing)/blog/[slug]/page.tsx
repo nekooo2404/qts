@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { CalendarDays, UserRound } from 'lucide-react'
 
-import { PageHero } from '@/components/public/page-hero'
+import { PageHero } from '@client/components/public/page-hero'
 import { StructuredData } from '@/components/shared/structured-data'
 import { db } from '@/lib/db'
 import { createMetadata, getAppUrl } from '@/lib/seo'

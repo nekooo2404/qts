@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { PortalPreview } from '@/components/public/portal-preview'
+import { PortalPreview } from '@client/components/public/portal-preview'
 import { QtsLogo } from '@/components/shared/qts-logo'
 
 export const metadata: Metadata = {
