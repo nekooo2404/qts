@@ -23,7 +23,7 @@ The QTS expression is exact, calm, and service-oriented: a cool light canvas, da
 
 ## Color And Tokens
 
-- All colors use semantic OKLCH tokens in `tokens.css`.
+- All colors use semantic OKLCH tokens in `src/styles/tokens.css`.
 - `--color-canvas` and `--color-surface` establish quiet full-width bands.
 - `--color-ink` carries primary text and the dark portal rail.
 - `--color-brand` is limited to primary actions, selected states, small signals, and focus rings.
