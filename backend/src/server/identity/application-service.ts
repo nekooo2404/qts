@@ -138,6 +138,15 @@ function normalizeOrigins(origins: readonly string[]) {
   return [...new Set(normalized)]
 }
 
+function normalizeScopes(scopes: readonly string[]) {
+  const normalized = new Set<string>()
+  for (const scope of scopes) {
+    const value = scope.trim()
+    if (value) normalized.add(value)
+  }
+  return [...normalized]
+}
+
 export function normalizeApplicationInput(
   input: ApplicationInput,
 ): ApplicationInput {
@@ -148,9 +157,7 @@ export function normalizeApplicationInput(
     allowedOrigins: normalizeOrigins(
       input.allowedOrigins.map((origin) => origin.trim()),
     ),
-    scopes: [
-      ...new Set(input.scopes.map((scope) => scope.trim()).filter(Boolean)),
-    ],
+    scopes: normalizeScopes(input.scopes),
   }
   validateRedirects(normalized.redirectUris)
   if (!normalized.scopes.length) {
@@ -295,9 +302,7 @@ export async function updateApplication(
   const allowedOrigins = input.allowedOrigins
     ? normalizeOrigins(input.allowedOrigins.map((origin) => origin.trim()))
     : undefined
-  const scopes = input.scopes
-    ? [...new Set(input.scopes.map((scope) => scope.trim()).filter(Boolean))]
-    : undefined
+  const scopes = input.scopes ? normalizeScopes(input.scopes) : undefined
   if (input.scopes && !scopes?.length) {
     throw new IdentityHttpError(
       422,
