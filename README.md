@@ -175,8 +175,10 @@ npm run identity:workflow-smoke
 
 Kong local endpoints: `http://127.0.0.1:8000/api/identity/health` for the
 platform BFF and `http://127.0.0.1:8000/realms/qts-identity` for OIDC
-discovery. The direct Keycloak URL remains available on port `8080` for local
-administration; the gateway does not expose Keycloak admin APIs.
+discovery. Kong's Admin API is bound to `127.0.0.1:8001` only; it is not
+reachable from the LAN. The direct Keycloak URL remains available on port
+`8080` for local administration; the gateway does not expose Keycloak admin
+APIs.
 
 Các endpoint BFF OIDC dùng Authorization Code + PKCE tại `/api/identity/auth/*`; access/refresh token không nằm trong localStorage. Cấu hình IdP chỉ nhận `secret_ref` trỏ tới secret manager và phát outbox event để worker đồng bộ với Keycloak ở bước provisioning tiếp theo. `IDENTITY_DEV_SESSION_BRIDGE=true` chỉ dành cho local, không được bật production; production yêu cầu JWT Keycloak và MFA cho thao tác platform/IdP/policy/application nhạy cảm.
 

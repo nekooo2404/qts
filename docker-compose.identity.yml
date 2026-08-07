@@ -89,7 +89,9 @@ services:
       KONG_PLUGINS: bundled
     ports:
       - '${KONG_PROXY_PORT:-8000}:8000'
-      - '${KONG_ADMIN_PORT:-8001}:8001'
+      # Kong's Admin API is for local operator access only. Keep it off the
+      # LAN while allowing Prometheus to scrape it over the Docker network.
+      - '127.0.0.1:${KONG_ADMIN_PORT:-8001}:8001'
     volumes:
       - ./infra/kong/kong.yml:/opt/kong/kong.yml:ro
     depends_on:
