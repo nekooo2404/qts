@@ -4,10 +4,10 @@ import {
   identityErrorResponse,
   parseIdentityUuid,
   readIdentityJson,
-} from '@/server/identity/http'
-import { updateMembership } from '@/server/identity/membership-service'
-import { membershipUpdateSchema } from '@/server/identity/schemas'
-import { requireTenantPermission } from '@/server/identity/tenant-auth'
+} from '@backend/server/identity/http'
+import { updateMembership } from '@backend/server/identity/membership-service'
+import { membershipUpdateSchema } from '@backend/server/identity/schemas'
+import { requireTenantPermission } from '@backend/server/identity/tenant-auth'
 
 export const runtime = 'nodejs'
 

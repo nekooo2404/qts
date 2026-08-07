@@ -1,6 +1,6 @@
-import { getIdentityRedis } from '@/server/identity/cache'
-import { isIdentityPlatformConfigured } from '@/server/identity/config'
-import { queryIdentity } from '@/server/identity/database'
+import { getIdentityRedis } from '@backend/server/identity/cache'
+import { isIdentityPlatformConfigured } from '@backend/server/identity/config'
+import { queryIdentity } from '@backend/server/identity/database'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

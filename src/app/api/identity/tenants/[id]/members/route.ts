@@ -5,13 +5,13 @@ import {
   parseIdentityQuery,
   parseIdentityUuid,
   readIdentityJson,
-} from '@/server/identity/http'
+} from '@backend/server/identity/http'
 import {
   createInvitation,
   listMembers,
-} from '@/server/identity/membership-service'
-import { invitationSchema } from '@/server/identity/schemas'
-import { requireTenantPermission } from '@/server/identity/tenant-auth'
+} from '@backend/server/identity/membership-service'
+import { invitationSchema } from '@backend/server/identity/schemas'
+import { requireTenantPermission } from '@backend/server/identity/tenant-auth'
 import { z } from 'zod'
 
 export const runtime = 'nodejs'

@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import { describe, expect, it } from 'vitest'
 
 import { proxy } from '@/proxy'
-import { IDENTITY_SESSION_COOKIE } from '@/server/identity/constants'
+import { IDENTITY_SESSION_COOKIE } from '@backend/server/identity/constants'
 
 function request(pathname: string, cookie?: string) {
   return new NextRequest(`http://127.0.0.1:3100${pathname}`, {

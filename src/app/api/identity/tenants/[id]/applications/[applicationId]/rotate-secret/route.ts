@@ -3,9 +3,9 @@ import { randomUUID } from 'node:crypto'
 import {
   identityErrorResponse,
   parseIdentityUuid,
-} from '@/server/identity/http'
-import { rotateApplicationSecret } from '@/server/identity/application-service'
-import { requireTenantPermission } from '@/server/identity/tenant-auth'
+} from '@backend/server/identity/http'
+import { rotateApplicationSecret } from '@backend/server/identity/application-service'
+import { requireTenantPermission } from '@backend/server/identity/tenant-auth'
 
 export const runtime = 'nodejs'
 

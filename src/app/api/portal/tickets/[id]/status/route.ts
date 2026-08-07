@@ -13,7 +13,7 @@ import {
   RequestBodyError,
   validationErrorResponse,
 } from '@/lib/http/response'
-import { ticketScope } from '@/server/repositories/portal'
+import { ticketScope } from '@backend/server/repositories/portal'
 import { ticketStatusSchema } from '@/lib/validation/forms'
 
 export async function PATCH(

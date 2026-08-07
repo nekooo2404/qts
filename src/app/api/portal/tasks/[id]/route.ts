@@ -11,7 +11,7 @@ import {
   RequestBodyError,
   validationErrorResponse,
 } from '@/lib/http/response'
-import { taskScope } from '@/server/repositories/portal'
+import { taskScope } from '@backend/server/repositories/portal'
 import { taskUpdateSchema } from '@/lib/validation/forms'
 
 export async function PATCH(

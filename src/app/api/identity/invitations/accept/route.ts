@@ -1,9 +1,12 @@
 import { randomUUID } from 'node:crypto'
 
-import { identityErrorResponse, readIdentityJson } from '@/server/identity/http'
-import { verifyIdentityAccessToken } from '@/server/identity/keycloak'
-import { acceptInvitation } from '@/server/identity/membership-service'
-import { invitationAcceptSchema } from '@/server/identity/schemas'
+import {
+  identityErrorResponse,
+  readIdentityJson,
+} from '@backend/server/identity/http'
+import { verifyIdentityAccessToken } from '@backend/server/identity/keycloak'
+import { acceptInvitation } from '@backend/server/identity/membership-service'
+import { invitationAcceptSchema } from '@backend/server/identity/schemas'
 
 export const runtime = 'nodejs'
 

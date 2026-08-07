@@ -10,15 +10,17 @@ if (!configuredUrl) {
   throw new Error('DATABASE_URL chưa được cấu hình.')
 }
 
+const prismaRoot = path.resolve(process.cwd(), 'backend', 'prisma')
+
 const datasourceUrl = configuredUrl.startsWith('file:./')
-  ? `file:${path.resolve(process.cwd(), 'prisma', configuredUrl.slice(7)).replaceAll('\\', '/')}`
+  ? `file:${path.resolve(prismaRoot, configuredUrl.slice(7)).replaceAll('\\', '/')}`
   : configuredUrl
 
 export default defineConfig({
-  schema: 'prisma/schema.prisma',
+  schema: 'backend/prisma/schema.prisma',
   migrations: {
-    path: 'prisma/migrations',
-    seed: 'tsx prisma/seed.ts',
+    path: 'backend/prisma/migrations',
+    seed: 'tsx backend/prisma/seed.ts',
   },
   datasource: {
     url: datasourceUrl,

@@ -13,5 +13,8 @@ boundary through the `@backend/*` TypeScript alias. This keeps the public URLs
 stable while allowing the backend to become an independently deployable
 service behind Kong later.
 
+The infrastructure manifests are under `backend/infra`; the root
+`docker-compose.identity.yml` is only the orchestration entrypoint.
+
 Do not import browser components from this folder. Backend code may import the
 shared domain contracts under `src/lib/domain` and `src/lib/validation`.

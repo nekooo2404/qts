@@ -1,3 +1,3 @@
-import { getPermissionCatalog } from '@/server/admin/permissions'
+import { getPermissionCatalog } from '@backend/server/admin/permissions'
 
 export const GET = getPermissionCatalog

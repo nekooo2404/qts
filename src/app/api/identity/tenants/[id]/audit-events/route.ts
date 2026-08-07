@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
-import { listAuditEvents } from '@/server/identity/audit-service'
+import { listAuditEvents } from '@backend/server/identity/audit-service'
 import {
   identityErrorResponse,
   parseIdentityQuery,
   parseIdentityUuid,
-} from '@/server/identity/http'
-import { requireTenantPermission } from '@/server/identity/tenant-auth'
+} from '@backend/server/identity/http'
+import { requireTenantPermission } from '@backend/server/identity/tenant-auth'
 
 export const runtime = 'nodejs'
 

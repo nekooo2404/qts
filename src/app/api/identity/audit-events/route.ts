@@ -1,11 +1,11 @@
 import { z } from 'zod'
 
-import { listAuditEvents } from '@/server/identity/audit-service'
+import { listAuditEvents } from '@backend/server/identity/audit-service'
 import {
   identityErrorResponse,
   parseIdentityQuery,
-} from '@/server/identity/http'
-import { requirePlatformAdministrator } from '@/server/identity/keycloak'
+} from '@backend/server/identity/http'
+import { requirePlatformAdministrator } from '@backend/server/identity/keycloak'
 
 export const runtime = 'nodejs'
 

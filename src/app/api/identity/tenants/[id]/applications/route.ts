@@ -4,13 +4,13 @@ import {
   identityErrorResponse,
   parseIdentityUuid,
   readIdentityJson,
-} from '@/server/identity/http'
+} from '@backend/server/identity/http'
 import {
   createApplication,
   listApplications,
-} from '@/server/identity/application-service'
-import { applicationSchema } from '@/server/identity/schemas'
-import { requireTenantPermission } from '@/server/identity/tenant-auth'
+} from '@backend/server/identity/application-service'
+import { applicationSchema } from '@backend/server/identity/schemas'
+import { requireTenantPermission } from '@backend/server/identity/tenant-auth'
 
 export const runtime = 'nodejs'
 

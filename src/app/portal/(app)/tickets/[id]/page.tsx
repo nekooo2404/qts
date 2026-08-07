@@ -20,7 +20,7 @@ import { hasPermission } from '@/lib/domain/permissions'
 import { allowedTicketTransitions } from '@/lib/domain/ticket-workflow'
 import { db } from '@/lib/db'
 import { formatDateTime } from '@/lib/utils'
-import { findTicketForUser } from '@/server/repositories/portal'
+import { findTicketForUser } from '@backend/server/repositories/portal'
 
 export const metadata: Metadata = { title: 'Chi tiết ticket' }
 const categoryLabels: Record<string, string> = {

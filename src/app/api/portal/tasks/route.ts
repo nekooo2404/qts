@@ -11,7 +11,7 @@ import {
   RequestBodyError,
   validationErrorResponse,
 } from '@/lib/http/response'
-import { projectScope } from '@/server/repositories/portal'
+import { projectScope } from '@backend/server/repositories/portal'
 import { taskSchema } from '@/lib/validation/forms'
 
 export async function POST(request: Request) {

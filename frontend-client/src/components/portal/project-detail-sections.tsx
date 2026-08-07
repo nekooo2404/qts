@@ -15,7 +15,7 @@ import { ProjectForm } from '@client/components/portal/project-form'
 import { ProjectProgress } from '@client/components/portal/project-progress'
 import { StatusBadge } from '@client/components/portal/status-badge'
 import { formatDate, formatDateInput, formatFileSize } from '@/lib/utils'
-import type { findProjectForUser } from '@/server/repositories/portal'
+import type { findProjectForUser } from '@backend/server/repositories/portal'
 
 type Project = NonNullable<Awaited<ReturnType<typeof findProjectForUser>>>
 

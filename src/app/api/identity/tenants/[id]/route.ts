@@ -4,10 +4,13 @@ import {
   identityErrorResponse,
   parseIdentityUuid,
   readIdentityJson,
-} from '@/server/identity/http'
-import { requirePlatformAdministrator } from '@/server/identity/keycloak'
-import { updateTenantSchema } from '@/server/identity/schemas'
-import { getTenant, updateTenant } from '@/server/identity/tenant-service'
+} from '@backend/server/identity/http'
+import { requirePlatformAdministrator } from '@backend/server/identity/keycloak'
+import { updateTenantSchema } from '@backend/server/identity/schemas'
+import {
+  getTenant,
+  updateTenant,
+} from '@backend/server/identity/tenant-service'
 
 export const runtime = 'nodejs'
 

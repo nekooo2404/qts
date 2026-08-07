@@ -1,5 +1,10 @@
 # QTS Technology
 
+The workspace boundaries are documented in [ARCHITECTURE.md](./ARCHITECTURE.md):
+`backend/`, `frontend-client/`, and `frontend-admin/`. The root `src/app`
+directory is intentionally kept as a stable Next.js route shell until the API
+contract is extracted into an independent service.
+
 Ứng dụng full-stack gồm website doanh nghiệp QTS, QTS Portal và QTS Admin. Website công khai tổ chức nội dung theo mô hình hệ sinh thái B2B; Portal cung cấp dashboard, dự án, công việc, ticket, tài liệu, hợp đồng, hóa đơn, thông báo và hồ sơ; Admin là bề mặt quản trị riêng cho người dùng, nội dung, quyền truy cập và audit.
 
 Thiết kế tham khảo cấu trúc nội dung và nhịp trải nghiệm của AMIS MISA nhưng không sao chép mã nguồn, nội dung, tên sản phẩm, logo, hình ảnh hoặc nhận diện MISA. Toàn bộ bề mặt sản phẩm và dữ liệu demo thuộc hệ QTS.
@@ -25,11 +30,11 @@ Thiết kế tham khảo cấu trúc nội dung và nhịp trải nghiệm của
 ## Cấu trúc
 
 ```text
-prisma/
+backend/prisma/
   migrations/        Migration SQLite
   schema.prisma      Models, enums, indexes
   seed.ts            Dữ liệu và tài khoản demo
-src/
+src/ (route shell and shared foundation)
   app/
     (marketing)/     Website công khai
     portal/          Portal auth, dashboard và workflow vận hành

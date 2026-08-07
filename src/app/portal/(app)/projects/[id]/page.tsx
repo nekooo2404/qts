@@ -5,7 +5,7 @@ import { ProjectDetailSections } from '@client/components/portal/project-detail-
 import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
-import { findProjectForUser } from '@/server/repositories/portal'
+import { findProjectForUser } from '@backend/server/repositories/portal'
 
 export const metadata: Metadata = { title: 'Chi tiết dự án' }
 

@@ -4,10 +4,13 @@ import {
   identityErrorResponse,
   parseIdentityUuid,
   readIdentityJson,
-} from '@/server/identity/http'
-import { disablePolicy, updatePolicy } from '@/server/identity/policy-service'
-import { policyUpdateSchema } from '@/server/identity/schemas'
-import { requireTenantPermission } from '@/server/identity/tenant-auth'
+} from '@backend/server/identity/http'
+import {
+  disablePolicy,
+  updatePolicy,
+} from '@backend/server/identity/policy-service'
+import { policyUpdateSchema } from '@backend/server/identity/schemas'
+import { requireTenantPermission } from '@backend/server/identity/tenant-auth'
 
 export const runtime = 'nodejs'
 

@@ -4,13 +4,13 @@ import {
   identityErrorResponse,
   parseIdentityUuid,
   readIdentityJson,
-} from '@/server/identity/http'
+} from '@backend/server/identity/http'
 import {
   getMembershipPermissionOverrides,
   setMembershipPermissionOverrides,
-} from '@/server/identity/membership-service'
-import { membershipPermissionOverridesSchema } from '@/server/identity/schemas'
-import { requireTenantPermission } from '@/server/identity/tenant-auth'
+} from '@backend/server/identity/membership-service'
+import { membershipPermissionOverridesSchema } from '@backend/server/identity/schemas'
+import { requireTenantPermission } from '@backend/server/identity/tenant-auth'
 
 export const runtime = 'nodejs'
 

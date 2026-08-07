@@ -10,7 +10,7 @@ import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { resourceOrganizationFilter } from '@/server/repositories/portal'
+import { resourceOrganizationFilter } from '@backend/server/repositories/portal'
 
 export const metadata: Metadata = { title: 'Hợp đồng' }
 

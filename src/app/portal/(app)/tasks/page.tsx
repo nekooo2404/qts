@@ -23,7 +23,7 @@ import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { cn, formatDate } from '@/lib/utils'
-import { projectScope, taskScope } from '@/server/repositories/portal'
+import { projectScope, taskScope } from '@backend/server/repositories/portal'
 
 export const metadata: Metadata = { title: 'Công việc' }
 const taskStatuses = [

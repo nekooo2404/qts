@@ -11,7 +11,7 @@ import {
   RequestBodyError,
   validationErrorResponse,
 } from '@/lib/http/response'
-import { findTicketForUser } from '@/server/repositories/portal'
+import { findTicketForUser } from '@backend/server/repositories/portal'
 import { ticketMessageSchema } from '@/lib/validation/forms'
 
 export async function POST(

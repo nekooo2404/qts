@@ -15,7 +15,7 @@ import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { cn, formatDateTime } from '@/lib/utils'
-import { projectScope, ticketScope } from '@/server/repositories/portal'
+import { projectScope, ticketScope } from '@backend/server/repositories/portal'
 
 export const metadata: Metadata = { title: 'Ticket hỗ trợ' }
 const ticketStatuses = [

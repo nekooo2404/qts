@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { messageResponse } from '@/lib/http/response'
-import { resourceOrganizationFilter } from '@/server/repositories/portal'
+import { resourceOrganizationFilter } from '@backend/server/repositories/portal'
 
 export async function GET(
   _request: Request,

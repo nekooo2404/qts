@@ -1,23 +1,23 @@
 import { createHash } from 'node:crypto'
 import { cookies } from 'next/headers'
 
-import { consumeCachedJson } from '@/server/identity/cache'
-import { getIdentityConfig } from '@/server/identity/config'
+import { consumeCachedJson } from '@backend/server/identity/cache'
+import { getIdentityConfig } from '@backend/server/identity/config'
 import {
   identityErrorResponse,
   IdentityHttpError,
-} from '@/server/identity/http'
+} from '@backend/server/identity/http'
 import {
   createIdentitySession,
   destroyIdentitySession,
-} from '@/server/identity/identity-session'
+} from '@backend/server/identity/identity-session'
 import {
   exchangeAuthorizationCode,
   matchesOauthStateCookie,
   oauthStateCookieName,
   safeReturnTo,
-} from '@/server/identity/oauth'
-import { verifyIdentityTokenValue } from '@/server/identity/keycloak'
+} from '@backend/server/identity/oauth'
+import { verifyIdentityTokenValue } from '@backend/server/identity/keycloak'
 
 export const runtime = 'nodejs'
 

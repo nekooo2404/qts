@@ -25,7 +25,7 @@ services:
       - '${PLATFORM_DB_PORT:-5433}:5432'
     volumes:
       - platform-postgres-data:/var/lib/postgresql/data
-      - ./infra/postgres/platform:/docker-entrypoint-initdb.d:ro
+      - ./backend/infra/postgres/platform:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
       interval: 5s
@@ -74,7 +74,7 @@ services:
     ports:
       - '${KEYCLOAK_PORT:-8080}:8080'
     volumes:
-      - ./infra/keycloak:/opt/keycloak/data/import:ro
+      - ./backend/infra/keycloak:/opt/keycloak/data/import:ro
     depends_on:
       postgres-keycloak:
         condition: service_healthy
@@ -93,7 +93,7 @@ services:
       # LAN while allowing Prometheus to scrape it over the Docker network.
       - '127.0.0.1:${KONG_ADMIN_PORT:-8001}:8001'
     volumes:
-      - ./infra/kong/kong.yml:/opt/kong/kong.yml:ro
+      - ./backend/infra/kong/kong.yml:/opt/kong/kong.yml:ro
     depends_on:
       keycloak:
         condition: service_started
@@ -103,7 +103,7 @@ services:
     ports:
       - '${PROMETHEUS_PORT:-9090}:9090'
     volumes:
-      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./backend/infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     command:
       [

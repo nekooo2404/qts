@@ -17,7 +17,7 @@ import { PortalPageHeader } from '@client/components/portal/portal-page-header'
 import { ProjectProgress } from '@client/components/portal/project-progress'
 import { StatusBadge } from '@client/components/portal/status-badge'
 import { requirePortalUser } from '@/lib/auth/guards'
-import { getDashboardData } from '@/server/repositories/portal'
+import { getDashboardData } from '@backend/server/repositories/portal'
 import { formatDate, formatDateTime } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Tổng quan' }

@@ -15,7 +15,7 @@ import { requirePortalUser } from '@/lib/auth/guards'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { cn, formatDate } from '@/lib/utils'
-import { projectScope } from '@/server/repositories/portal'
+import { projectScope } from '@backend/server/repositories/portal'
 
 export const metadata: Metadata = { title: 'Dự án' }
 const statuses = new Set([

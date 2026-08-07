@@ -4,7 +4,7 @@ import path from 'node:path'
 
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 
-import { PrismaClient } from '@/generated/prisma/client'
+import { PrismaClient } from '@backend/generated/prisma/client'
 
 const databaseUrl = process.env.DATABASE_URL
 
@@ -13,6 +13,7 @@ if (!databaseUrl) {
 }
 
 const configuredDatabaseUrl: string = databaseUrl
+const prismaRoot = path.resolve(process.cwd(), 'backend', 'prisma')
 
 const globalForPrisma = globalThis as unknown as {
   qtsPrisma?: PrismaClient
@@ -20,7 +21,7 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient() {
   const adapterUrl = configuredDatabaseUrl.startsWith('file:./')
-    ? `file:${path.resolve(process.cwd(), 'prisma', configuredDatabaseUrl.slice(7)).replaceAll('\\', '/')}`
+    ? `file:${path.resolve(prismaRoot, configuredDatabaseUrl.slice(7)).replaceAll('\\', '/')}`
     : configuredDatabaseUrl
   const adapter = new PrismaBetterSqlite3({ url: adapterUrl })
 

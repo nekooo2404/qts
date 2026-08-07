@@ -1,5 +1,5 @@
-import { identityErrorResponse } from '@/server/identity/http'
-import { readIdentitySession } from '@/server/identity/identity-session'
+import { identityErrorResponse } from '@backend/server/identity/http'
+import { readIdentitySession } from '@backend/server/identity/identity-session'
 
 export const runtime = 'nodejs'
 

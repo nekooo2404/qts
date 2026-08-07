@@ -9,11 +9,11 @@ import {
 } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 import { getCurrentUser, type AuthUser } from '@/lib/auth/session'
-import { isIdentityPlatformConfigured } from '@/server/identity/config'
+import { isIdentityPlatformConfigured } from '@backend/server/identity/config'
 import {
   getIdentitySessionPrincipal,
   principalHasStrongAuthentication,
-} from '@/server/identity/keycloak'
+} from '@backend/server/identity/keycloak'
 
 function identityAdminUser(session: {
   subject: string

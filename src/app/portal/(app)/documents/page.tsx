@@ -13,7 +13,7 @@ import { cn, formatDate, formatFileSize } from '@/lib/utils'
 import {
   projectScope,
   resourceOrganizationFilter,
-} from '@/server/repositories/portal'
+} from '@backend/server/repositories/portal'
 
 export const metadata: Metadata = { title: 'Tài liệu' }
 

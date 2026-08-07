@@ -15,7 +15,7 @@ import { userAdminSchema } from '@/lib/validation/forms'
 import {
   hasActivePermissionManager,
   LastPermissionManagerError,
-} from '@/server/admin/permission-invariants'
+} from '@backend/server/admin/permission-invariants'
 
 class TargetUserNotFoundError extends Error {}
 class InvalidRoleError extends Error {}

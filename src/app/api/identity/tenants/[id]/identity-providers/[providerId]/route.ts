@@ -4,14 +4,14 @@ import {
   identityErrorResponse,
   parseIdentityUuid,
   readIdentityJson,
-} from '@/server/identity/http'
+} from '@backend/server/identity/http'
 import {
   getIdentityProvider,
   suspendIdentityProvider,
   updateIdentityProvider,
   updateIdentityProviderSchema,
-} from '@/server/identity/identity-provider'
-import { requireTenantPermission } from '@/server/identity/tenant-auth'
+} from '@backend/server/identity/identity-provider'
+import { requireTenantPermission } from '@backend/server/identity/tenant-auth'
 
 export const runtime = 'nodejs'
 

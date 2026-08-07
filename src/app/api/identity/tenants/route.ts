@@ -1,10 +1,16 @@
 import { randomUUID } from 'node:crypto'
 
-import { consumeDistributedRateLimit } from '@/server/identity/cache'
-import { identityErrorResponse, readIdentityJson } from '@/server/identity/http'
-import { requirePlatformAdministrator } from '@/server/identity/keycloak'
-import { createTenantSchema } from '@/server/identity/schemas'
-import { createTenant, listTenants } from '@/server/identity/tenant-service'
+import { consumeDistributedRateLimit } from '@backend/server/identity/cache'
+import {
+  identityErrorResponse,
+  readIdentityJson,
+} from '@backend/server/identity/http'
+import { requirePlatformAdministrator } from '@backend/server/identity/keycloak'
+import { createTenantSchema } from '@backend/server/identity/schemas'
+import {
+  createTenant,
+  listTenants,
+} from '@backend/server/identity/tenant-service'
 
 export const runtime = 'nodejs'
 

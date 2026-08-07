@@ -1,12 +1,12 @@
 import {
   assertIdentityMutationOrigin,
   identityErrorResponse,
-} from '@/server/identity/http'
+} from '@backend/server/identity/http'
 import {
   destroyIdentitySession,
   readIdentitySession,
-} from '@/server/identity/identity-session'
-import { revokeKeycloakToken } from '@/server/identity/oauth'
+} from '@backend/server/identity/identity-session'
+import { revokeKeycloakToken } from '@backend/server/identity/oauth'
 
 export const runtime = 'nodejs'
 

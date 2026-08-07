@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 import { getSessionCookieName } from '@/lib/auth/constants'
-import { IDENTITY_SESSION_COOKIE } from '@/server/identity/constants'
+import { IDENTITY_SESSION_COOKIE } from '@backend/server/identity/constants'
 
 const publicPortalRoutes = ['/portal/login', '/portal/forgot-password']
 

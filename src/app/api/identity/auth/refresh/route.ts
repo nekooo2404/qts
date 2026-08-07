@@ -2,18 +2,18 @@ import {
   assertIdentityMutationOrigin,
   identityErrorResponse,
   IdentityHttpError,
-} from '@/server/identity/http'
+} from '@backend/server/identity/http'
 import {
   acquireIdentitySessionLock,
   destroyIdentitySession,
   readIdentitySession,
   updateIdentitySession,
-} from '@/server/identity/identity-session'
+} from '@backend/server/identity/identity-session'
 import {
   refreshKeycloakTokens,
   revokeKeycloakToken,
-} from '@/server/identity/oauth'
-import { verifyIdentityTokenValue } from '@/server/identity/keycloak'
+} from '@backend/server/identity/oauth'
+import { verifyIdentityTokenValue } from '@backend/server/identity/keycloak'
 
 export const runtime = 'nodejs'
 

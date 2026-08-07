@@ -1,10 +1,13 @@
-import { evaluateAuthorization } from '@/server/identity/authorization-engine'
-import { identityErrorResponse, readIdentityJson } from '@/server/identity/http'
-import { verifyIdentityAccessToken } from '@/server/identity/keycloak'
-import { loadAuthorizationContext } from '@/server/identity/membership-service'
-import { authorizationCheckSchema } from '@/server/identity/schemas'
-import { readTenantId } from '@/server/identity/tenant-context'
-import { getTenant } from '@/server/identity/tenant-service'
+import { evaluateAuthorization } from '@backend/server/identity/authorization-engine'
+import {
+  identityErrorResponse,
+  readIdentityJson,
+} from '@backend/server/identity/http'
+import { verifyIdentityAccessToken } from '@backend/server/identity/keycloak'
+import { loadAuthorizationContext } from '@backend/server/identity/membership-service'
+import { authorizationCheckSchema } from '@backend/server/identity/schemas'
+import { readTenantId } from '@backend/server/identity/tenant-context'
+import { getTenant } from '@backend/server/identity/tenant-service'
 
 export const runtime = 'nodejs'
 

@@ -25,8 +25,8 @@
     "identity:compose:config": "docker compose --env-file .env.identity -f docker-compose.identity.yml config",
     "identity:compose:up": "docker compose --env-file .env.identity -f docker-compose.identity.yml up -d",
     "identity:compose:down": "docker compose --env-file .env.identity -f docker-compose.identity.yml down",
-    "identity:smoke": "tsx scripts/identity-smoke.ts",
-    "identity:workflow-smoke": "tsx scripts/identity-workflow-smoke.ts",
+    "identity:smoke": "tsx backend/scripts/identity-smoke.ts",
+    "identity:workflow-smoke": "tsx backend/scripts/identity-workflow-smoke.ts",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 import {
   getUserPermissions,
   updateUserPermissions,
-} from '@/server/admin/permissions'
+} from '@backend/server/admin/permissions'
 
 export const GET = getUserPermissions
 export const PUT = updateUserPermissions

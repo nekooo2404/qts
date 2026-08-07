@@ -5,18 +5,18 @@ import { z } from 'zod'
 import {
   consumeDistributedRateLimit,
   setCachedJson,
-} from '@/server/identity/cache'
-import { getIdentityConfig } from '@/server/identity/config'
+} from '@backend/server/identity/cache'
+import { getIdentityConfig } from '@backend/server/identity/config'
 import {
   IdentityHttpError,
   identityErrorResponse,
-} from '@/server/identity/http'
+} from '@backend/server/identity/http'
 import {
   authorizationEndpoint,
   createPkcePair,
   oauthStateCookieName,
   safeReturnTo,
-} from '@/server/identity/oauth'
+} from '@backend/server/identity/oauth'
 import { requestIp } from '@/lib/security/request'
 
 export const runtime = 'nodejs'

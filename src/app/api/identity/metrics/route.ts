@@ -1,4 +1,4 @@
-import { renderIdentityMetrics } from '@/server/identity/metrics'
+import { renderIdentityMetrics } from '@backend/server/identity/metrics'
 
 export const runtime = 'nodejs'
 
