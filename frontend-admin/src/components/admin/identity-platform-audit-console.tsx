@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { Filter, LoaderCircle, RefreshCw, ScrollText } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { formatDateTime } from '@/lib/utils'
 
 type AuditEvent = {
   id: string
@@ -140,7 +141,7 @@ export function IdentityPlatformAuditConsole() {
               <tr key={event.id}>
                 <td>
                   <time dateTime={event.createdAt}>
-                    {new Date(event.createdAt).toLocaleString()}
+                    {formatDateTime(event.createdAt)}
                   </time>
                 </td>
                 <td>
