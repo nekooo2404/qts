@@ -1,9 +1,10 @@
 # QTS Technology
 
-The workspace boundaries are documented in [ARCHITECTURE.md](./ARCHITECTURE.md):
-`backend/`, `frontend-client/`, and `frontend-admin/`. The root `src/app`
-directory is intentionally kept as a stable Next.js route shell until the API
-contract is extracted into an independent service.
+The workspace boundaries are documented in
+[`docs/workspace-boundaries.md`](docs/workspace-boundaries.md): `backend/`,
+`frontend-client/`, and `frontend-admin/`. The root `src/app` directory is
+intentionally kept as a stable Next.js route shell until the API contract is
+extracted into an independent service.
 
 Ứng dụng full-stack gồm website doanh nghiệp QTS, QTS Portal và QTS Admin. Website công khai tổ chức nội dung theo mô hình hệ sinh thái B2B; Portal cung cấp dashboard, dự án, công việc, ticket, tài liệu, hợp đồng, hóa đơn, thông báo và hồ sơ; Admin là bề mặt quản trị riêng cho người dùng, nội dung, quyền truy cập và audit.
 
