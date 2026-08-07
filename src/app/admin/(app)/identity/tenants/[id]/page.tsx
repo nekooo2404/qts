@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { IdentityTenantDetailConsole } from '@/components/admin/identity-tenant-detail-console'
+import { IdentityTenantDetailConsole } from '@admin/components/admin/identity-tenant-detail-console'
 import { PortalPageHeader } from '@client/components/portal/portal-page-header'
 
 export const metadata: Metadata = {

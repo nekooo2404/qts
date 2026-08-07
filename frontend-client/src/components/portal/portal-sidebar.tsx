@@ -7,7 +7,10 @@ import type { ComponentType } from 'react'
 
 import { QtsLogo } from '@/components/shared/qts-logo'
 import { Button } from '@/components/ui/button'
-import { adminSurfaceLinks, adminSurfaceNavigation } from '@/config/admin'
+import {
+  adminSurfaceLinks,
+  adminSurfaceNavigation,
+} from '@/config/admin-navigation'
 import { accountNavigation, portalNavigation } from '@client/config/portal'
 import type { AuthUser } from '@/lib/auth/session'
 import {

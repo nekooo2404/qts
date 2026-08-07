@@ -4,7 +4,7 @@ import {
   PermissionWorkbench,
   type PermissionCatalogItem,
   type PermissionUser,
-} from '@/components/admin/permission-workbench'
+} from '@admin/components/admin/permission-workbench'
 import { hasPermission, PERMISSION_CATALOG } from '@/lib/domain/permissions'
 import { requirePortalUser } from '@/lib/auth/guards'
 import { db } from '@/lib/db'

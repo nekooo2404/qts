@@ -6,7 +6,10 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ArrowRight, Search, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { adminSurfaceLinks, adminSurfaceNavigation } from '@/config/admin'
+import {
+  adminSurfaceLinks,
+  adminSurfaceNavigation,
+} from '@/config/admin-navigation'
 import { accountNavigation, portalNavigation } from '@client/config/portal'
 import {
   hasPermission,
