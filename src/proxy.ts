@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 import { getSessionCookieName } from '@/lib/auth/constants'
+import { IDENTITY_SESSION_COOKIE } from '@/server/identity/constants'
 
 const publicPortalRoutes = ['/portal/login', '/portal/forgot-password']
 
@@ -18,7 +19,12 @@ export function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const hasSession = request.cookies.has(getSessionCookieName())
+  const hasLegacySession = request.cookies.has(getSessionCookieName())
+  const hasIdentitySession =
+    pathname === '/admin/identity' || pathname.startsWith('/admin/identity/')
+      ? request.cookies.has(IDENTITY_SESSION_COOKIE)
+      : false
+  const hasSession = hasLegacySession || hasIdentitySession
   if (!hasSession) {
     const loginUrl = new URL('/portal/login', request.url)
     loginUrl.searchParams.set('next', `${pathname}${search}`)

@@ -154,9 +154,33 @@ Playwright tự chạy ứng dụng tại `http://127.0.0.1:3100`. Lệnh E2E s�
 - Công việc: `/portal/dashboard`, `/portal/projects`, `/portal/projects/[id]`, `/portal/tasks`, `/portal/tickets`, `/portal/tickets/[id]`
 - Hồ sơ doanh nghiệp: `/portal/documents`, `/portal/contracts`, `/portal/invoices`, `/portal/notifications`, `/portal/announcements`, `/portal/profile`, `/portal/settings`
 - Admin độc lập: `/admin`, `/admin/users`, `/admin/roles`, `/admin/content`, `/admin/audit-logs`
+- Identity Platform: `/admin/identity/tenants`, `/admin/identity/audit` và chi tiết tenant với members, quyền riêng từng người, applications, IdP, ABAC policies, custom domains và audit trail.
 - `/portal/admin/*` chỉ còn là alias tương thích và được redirect 308 sang `/admin/*`; không phải một bề mặt thứ ba.
 
 Mỗi tài khoản nhận quyền nền từ `RolePermission` và có thể được cấp hoặc từ chối riêng bằng `UserPermission`. Resolver mở rộng các điều kiện tiên quyết (ví dụ `update` cần `read`) và luôn làm cho `DENY` có hiệu lực xuyên suốt các quyền phụ thuộc. Layout, navigation, repository và mutation API đều dùng cùng permission key contract.
+
+## Identity Platform (Keycloak)
+
+Identity Platform là control plane đa tenant nằm quanh Keycloak; nghiệp vụ tenant nằm ở lớp QTS, không đưa vào mã nguồn Keycloak. PostgreSQL/RLS là nguồn dữ liệu tenant, Redis giữ session opaque/PKCE/rate limit, Kong làm gateway và Prometheus/Grafana theo dõi runtime. Sơ đồ kiến trúc, ERD, threat model, chiến lược shared-to-dedicated và roadmap nằm tại [`docs/identity-platform/architecture.md`](docs/identity-platform/architecture.md).
+
+Khởi động stack local (thay toàn bộ mật khẩu mẫu trước khi dùng môi trường dùng chung):
+
+```powershell
+Copy-Item .env.identity.example .env.identity
+npm run identity:compose:config
+npm run identity:compose:up
+npm run identity:smoke
+npm run identity:workflow-smoke
+```
+
+Kong local endpoints: `http://127.0.0.1:8000/api/identity/health` for the
+platform BFF and `http://127.0.0.1:8000/realms/qts-identity` for OIDC
+discovery. The direct Keycloak URL remains available on port `8080` for local
+administration; the gateway does not expose Keycloak admin APIs.
+
+Các endpoint BFF OIDC dùng Authorization Code + PKCE tại `/api/identity/auth/*`; access/refresh token không nằm trong localStorage. Cấu hình IdP chỉ nhận `secret_ref` trỏ tới secret manager và phát outbox event để worker đồng bộ với Keycloak ở bước provisioning tiếp theo. `IDENTITY_DEV_SESSION_BRIDGE=true` chỉ dành cho local, không được bật production; production yêu cầu JWT Keycloak và MFA cho thao tác platform/IdP/policy/application nhạy cảm.
+
+Prometheus scrape `/api/identity/metrics` (chỉ process/dependency gauges, không có tenant data). Đặt `IDENTITY_METRICS_TOKEN` và giới hạn route trong mạng quan sát khi triển khai thật.
 
 ## Thay logo và nội dung công ty
 

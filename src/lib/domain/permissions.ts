@@ -273,6 +273,20 @@ export const PERMISSION_CATALOG = [
     action: 'access',
   },
   {
+    key: 'admin.identity.read',
+    label: 'Xem Identity Platform',
+    description: 'Xem tenant, thành viên và cấu hình danh tính của nền tảng.',
+    module: 'admin.identity',
+    action: 'read',
+  },
+  {
+    key: 'admin.identity.manage',
+    label: 'Quản lý Identity Platform',
+    description: 'Thay đổi tenant, ứng dụng, IdP, policy và quyền thành viên.',
+    module: 'admin.identity',
+    action: 'manage',
+  },
+  {
     key: 'admin.dashboard.read',
     label: 'Xem tổng quan quản trị',
     description: 'Xem chỉ số tổng quan và tình trạng vận hành quản trị.',
@@ -439,6 +453,8 @@ const PERMISSION_IMPLICATIONS = {
   'admin.content.read': ['admin.access'],
   'admin.content.write': ['admin.content.read', 'admin.access'],
   'admin.audit.read': ['admin.access'],
+  'admin.identity.read': ['admin.access'],
+  'admin.identity.manage': ['admin.identity.read', 'admin.access'],
 } as const satisfies Partial<Record<PermissionKey, readonly PermissionKey[]>>
 
 export function expandPermissionKeys(keys: Iterable<string>) {
@@ -521,6 +537,12 @@ export function permissionForPortalRoute(
     adminPath.startsWith('/admin/audit-logs/')
   ) {
     return 'admin.audit.read'
+  }
+  if (
+    adminPath === '/admin/identity' ||
+    adminPath.startsWith('/admin/identity/')
+  ) {
+    return 'admin.identity.read'
   }
   const routeMap: Array<[string, PermissionKey]> = [
     ['/portal/dashboard', 'portal.dashboard.read'],

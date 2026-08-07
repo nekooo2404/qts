@@ -1,0 +1,46 @@
+_format_version: '3.0'
+_transform: true
+
+plugins:
+  - name: prometheus
+    config:
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+
+services:
+  - name: identity-platform-api
+    url: http://host.docker.internal:3100
+    routes:
+      - name: identity-platform-api-route
+        paths:
+          - /api/identity
+        strip_path: false
+    plugins:
+      - name: correlation-id
+        config:
+          header_name: X-Request-Id
+          generator: uuid
+          echo_downstream: true
+      - name: rate-limiting
+        config:
+          minute: 120
+          policy: local
+          limit_by: ip
+
+  - name: keycloak
+    url: http://keycloak:8080
+    routes:
+      - name: keycloak-root-route
+        paths:
+          - /realms
+          - /resources
+          - /js
+          - /robots.txt
+        strip_path: false
+    plugins:
+      - name: correlation-id
+        config:
+          header_name: X-Request-Id
+          generator: uuid
+          echo_downstream: true

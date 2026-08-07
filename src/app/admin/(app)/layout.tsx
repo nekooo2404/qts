@@ -3,12 +3,44 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { PortalShell } from '@/components/portal/portal-shell'
-import { requirePortalUser } from '@/lib/auth/guards'
 import {
   hasPermission,
   permissionForPortalRoute,
 } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
+import { getCurrentUser, type AuthUser } from '@/lib/auth/session'
+import { isIdentityPlatformConfigured } from '@/server/identity/config'
+import {
+  getIdentitySessionPrincipal,
+  principalHasStrongAuthentication,
+} from '@/server/identity/keycloak'
+
+function identityAdminUser(session: {
+  subject: string
+  email: string | null
+  displayName: string | null
+}): AuthUser {
+  const permissions = [
+    'admin.access',
+    'admin.dashboard.read',
+    'admin.identity.read',
+    'admin.audit.read',
+  ] as const
+  return {
+    id: `identity:${session.subject}`,
+    email: session.email ?? 'identity-admin@qts.local',
+    name: session.displayName ?? 'Identity platform administrator',
+    phone: null,
+    title: 'Identity platform administrator',
+    avatarUrl: null,
+    role: 'ADMIN',
+    roleLabel: 'Identity platform administrator',
+    organizationId: null,
+    organizationName: null,
+    permissions: [...permissions],
+    permissionKeys: [...permissions],
+  }
+}
 
 export const metadata: Metadata = {
   title: { default: 'QTS Admin', template: '%s | QTS Admin' },
@@ -20,9 +52,31 @@ export default async function AdminAppLayout({
 }: {
   children: React.ReactNode
 }) {
-  const user = await requirePortalUser()
+  const requestHeaders = await headers()
+  const pathname = requestHeaders.get('x-qts-pathname')
+  const isIdentitySurface = pathname?.startsWith('/admin/identity') ?? false
+  let user =
+    isIdentitySurface && isIdentityPlatformConfigured()
+      ? null
+      : await getCurrentUser()
+  if (isIdentitySurface && isIdentityPlatformConfigured()) {
+    const identityPrincipal = await getIdentitySessionPrincipal()
+    if (identityPrincipal) {
+      if (
+        !identityPrincipal.realmRoles.includes('platform-admin') ||
+        !principalHasStrongAuthentication(identityPrincipal)
+      ) {
+        redirect('/403')
+      }
+      user = identityAdminUser(identityPrincipal)
+    } else if (process.env.NODE_ENV !== 'production') {
+      // The legacy bridge keeps local demo accounts usable while Keycloak is
+      // not populated; production never falls back to the Portal session.
+      user = await getCurrentUser()
+    }
+  }
+  if (!user) redirect('/portal/login')
   if (!hasPermission(user, 'admin.access')) redirect('/403')
-  const pathname = (await headers()).get('x-qts-pathname')
   const requiredPermission = pathname
     ? permissionForPortalRoute(pathname)
     : null

@@ -9,6 +9,7 @@ import {
   LockKeyhole,
   LogIn,
   Mail,
+  ShieldCheck,
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
@@ -35,13 +36,12 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...values, next: nextPath }),
       })
-      const payload = (await response.json()) as {
-        message?: string
-        redirectTo?: string
-        errors?: Record<string, string[] | undefined>
-      }
 
       if (!response.ok) {
+        const payload = (await response.json()) as {
+          message?: string
+          errors?: Record<string, string[] | undefined>
+        }
         if (payload.errors?.email?.[0])
           setError('email', { message: payload.errors.email[0] })
         if (payload.errors?.password?.[0])
@@ -50,6 +50,7 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
         return
       }
 
+      const payload = (await response.json()) as { redirectTo?: string }
       router.replace(payload.redirectTo ?? '/portal/dashboard')
       router.refresh()
     } catch {
@@ -107,6 +108,13 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
         )}
         {isSubmitting ? 'Đang xác thực...' : 'Đăng nhập QTS Portal'}
       </Button>
+      <a
+        className="button button--default button--secondary auth-form__sso-link"
+        href={`/api/identity/auth/start?returnTo=${encodeURIComponent(nextPath)}`}
+      >
+        <ShieldCheck size={18} aria-hidden="true" />
+        Đăng nhập bằng QTS SSO
+      </a>
     </form>
   )
 }

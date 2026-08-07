@@ -56,6 +56,8 @@ next-env.d.ts
 # Playwright
 /playwright-report/
 /test-results/
+/.playwright-cli/
 
 # Keep the documented environment template
 !.env.example
+!.env.identity.example

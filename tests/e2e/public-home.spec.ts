@@ -119,6 +119,236 @@ test('homepage stays in-bounds and reveals its product surface', async ({
   }
 })
 
+test('landing page reveals related content items in a staged sequence', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/')
+
+  const groups = page.locator(
+    'main[data-scroll-reveal] > section[data-reveal-group]',
+  )
+  await expect(groups.first()).toHaveAttribute('data-reveal-group', '1')
+  expect(await groups.count()).toBeGreaterThan(8)
+
+  const items = page.locator('main[data-scroll-reveal] [data-reveal-item]')
+  await expect(items.first()).toHaveAttribute('data-reveal-state', 'visible')
+  expect(await items.count()).toBeGreaterThan(24)
+
+  const platform = page.locator('.platform-section')
+  const productGroups = platform.locator(
+    '.product-catalogue__group[data-reveal-item]',
+  )
+  expect(await productGroups.count()).toBeGreaterThan(3)
+
+  const firstProductGroup = productGroups.first()
+  const lastProductGroup = productGroups.last()
+  await expect(firstProductGroup).toHaveAttribute(
+    'data-reveal-state',
+    'pending',
+  )
+  await expect(lastProductGroup).toHaveAttribute('data-reveal-state', 'pending')
+  await expect(firstProductGroup).toHaveCSS('opacity', '0')
+
+  const layoutBefore = await platform.evaluate((element) => ({
+    offsetHeight: (element as HTMLElement).offsetHeight,
+    offsetTop: (element as HTMLElement).offsetTop,
+  }))
+
+  await firstProductGroup.scrollIntoViewIfNeeded()
+  await expect(firstProductGroup).toHaveAttribute(
+    'data-reveal-state',
+    'visible',
+  )
+  await expect(firstProductGroup).toHaveCSS('opacity', '1')
+  await expect(lastProductGroup).toHaveAttribute('data-reveal-state', 'pending')
+
+  await lastProductGroup.scrollIntoViewIfNeeded()
+  await expect(lastProductGroup).toHaveAttribute('data-reveal-state', 'visible')
+
+  const layoutAfter = await platform.evaluate((element) => ({
+    offsetHeight: (element as HTMLElement).offsetHeight,
+    offsetTop: (element as HTMLElement).offsetTop,
+  }))
+  expect(layoutAfter).toEqual(layoutBefore)
+
+  const revealOrders = await productGroups.evaluateAll((elements) =>
+    elements.map((element) => element.getAttribute('data-reveal-order')),
+  )
+  expect(new Set(revealOrders).size).toBeGreaterThan(2)
+
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await expect(firstProductGroup).toHaveAttribute(
+    'data-reveal-state',
+    'visible',
+  )
+})
+
+test('landing page keeps reveal items visible with reduced motion', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/')
+
+  const items = page.locator('main[data-scroll-reveal] [data-reveal-item]')
+  await expect(items.first()).toHaveAttribute('data-reveal-state', 'visible')
+  expect(await items.count()).toBeGreaterThan(24)
+
+  for (const item of await items.all()) {
+    await expect(item).toHaveAttribute('data-reveal-state', 'visible')
+    await expect(item).toHaveCSS('opacity', '1')
+  }
+})
+
+test('landing page content remains available without client JavaScript', async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false })
+  const page = await context.newPage()
+
+  try {
+    await page.goto('/')
+    const sections = page.locator('main#main-content > section')
+    const solutions = page.locator('.solutions-section')
+    const contact = page.locator('.contact-cta')
+
+    expect(await sections.count()).toBeGreaterThan(8)
+    await expect(solutions).toContainText('Bắt đầu từ nút thắt vận hành')
+    await expect(contact).toContainText('Bắt đầu dự án công nghệ cùng QTS')
+
+    for (const section of [solutions, contact]) {
+      const styles = await section.evaluate((element) => {
+        const computed = getComputedStyle(element)
+        return {
+          display: computed.display,
+          opacity: computed.opacity,
+          visibility: computed.visibility,
+        }
+      })
+
+      expect(styles.display).not.toBe('none')
+      expect(styles.opacity).toBe('1')
+      expect(styles.visibility).toBe('visible')
+    }
+  } finally {
+    await context.close()
+  }
+})
+
+test('hero decisions remain centered and geometrically aligned', async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 320, height: 780 },
+    { width: 375, height: 812 },
+    { width: 768, height: 900 },
+    { width: 1280, height: 800 },
+    { width: 1920, height: 1000 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+
+    const heroButtons = page.locator('.home-hero__actions .button')
+    await expect(heroButtons.first()).toBeVisible()
+    await expect(heroButtons.last()).toBeVisible()
+
+    const geometry = await page.locator('.home-hero').evaluate((hero) => {
+      const content = hero.querySelector<HTMLElement>('.home-hero__content')
+      const actions = hero.querySelector<HTMLElement>('.home-hero__actions')
+      const buttons = Array.from(
+        hero.querySelectorAll<HTMLElement>('.home-hero__actions .button'),
+      )
+      const contentRect = content?.getBoundingClientRect()
+      const buttonRects = buttons.map((button) =>
+        button.getBoundingClientRect(),
+      )
+      const groupLeft = Math.min(...buttonRects.map((rect) => rect.left))
+      const groupRight = Math.max(...buttonRects.map((rect) => rect.right))
+
+      return {
+        buttonHeights: buttonRects.map((rect) => rect.height),
+        buttonTops: buttonRects.map((rect) => rect.top),
+        centerDelta:
+          (groupLeft + groupRight) / 2 -
+          ((contentRect?.left ?? 0) + (contentRect?.right ?? 0)) / 2,
+        flexDirection: actions ? getComputedStyle(actions).flexDirection : '',
+        whiteSpace: buttons.map(
+          (button) => getComputedStyle(button).whiteSpace,
+        ),
+      }
+    })
+
+    expect(
+      Math.abs(geometry.centerDelta),
+      `${viewport.width}px hero decisions are off-center`,
+    ).toBeLessThanOrEqual(1)
+    expect(new Set(geometry.buttonHeights).size).toBe(1)
+    expect(Math.min(...geometry.buttonHeights)).toBeGreaterThanOrEqual(44)
+    expect(geometry.whiteSpace).toEqual(['nowrap', 'nowrap'])
+
+    if (geometry.flexDirection === 'row') {
+      expect(
+        Math.max(...geometry.buttonTops) - Math.min(...geometry.buttonTops),
+      ).toBeLessThanOrEqual(1)
+    }
+  }
+})
+
+test('homepage affordances use direction-aware motion feedback', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/')
+
+  const primaryDecision = page.locator('.home-hero__decision--primary')
+  const ecosystemDecision = page.locator('.home-hero__decision--ecosystem')
+  await expect(primaryDecision).toBeVisible()
+  await expect(ecosystemDecision).toBeVisible()
+
+  await primaryDecision.hover()
+  await expect
+    .poll(() =>
+      primaryDecision
+        .locator('svg')
+        .evaluate(
+          (icon) => new DOMMatrix(getComputedStyle(icon).transform).m41,
+        ),
+    )
+    .toBeGreaterThanOrEqual(3)
+
+  await ecosystemDecision.hover()
+  await expect
+    .poll(() =>
+      ecosystemDecision
+        .locator('svg')
+        .evaluate(
+          (icon) => new DOMMatrix(getComputedStyle(icon).transform).m42,
+        ),
+    )
+    .toBeGreaterThanOrEqual(3)
+
+  const productCard = page.locator('.product-card').first()
+  await productCard.scrollIntoViewIfNeeded()
+  await productCard.hover()
+  await expect
+    .poll(() =>
+      productCard
+        .locator('.product-card__arrow')
+        .evaluate(
+          (icon) => new DOMMatrix(getComputedStyle(icon).transform).m41,
+        ),
+    )
+    .toBeGreaterThanOrEqual(3)
+
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await primaryDecision.hover()
+  const reducedMotionShift = await primaryDecision
+    .locator('svg')
+    .evaluate((icon) => new DOMMatrix(getComputedStyle(icon).transform).m41)
+  expect(reducedMotionShift).toBe(0)
+})
+
 test('header changes mode before desktop navigation can overlap actions', async ({
   page,
 }) => {
@@ -170,6 +400,49 @@ test('header changes mode before desktop navigation can overlap actions', async 
       ).toBeLessThanOrEqual(geometry.actionsLeft + 1)
     }
   }
+})
+
+test('scrolled desktop header masks content beneath the floating navigation', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/')
+  await page.evaluate(() => window.scrollTo(0, 180))
+
+  const header = page.locator('.public-header')
+  await expect(header).toHaveClass(/public-header--scrolled/)
+
+  const geometry = await header.evaluate((element) => {
+    const inner = element.querySelector<HTMLElement>('.public-header__inner')
+    const logo = element.querySelector<HTMLElement>('.qts-logo')
+    const actions = element.querySelector<HTMLElement>(
+      '.public-header__actions',
+    )
+    const headerRect = element.getBoundingClientRect()
+    const innerRect = inner?.getBoundingClientRect()
+    const logoRect = logo?.getBoundingClientRect()
+    const actionsRect = actions?.getBoundingClientRect()
+
+    return {
+      backgroundColor: getComputedStyle(element).backgroundColor,
+      headerTop: headerRect.top,
+      headerBottom: headerRect.bottom,
+      innerTop: innerRect?.top ?? Number.NEGATIVE_INFINITY,
+      innerBottom: innerRect?.bottom ?? Number.POSITIVE_INFINITY,
+      leftInset:
+        (logoRect?.left ?? Number.NEGATIVE_INFINITY) -
+        (innerRect?.left ?? Number.POSITIVE_INFINITY),
+      rightInset:
+        (innerRect?.right ?? Number.NEGATIVE_INFINITY) -
+        (actionsRect?.right ?? Number.POSITIVE_INFINITY),
+    }
+  })
+
+  expect(geometry.backgroundColor).not.toBe('rgba(0, 0, 0, 0)')
+  expect(geometry.innerTop).toBeGreaterThanOrEqual(geometry.headerTop)
+  expect(geometry.innerBottom).toBeLessThanOrEqual(geometry.headerBottom)
+  expect(geometry.leftInset).toBeGreaterThanOrEqual(16)
+  expect(geometry.rightInset).toBeGreaterThanOrEqual(16)
 })
 
 test('public routes stay within the viewport on compact mobile screens', async ({

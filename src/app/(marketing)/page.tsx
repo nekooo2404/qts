@@ -7,6 +7,7 @@ import { BlogCard } from '@/components/public/blog-card'
 import { CaseStudyCard } from '@/components/public/case-study-card'
 import { HeroSection } from '@/components/public/hero-section'
 import { HomeFaq } from '@/components/public/home-faq'
+import { LandingPageReveal } from '@/components/public/landing-page-reveal'
 import { ProcessTimeline } from '@/components/public/process-timeline'
 import { ProductCatalogue } from '@/components/public/product-catalogue'
 import { QuoteRequestForm } from '@/components/public/quote-request-form'
@@ -63,7 +64,7 @@ export default async function HomePage() {
   )
 
   return (
-    <main id="main-content">
+    <LandingPageReveal>
       <HeroSection />
 
       <section
@@ -256,6 +257,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-    </main>
+    </LandingPageReveal>
   )
 }

@@ -35,8 +35,16 @@ export function PublicHeader() {
 
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
+    // Hydration and browser scroll restoration can race the first scroll
+    // event, especially when smooth scrolling is enabled on the document.
+    const settleTimers = [0, 120, 600].map((delay) =>
+      window.setTimeout(onScroll, delay),
+    )
 
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      settleTimers.forEach((timer) => window.clearTimeout(timer))
+    }
   }, [])
 
   useEffect(() => {

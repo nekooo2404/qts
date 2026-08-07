@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowDown, ArrowRight, Check } from 'lucide-react'
 
 import { EcosystemHeroVisual } from '@/components/public/ecosystem-hero-visual'
 import { buttonVariants } from '@/components/ui/button'
@@ -42,16 +42,24 @@ export function HeroSection() {
           </ul>
           <div className="home-hero__actions">
             <Link
-              className={cn(buttonVariants({ variant: 'primary' }))}
+              className={cn(
+                buttonVariants({ variant: 'primary' }),
+                'home-hero__decision home-hero__decision--primary',
+              )}
               href="/lien-he"
             >
-              Nhận tư vấn <ArrowRight size={17} aria-hidden="true" />
+              <span>Nhận tư vấn</span>
+              <ArrowRight size={17} aria-hidden="true" />
             </Link>
             <Link
-              className={cn(buttonVariants({ variant: 'secondary' }))}
+              className={cn(
+                buttonVariants({ variant: 'secondary' }),
+                'home-hero__decision home-hero__decision--ecosystem',
+              )}
               href="#he-sinh-thai"
             >
-              Xem hệ sinh thái
+              <span>Xem hệ sinh thái</span>
+              <ArrowDown size={17} aria-hidden="true" />
             </Link>
           </div>
         </div>

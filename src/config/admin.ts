@@ -1,6 +1,8 @@
 import {
   ArrowLeftRight,
   BookOpenText,
+  Building2,
+  Fingerprint,
   LayoutDashboard,
   ScrollText,
   ShieldCheck,
@@ -24,6 +26,18 @@ export const adminSurfaceNavigation = [
     href: '/admin/users',
     icon: UsersRound,
     permission: 'admin.users.read',
+  },
+  {
+    label: 'Identity tenants',
+    href: '/admin/identity/tenants',
+    icon: Building2,
+    permission: 'admin.identity.read',
+  },
+  {
+    label: 'Identity audit',
+    href: '/admin/identity/audit',
+    icon: Fingerprint,
+    permission: 'admin.identity.read',
   },
   {
     label: 'Quyền truy cập',
