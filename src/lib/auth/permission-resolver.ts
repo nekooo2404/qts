@@ -64,12 +64,3 @@ export function resolvePermissionKeys(
     (item) => item.key,
   )
 }
-
-export function getPermissionAssignments<T extends PermissionAssignment>(
-  assignments: readonly T[],
-) {
-  return assignments.map((assignment) => ({
-    key: assignment.key,
-    effect: assignment.effect,
-  }))
-}

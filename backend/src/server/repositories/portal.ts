@@ -52,13 +52,6 @@ export function ticketScope(user: AuthUser): Prisma.TicketWhereInput {
   return { organizationId: user.organizationId ?? impossibleOrganizationId }
 }
 
-export function organizationScope(
-  user: AuthUser,
-): Prisma.OrganizationWhereInput {
-  if (hasPermission(user, 'portal.projects.read.all')) return {}
-  return { id: user.organizationId ?? impossibleOrganizationId }
-}
-
 export type ResourceKind = 'documents' | 'contracts' | 'invoices'
 
 export function resourceOrganizationFilter(

@@ -602,15 +602,3 @@ function subjectOrRole(
 export function canManageBlog(subject: RoleName | PermissionSubject) {
   return hasPermission(subjectOrRole(subject), 'admin.content.write')
 }
-
-export function canManageProjects(subject: RoleName | PermissionSubject) {
-  return hasPermission(subjectOrRole(subject), 'portal.projects.update')
-}
-
-export function canManageTasks(subject: RoleName | PermissionSubject) {
-  return hasPermission(subjectOrRole(subject), 'portal.tasks.update')
-}
-
-export function canManageTicketStatus(subject: RoleName | PermissionSubject) {
-  return hasPermission(subjectOrRole(subject), 'portal.tickets.manage')
-}

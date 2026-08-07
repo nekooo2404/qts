@@ -2777,47 +2777,6 @@ h4 {
   text-align: center;
 }
 
-.testimonial-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-6);
-}
-
-.testimonial-card {
-  display: grid;
-  gap: var(--space-5);
-  margin: 0;
-  padding: var(--space-6);
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-}
-
-.testimonial-card > svg {
-  color: var(--color-brand);
-}
-
-.testimonial-card blockquote {
-  margin: 0;
-  color: var(--color-ink-muted);
-}
-
-.testimonial-card figcaption {
-  display: grid;
-  font-size: var(--text-sm);
-}
-
-.testimonial-card figcaption span,
-.testimonial-card > small {
-  color: var(--color-ink-soft);
-}
-
-.testimonial-card > small {
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-line);
-  font-size: var(--text-xs);
-}
-
 .empty-public-state .container--narrow {
   display: grid;
   justify-items: start;
@@ -6366,8 +6325,7 @@ h4 {
 
   .delivery-grid,
   .case-detail__grid,
-  .customer-directory,
-  .testimonial-grid {
+  .customer-directory {
     grid-template-columns: minmax(0, 1fr);
   }
 

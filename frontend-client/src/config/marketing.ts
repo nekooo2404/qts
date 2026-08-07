@@ -273,39 +273,6 @@ export const serviceDetails = {
   },
 } as const
 
-export const ecosystemItems = [
-  serviceDetails['thiet-ke-website'],
-  serviceDetails['phat-trien-phan-mem'],
-  {
-    name: 'QTS Portal',
-    shortName: 'QTS Portal',
-    description:
-      'Một điểm làm việc chung cho dự án, ticket, tài liệu, hợp đồng và thông báo.',
-    benefits: [
-      'Theo dõi tiến độ',
-      'Trao đổi tập trung',
-      'Dữ liệu theo vai trò',
-    ],
-    deliverables: ['Portal khách hàng'],
-    icon: 'PanelsTopLeft',
-  },
-  serviceDetails['tich-hop-he-thong'],
-  {
-    name: 'Data Dashboard',
-    shortName: 'Data Dashboard',
-    description:
-      'Tập hợp chỉ số vận hành quan trọng thành góc nhìn dễ theo dõi và ra quyết định.',
-    benefits: [
-      'Chỉ số có nguồn',
-      'Bộ lọc theo vai trò',
-      'Cảnh báo theo ngưỡng',
-    ],
-    deliverables: ['Dashboard quản trị'],
-    icon: 'ChartNoAxesCombined',
-  },
-  serviceDetails['bao-tri-van-hanh'],
-] as const
-
 export const platformGroups = [
   {
     id: 'work-platforms',
@@ -684,15 +651,4 @@ export const qtsAdvantages = [
     'Đồng hành sau triển khai',
     'Ticket, tài liệu và lịch sử hỗ trợ nằm trong cùng một cổng thông tin.',
   ],
-] as const
-
-export const portalCapabilities = [
-  'Quản lý dự án',
-  'Quản lý yêu cầu hỗ trợ',
-  'Theo dõi tiến độ',
-  'Chia sẻ tài liệu',
-  'Quản lý hợp đồng',
-  'Tra cứu hóa đơn',
-  'Thông báo tập trung',
-  'Báo cáo tổng quan',
 ] as const
