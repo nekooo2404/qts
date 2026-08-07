@@ -2,10 +2,10 @@ import 'server-only'
 
 import type { QueryResultRow } from 'pg'
 
+import { recordTenantAudit } from '@backend/server/identity/audit-writer'
 import { withTenantTransaction } from '@backend/server/identity/database'
 import { IdentityHttpError } from '@backend/server/identity/http'
 import { policyConditionsSchema } from '@backend/server/identity/schemas'
-import { recordTenantAudit } from '@backend/server/identity/tenant-service'
 import type { AbacPolicy, PolicyEffect } from '@backend/server/identity/types'
 
 type PolicyRow = QueryResultRow & {

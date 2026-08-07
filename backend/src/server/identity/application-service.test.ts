@@ -14,7 +14,7 @@ vi.mock('@backend/server/identity/database', () => ({
   ) => operation({ query: mocks.query }),
 }))
 
-vi.mock('@backend/server/identity/tenant-service', () => ({
+vi.mock('@backend/server/identity/audit-writer', () => ({
   recordTenantAudit: mocks.audit,
 }))
 

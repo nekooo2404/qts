@@ -3,9 +3,9 @@ import 'server-only'
 import { randomBytes, timingSafeEqual } from 'node:crypto'
 import type { QueryResultRow } from 'pg'
 
+import { recordTenantAudit } from '@backend/server/identity/audit-writer'
 import { withTenantTransaction } from '@backend/server/identity/database'
 import { IdentityHttpError } from '@backend/server/identity/http'
-import { recordTenantAudit } from '@backend/server/identity/tenant-service'
 import { sha256 } from '@/lib/security/hash'
 
 type ApplicationStatus = 'ACTIVE' | 'SUSPENDED' | 'REVOKED'

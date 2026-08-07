@@ -3,9 +3,9 @@ import 'server-only'
 import type { QueryResultRow } from 'pg'
 import { z } from 'zod'
 
+import { recordTenantAudit } from '@backend/server/identity/audit-writer'
 import { withTenantTransaction } from '@backend/server/identity/database'
 import { IdentityHttpError } from '@backend/server/identity/http'
-import { recordTenantAudit } from '@backend/server/identity/tenant-service'
 
 export const IDENTITY_PROVIDER_TYPES = [
   'GOOGLE',

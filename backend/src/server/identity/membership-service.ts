@@ -3,11 +3,11 @@ import 'server-only'
 import { randomBytes } from 'node:crypto'
 import type { QueryResultRow } from 'pg'
 
+import { recordTenantAudit } from '@backend/server/identity/audit-writer'
 import { withTenantTransaction } from '@backend/server/identity/database'
 import { IdentityHttpError } from '@backend/server/identity/http'
 import { policyConditionsSchema } from '@backend/server/identity/schemas'
 import { sha256 } from '@/lib/security/hash'
-import { recordTenantAudit } from '@backend/server/identity/tenant-service'
 import { getMembershipRoleMutationError } from '@backend/server/identity/membership-policy'
 import type {
   AbacPolicy,
