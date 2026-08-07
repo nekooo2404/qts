@@ -1,7 +1,7 @@
 import 'server-only'
 
 import type { Prisma } from '@backend/generated/prisma/client'
-import type { AuthUser } from '@/lib/auth/session'
+import type { AuthUser } from '@/lib/auth/types'
 import { hasPermission } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
 

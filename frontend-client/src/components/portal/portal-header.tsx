@@ -12,7 +12,7 @@ import {
 import { PortalBreadcrumb } from '@client/components/portal/portal-breadcrumb'
 import { PortalSearch } from '@client/components/portal/portal-search'
 import { Button } from '@/components/ui/button'
-import type { AuthUser } from '@/lib/auth/session'
+import type { AuthUser } from '@/lib/auth/types'
 import { hasPermission } from '@/lib/domain/permissions'
 
 type PortalHeaderProps = {

@@ -8,7 +8,8 @@ import {
   permissionForPortalRoute,
 } from '@/lib/domain/permissions'
 import { db } from '@/lib/db'
-import { getCurrentUser, type AuthUser } from '@/lib/auth/session'
+import { getCurrentUser } from '@/lib/auth/session'
+import type { AuthUser } from '@/lib/auth/types'
 import { isIdentityPlatformConfigured } from '@backend/server/identity/config'
 import {
   getIdentitySessionPrincipal,

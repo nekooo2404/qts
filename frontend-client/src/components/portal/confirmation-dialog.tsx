@@ -7,7 +7,7 @@ import { LoaderCircle, Trash2, X } from 'lucide-react'
 import {
   FormFeedback,
   type FormFeedbackValue,
-} from '@client/components/portal/form-feedback'
+} from '@/components/shared/form-feedback'
 import { Button } from '@/components/ui/button'
 
 type ConfirmationDialogProps = {

@@ -6,29 +6,12 @@ import { cookies } from 'next/headers'
 
 import { getSessionCookieName } from '@/lib/auth/constants'
 import { resolvePermissionKeys } from '@/lib/auth/permission-resolver'
-import type { PermissionKey, RoleName } from '@/lib/domain/permissions'
+import type { AuthUser } from '@/lib/auth/types'
 import { db } from '@/lib/db'
 import { sha256 } from '@/lib/security/hash'
 import { requestIp } from '@/lib/security/request'
 
 const DEFAULT_SESSION_TTL_DAYS = 7
-
-export type AuthUser = {
-  id: string
-  email: string
-  name: string
-  phone: string | null
-  title: string | null
-  avatarUrl: string | null
-  role: RoleName
-  roleLabel: string
-  organizationId: string | null
-  organizationName: string | null
-  /** Effective role defaults after per-account ALLOW/DENY overrides. */
-  permissions: PermissionKey[]
-  /** Stable alias used by navigation and server guards. */
-  permissionKeys: PermissionKey[]
-}
 
 function sessionTtlDays() {
   const configured = Number(process.env.SESSION_TTL_DAYS)

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import {
   FormFeedback,
   type FormFeedbackValue,
-} from '@client/components/portal/form-feedback'
+} from '@/components/shared/form-feedback'
 import { Button } from '@/components/ui/button'
 import { statusLabels } from '@client/config/portal'
 import { apiMutation } from '@/lib/client/api'

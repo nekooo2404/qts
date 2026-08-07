@@ -8,7 +8,7 @@ import { PortalHeader } from '@client/components/portal/portal-header'
 import { type HeaderNotification } from '@client/components/portal/notification-menu'
 import { PortalSidebar } from '@client/components/portal/portal-sidebar'
 import { Button } from '@/components/ui/button'
-import type { AuthUser } from '@/lib/auth/session'
+import type { AuthUser } from '@/lib/auth/types'
 import { cn } from '@/lib/utils'
 
 export function PortalShell({

@@ -2,7 +2,8 @@ import 'server-only'
 
 import { NextResponse } from 'next/server'
 
-import { getCurrentUser, type AuthUser } from '@/lib/auth/session'
+import { getCurrentUser } from '@/lib/auth/session'
+import type { AuthUser } from '@/lib/auth/types'
 import { hasPermission, type PermissionKey } from '@/lib/domain/permissions'
 import { messageResponse } from '@/lib/http/response'
 import { isSameOriginRequest } from '@/lib/security/request'

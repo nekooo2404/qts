@@ -12,7 +12,7 @@ import {
   adminSurfaceNavigation,
 } from '@/config/admin-navigation'
 import { accountNavigation, portalNavigation } from '@client/config/portal'
-import type { AuthUser } from '@/lib/auth/session'
+import type { AuthUser } from '@/lib/auth/types'
 import {
   hasPermission,
   permissionForPortalRoute,

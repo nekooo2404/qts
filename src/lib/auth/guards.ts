@@ -7,7 +7,8 @@ import {
   hasPermission,
   type PermissionKey,
 } from '@/lib/domain/permissions'
-import { getCurrentUser, type AuthUser } from '@/lib/auth/session'
+import { getCurrentUser } from '@/lib/auth/session'
+import type { AuthUser } from '@/lib/auth/types'
 
 export class ForbiddenError extends Error {
   constructor(message = 'Bạn không có quyền thực hiện thao tác này.') {
