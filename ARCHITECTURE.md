@@ -19,7 +19,6 @@ frontend-client/
 
 frontend-admin/
   src/components/admin/   Platform Admin and Identity Console UI
-  src/config/              Admin compatibility/navigation entrypoint
 
 src/                         Next route shell and shared platform foundation
   app/                       URL adapters for /, /portal, /admin and /api
