@@ -16,14 +16,6 @@ export type KeycloakTokenResponse = {
   session_state?: string
 }
 
-export type OauthState = {
-  tenantId: string | null
-  codeVerifier: string
-  nonce: string
-  returnTo: string
-  createdAt: number
-}
-
 export const OAUTH_STATE_COOKIE_PREFIX = 'qts_identity_oauth_state_'
 
 /**
@@ -50,16 +42,6 @@ export function createPkcePair() {
     .update(codeVerifier)
     .digest('base64url')
   return { codeVerifier, codeChallenge }
-}
-
-export function createOauthState(): Omit<
-  OauthState,
-  'tenantId' | 'returnTo' | 'createdAt'
-> {
-  return {
-    codeVerifier: createPkcePair().codeVerifier,
-    nonce: randomBytes(24).toString('base64url'),
-  }
 }
 
 function tokenEndpoint() {
@@ -147,25 +129,5 @@ export async function revokeKeycloakToken(token: string) {
     })
   } catch {
     // Session deletion remains authoritative if the provider is unavailable.
-  }
-}
-
-export function safeReturnTo(value: string | null | undefined) {
-  if (!value || !value.startsWith('/') || value.startsWith('//'))
-    return '/portal/dashboard'
-  try {
-    const url = new URL(value, 'http://qts.local')
-    if (url.origin !== 'http://qts.local') return '/portal/dashboard'
-    const allowedPath =
-      url.pathname === '/portal' ||
-      url.pathname.startsWith('/portal/') ||
-      url.pathname === '/admin' ||
-      url.pathname.startsWith('/admin/')
-    if (!allowedPath) {
-      return '/portal/dashboard'
-    }
-    return `${url.pathname}${url.search}`
-  } catch {
-    return '/portal/dashboard'
   }
 }

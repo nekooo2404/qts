@@ -8,8 +8,8 @@ import {
   createPkcePair,
   matchesOauthStateCookie,
   oauthStateCookieName,
-  safeReturnTo,
 } from '@backend/server/identity/oauth'
+import { sanitizeNextPath } from '@/lib/security/request'
 
 describe('identity OAuth contract', () => {
   it('creates an RFC 7636 S256 verifier/challenge pair', () => {
@@ -21,11 +21,11 @@ describe('identity OAuth contract', () => {
   })
 
   it('allows only local portal/admin return paths', () => {
-    expect(safeReturnTo('/admin/identity/tenants?tab=a')).toBe(
+    expect(sanitizeNextPath('/admin/identity/tenants?tab=a')).toBe(
       '/admin/identity/tenants?tab=a',
     )
-    expect(safeReturnTo('https://evil.example')).toBe('/portal/dashboard')
-    expect(safeReturnTo('/portalist')).toBe('/portal/dashboard')
+    expect(sanitizeNextPath('https://evil.example')).toBe('/portal/dashboard')
+    expect(sanitizeNextPath('/portalist')).toBe('/portal/dashboard')
   })
 
   it('binds OAuth state to a browser cookie without sharing cookie names', () => {

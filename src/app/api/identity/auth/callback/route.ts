@@ -15,9 +15,9 @@ import {
   exchangeAuthorizationCode,
   matchesOauthStateCookie,
   oauthStateCookieName,
-  safeReturnTo,
 } from '@backend/server/identity/oauth'
 import { verifyIdentityTokenValue } from '@backend/server/identity/keycloak'
+import { sanitizeNextPath } from '@/lib/security/request'
 
 export const runtime = 'nodejs'
 
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
       accessTokenExpiresAt: Date.now() + tokens.expires_in * 1000,
     })
     return Response.redirect(
-      new URL(safeReturnTo(stored.returnTo), request.url),
+      new URL(sanitizeNextPath(stored.returnTo), request.url),
     )
   } catch (error) {
     return identityErrorResponse(error)

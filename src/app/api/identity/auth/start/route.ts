@@ -15,9 +15,8 @@ import {
   authorizationEndpoint,
   createPkcePair,
   oauthStateCookieName,
-  safeReturnTo,
 } from '@backend/server/identity/oauth'
-import { requestIp } from '@/lib/security/request'
+import { requestIp, sanitizeNextPath } from '@/lib/security/request'
 
 export const runtime = 'nodejs'
 
@@ -56,7 +55,7 @@ export async function GET(request: Request) {
         'tenantId must be a UUID.',
       )
     }
-    const returnTo = safeReturnTo(url.searchParams.get('returnTo'))
+    const returnTo = sanitizeNextPath(url.searchParams.get('returnTo'))
     const { codeVerifier, codeChallenge } = createPkcePair()
     const state = randomBytes(32).toString('base64url')
     const nonce = randomBytes(24).toString('base64url')
