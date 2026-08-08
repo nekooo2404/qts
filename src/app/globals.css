@@ -9242,7 +9242,8 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   right: 0;
   bottom: 0;
   width: 1px;
-  background: var(--color-line);
+  display: none;
+  background: transparent;
   content: '';
 }
 
@@ -9326,6 +9327,29 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   background: var(--color-auth-stage);
   color: var(--color-ink);
   isolation: isolate;
+}
+
+.portal-auth-layout__visual::before {
+  position: absolute;
+  inset: -2rem -2rem -2rem -8rem;
+  z-index: -4;
+  background: var(--color-auth-stage-depth);
+  content: '';
+  filter: blur(2rem);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 20%,
+    black 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 20%,
+    black 100%
+  );
+  pointer-events: none;
+  transform: translateZ(0);
 }
 
 .portal-auth-layout__visual .portal-preview {
@@ -9576,7 +9600,7 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   align-items: center;
   border-block: 1px solid var(--color-auth-stage-line);
   padding-inline: var(--space-2);
-  color: var(--color-ink-soft);
+  color: var(--color-ink-muted);
   font-family: var(--font-mono);
   font-size: 0.64rem;
   letter-spacing: 0.08em;
@@ -9628,7 +9652,7 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   gap: var(--space-4);
   border-top: 1px solid var(--color-auth-stage-line);
   padding-top: var(--space-4);
-  color: var(--color-ink-soft);
+  color: var(--color-ink-muted);
   font-family: var(--font-mono);
   font-size: 0.62rem;
   letter-spacing: 0.08em;
@@ -9838,6 +9862,22 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
     order: 2;
     min-height: 30rem;
     padding: var(--space-10) var(--space-6) var(--space-8);
+  }
+
+  .portal-auth-layout__visual::before {
+    inset: -6rem -2rem -2rem;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 14%,
+      black 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 14%,
+      black 100%
+    );
   }
 
   .auth-space__content h2 {

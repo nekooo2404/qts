@@ -113,6 +113,11 @@
     var(--color-brand) 24%
   );
   --color-auth-stage: var(--color-auth-canvas);
+  --color-auth-stage-depth: color-mix(
+    in srgb,
+    var(--color-auth-canvas) 86%,
+    var(--color-brand) 14%
+  );
   --color-auth-stage-surface: color-mix(
     in srgb,
     var(--color-brand-soft) 54%,
