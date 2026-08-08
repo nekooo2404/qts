@@ -14,6 +14,7 @@ import {
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { loginSchema, type LoginInput } from '@/lib/validation/forms'
 
 export function LoginForm({ nextPath }: { nextPath: string }) {
@@ -64,35 +65,48 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
     <form className="auth-form" onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="field">
         <label htmlFor="login-email">Email</label>
-        <div className="auth-input">
+        <div className={cn('auth-input', errors.email && 'is-invalid')}>
           <Mail size={18} aria-hidden="true" />
           <input
             id="login-email"
             type="email"
             autoComplete="email"
             aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? 'login-email-error' : undefined}
+            required
+            spellCheck={false}
             {...register('email')}
           />
         </div>
-        {errors.email && <p className="field__error">{errors.email.message}</p>}
+        {errors.email && (
+          <p id="login-email-error" className="field__error">
+            {errors.email.message}
+          </p>
+        )}
       </div>
       <div className="field">
         <div className="auth-form__label-row">
           <label htmlFor="login-password">Mật khẩu</label>
           <Link href="/portal/forgot-password">Quên mật khẩu?</Link>
         </div>
-        <div className="auth-input">
+        <div className={cn('auth-input', errors.password && 'is-invalid')}>
           <LockKeyhole size={18} aria-hidden="true" />
           <input
             id="login-password"
             type="password"
             autoComplete="current-password"
             aria-invalid={Boolean(errors.password)}
+            aria-describedby={
+              errors.password ? 'login-password-error' : undefined
+            }
+            required
             {...register('password')}
           />
         </div>
         {errors.password && (
-          <p className="field__error">{errors.password.message}</p>
+          <p id="login-password-error" className="field__error">
+            {errors.password.message}
+          </p>
         )}
       </div>
       {rootError && (
@@ -100,7 +114,11 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
           <CircleAlert size={18} aria-hidden="true" /> {rootError}
         </p>
       )}
-      <Button type="submit" disabled={isSubmitting}>
+      <Button
+        className="auth-form__submit"
+        type="submit"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? (
           <LoaderCircle className="is-spinning" size={18} aria-hidden="true" />
         ) : (
@@ -108,6 +126,9 @@ export function LoginForm({ nextPath }: { nextPath: string }) {
         )}
         {isSubmitting ? 'Đang xác thực...' : 'Đăng nhập QTS Portal'}
       </Button>
+      <div className="auth-form__separator" aria-hidden="true">
+        <span>hoặc</span>
+      </div>
       <a
         className="button button--default button--secondary auth-form__sso-link"
         href={`/api/identity/auth/start?returnTo=${encodeURIComponent(nextPath)}`}

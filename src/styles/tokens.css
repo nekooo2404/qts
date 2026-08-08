@@ -77,6 +77,38 @@
   --shadow-sm: 0 1px 2px var(--color-shadow);
   --shadow-md: 0 12px 32px var(--color-shadow);
   --shadow-focus: 0 0 0 3px var(--color-brand-soft);
+  --color-auth-stage-grid: color-mix(
+    in srgb,
+    var(--color-dark-ink) 12%,
+    transparent
+  );
+  --color-auth-stage-line: color-mix(
+    in srgb,
+    var(--color-dark-ink) 20%,
+    transparent
+  );
+  --color-auth-stage-glow: color-mix(
+    in srgb,
+    var(--color-data) 28%,
+    transparent
+  );
+  --color-auth-panel: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  --shadow-auth-panel: 0 2rem 5rem
+    color-mix(in srgb, var(--color-ink) 24%, transparent);
+  --color-auth-space-glass: color-mix(
+    in srgb,
+    var(--color-dark-surface) 64%,
+    transparent
+  );
+  --color-auth-space-glass-line: color-mix(
+    in srgb,
+    var(--color-dark-ink) 28%,
+    transparent
+  );
+  --shadow-auth-space-window: 0 2.5rem 5rem
+    color-mix(in srgb, var(--color-ink) 38%, transparent);
+  --shadow-auth-space-preview: 0 1.5rem 3rem
+    color-mix(in srgb, var(--color-ink) 34%, transparent);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);

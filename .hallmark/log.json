@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-08-08",
+    "scope": "page",
+    "genre": "modern-minimal",
+    "macrostructure": "Spatial Gateway",
+    "theme": "QTS locked system",
+    "vibe": "layered enterprise workspace, calm access confidence",
+    "enrichment": "centered glass workspace window with comfortable FOV and live DOM portal preview",
+    "validation": "spatial review pass at 320-1440px; axe 0; reduced-motion pass",
+    "brief": "Redesign the Portal login as a responsive spatial access surface."
+  },
+  {
     "date": "2026-08-05",
     "genre": "modern-minimal",
     "macrostructure": "Ecosystem Index",

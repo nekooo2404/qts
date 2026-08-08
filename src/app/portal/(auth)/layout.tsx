@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { PortalPreview } from '@client/components/public/portal-preview'
+import { AuthSpatialScene } from '@client/components/portal/auth-spatial-scene'
 import { QtsLogo } from '@/components/shared/qts-logo'
 
 export const metadata: Metadata = {
@@ -18,26 +18,26 @@ export default function PortalAuthLayout({
     <main id="main-content" className="portal-auth-layout">
       <section className="portal-auth-layout__form">
         <div className="portal-auth-layout__form-inner">
-          <QtsLogo />
-          <div>{children}</div>
+          <div className="portal-auth-layout__brand-row">
+            <QtsLogo />
+            <span className="portal-auth-layout__access-status">
+              <i aria-hidden="true" />
+              Cổng nội bộ
+            </span>
+          </div>
+          <div className="portal-auth-layout__content">{children}</div>
           <p className="portal-auth-layout__legal">
-            Chỉ dành cho tài khoản được cấp quyền.{' '}
-            <Link href="/dieu-khoan-su-dung">Điều khoản sử dụng</Link>
+            Chỉ dành cho tài khoản được cấp quyền ·{' '}
+            <Link
+              href="/dieu-khoan-su-dung"
+              aria-label="Đọc điều khoản sử dụng"
+            >
+              Điều khoản
+            </Link>
           </p>
         </div>
       </section>
-      <aside className="portal-auth-layout__visual">
-        <div>
-          <span className="eyebrow">QTS Portal</span>
-          <h2>Mọi hoạt động dự án trong một không gian có phân quyền</h2>
-          <p>
-            Dự án, ticket, tài liệu, hợp đồng và thông báo được kết nối theo
-            đúng vai trò.
-          </p>
-        </div>
-        <PortalPreview compact />
-        <small>Bản xem trước dùng dữ liệu demo.</small>
-      </aside>
+      <AuthSpatialScene />
     </main>
   )
 }
