@@ -659,6 +659,14 @@ h4 {
   line-height: 1.55;
 }
 
+.checkbox-field__copy .inline-link {
+  display: inline-block;
+  min-height: 0;
+  line-height: inherit;
+  vertical-align: baseline;
+  color: var(--color-brand-hover);
+}
+
 .checkbox-field:hover {
   border-color: var(--color-line-strong);
   background: var(--color-surface-subtle);
