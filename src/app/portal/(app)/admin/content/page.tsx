@@ -5,9 +5,11 @@ import {
   LayoutTemplate,
   Plus,
   Settings2,
+  WalletCards,
 } from 'lucide-react'
 
 import { BlogPostForm } from '@client/components/portal/blog-post-form'
+import { BudgetOptionEditor } from '@client/components/portal/budget-option-editor'
 import {
   CaseStudyEditor,
   ServiceEditor,
@@ -25,15 +27,20 @@ export const metadata: Metadata = { title: 'Quản lý nội dung' }
 export default async function AdminContentPage() {
   const currentUser = await requirePortalUser()
   const canWrite = hasPermission(currentUser, 'admin.content.write')
-  const [posts, services, caseStudies, settings] = await Promise.all([
-    db.blogPost.findMany({
-      include: { author: { select: { name: true } } },
-      orderBy: { updatedAt: 'desc' },
-    }),
-    db.service.findMany({ orderBy: { order: 'asc' } }),
-    db.caseStudy.findMany({ orderBy: { updatedAt: 'desc' } }),
-    db.siteSetting.findMany({ orderBy: { key: 'asc' } }),
-  ])
+  const [posts, services, caseStudies, settings, budgetOptions] =
+    await Promise.all([
+      db.blogPost.findMany({
+        include: { author: { select: { name: true } } },
+        orderBy: { updatedAt: 'desc' },
+      }),
+      db.service.findMany({ orderBy: { order: 'asc' } }),
+      db.caseStudy.findMany({ orderBy: { updatedAt: 'desc' } }),
+      db.siteSetting.findMany({ orderBy: { key: 'asc' } }),
+      db.budgetOption.findMany({
+        orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+        select: { id: true, label: true, sortOrder: true, active: true },
+      }),
+    ])
   return (
     <div className="portal-page cms-page">
       <PortalPageHeader
@@ -46,6 +53,7 @@ export default async function AdminContentPage() {
         <a href="#services">Dịch vụ</a>
         <a href="#cases">Case study</a>
         <a href="#cta">CTA</a>
+        <a href="#budget-options">Ngân sách</a>
       </nav>
       <section className="portal-panel cms-section" id="blog">
         <header className="portal-panel__header">
@@ -166,6 +174,16 @@ export default async function AdminContentPage() {
             />
           ))}
         </div>
+      </section>
+      <section className="portal-panel cms-section" id="budget-options">
+        <header className="portal-panel__header">
+          <div>
+            <h2>Khoảng ngân sách</h2>
+            <p>Tạo các lựa chọn hiển thị trên biểu mẫu yêu cầu báo giá.</p>
+          </div>
+          <WalletCards size={18} />
+        </header>
+        <BudgetOptionEditor options={budgetOptions} readOnly={!canWrite} />
       </section>
     </div>
   )

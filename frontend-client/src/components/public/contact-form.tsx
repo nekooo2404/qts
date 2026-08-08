@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleAlert, CircleCheck, Clock3, Send } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
+import { ConsentField } from '@client/components/public/consent-field'
 import { FieldMessage } from '@client/components/public/field-message'
 import {
   contactSchema,
@@ -165,21 +165,12 @@ export function ContactForm() {
         />
       </div>
       <div className="form-grid__full">
-        <label className="checkbox-field">
-          <input
-            type="checkbox"
-            aria-invalid={Boolean(errors.consent)}
-            aria-describedby="contact-consent-error"
-            {...register('consent')}
-          />
-          <span>
-            Tôi đồng ý QTS sử dụng thông tin này để phản hồi yêu cầu theo{' '}
-            <Link className="inline-link" href="/chinh-sach-bao-mat">
-              chính sách dữ liệu
-            </Link>
-            .
-          </span>
-        </label>
+        <ConsentField
+          id="contact-consent"
+          errorId="contact-consent-error"
+          registration={register('consent')}
+          invalid={Boolean(errors.consent)}
+        />
         <FieldMessage
           id="contact-consent-error"
           message={errors.consent?.message}

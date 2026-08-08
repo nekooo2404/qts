@@ -207,3 +207,70 @@ test('10. đăng xuất thu hồi phiên hiện tại', async ({ page }) => {
   await page.goto('/portal/dashboard')
   await expect(page).toHaveURL(/\/portal\/login\?next=/)
 })
+
+test('11. admin tạo mức ngân sách và biểu mẫu công khai cập nhật', async ({
+  page,
+}) => {
+  await login(page, 'admin')
+  await page.goto('/admin/content#budget-options')
+
+  const label = `Ngân sách E2E ${Date.now()}`
+  const section = page.locator('#budget-options')
+  await section.locator('#new-budget-option-label').fill(label)
+  await section.locator('#new-budget-option-order').fill('990')
+
+  const createResponsePromise = page.waitForResponse(
+    (response) =>
+      response.url().endsWith('/api/portal/admin/budget-options') &&
+      response.request().method() === 'POST',
+  )
+  await section.locator('.budget-option-create button[type="submit"]').click()
+  const createResponse = await createResponsePromise
+  expect(createResponse.status()).toBe(201)
+
+  const payload = (await createResponse.json()) as {
+    data?: { id: string }
+  }
+  expect(payload.data?.id).toBeTruthy()
+  await expect(section.locator('input[name="label"]').last()).toHaveValue(label)
+
+  const duplicateStatus = await page.evaluate(async (duplicateLabel) => {
+    const response = await fetch('/api/portal/admin/budget-options', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        label: duplicateLabel.toUpperCase(),
+        sortOrder: 991,
+        active: true,
+      }),
+    })
+    return response.status
+  }, label)
+  expect(duplicateStatus).toBe(409)
+
+  await page.goto('/bao-gia')
+  await expect(page.getByRole('radio', { name: label })).toBeVisible()
+
+  await page.goto('/admin/content#budget-options')
+  const deactivateStatus = await page.evaluate(async (id) => {
+    const response = await fetch(`/api/portal/admin/budget-options/${id}`, {
+      method: 'DELETE',
+    })
+    return response.status
+  }, payload.data!.id)
+  expect(deactivateStatus).toBe(200)
+
+  const afterDelete = await page.evaluate(async () => {
+    const response = await fetch('/api/portal/admin/budget-options')
+    return (await response.json()) as {
+      data?: Array<{ id: string; sortOrder: number; active: boolean }>
+    }
+  })
+  const deleted = afterDelete.data?.find(
+    (option) => option.id === payload.data!.id,
+  )
+  expect(deleted).toMatchObject({ sortOrder: 990, active: false })
+
+  await page.reload()
+  await expect(section.locator('#new-budget-option-order')).toHaveValue('1000')
+})

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { PageHero } from '@client/components/public/page-hero'
 import { QuoteRequestForm } from '@client/components/public/quote-request-form'
+import { getActiveBudgetOptions } from '@/lib/budget-options'
 import { createMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = createMetadata(
@@ -10,7 +11,9 @@ export const metadata: Metadata = createMetadata(
   '/bao-gia',
 )
 
-export default function QuotePage() {
+export default async function QuotePage() {
+  const budgetOptions = await getActiveBudgetOptions()
+
   return (
     <main id="main-content">
       <PageHero
@@ -21,7 +24,7 @@ export default function QuotePage() {
       />
       <section className="section quote-page">
         <div className="container--narrow">
-          <QuoteRequestForm />
+          <QuoteRequestForm budgetOptions={budgetOptions} />
         </div>
       </section>
     </main>

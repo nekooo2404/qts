@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { recordAudit } from '@/lib/audit'
+import { getActiveBudgetOptionLabels } from '@/lib/budget-options'
 import { db } from '@/lib/db'
 import { consumeRateLimit } from '@/lib/http/rate-limit'
 import {
@@ -36,6 +37,20 @@ export async function POST(request: Request) {
         'Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.',
         429,
         { 'Retry-After': String(limit.retryAfterSeconds) },
+      )
+    }
+
+    const budgetOptions = await getActiveBudgetOptionLabels()
+    if (!budgetOptions.includes(result.data.budget)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: 'Vui lòng chọn một khoảng ngân sách đang được hiển thị.',
+          errors: {
+            budget: ['Khoảng ngân sách này không còn khả dụng.'],
+          },
+        },
+        { status: 422 },
       )
     }
 

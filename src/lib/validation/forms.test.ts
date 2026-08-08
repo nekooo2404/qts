@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  budgetOptionSchema,
+  budgetOptionUpdateSchema,
   contactSchema,
   loginSchema,
   quoteSchema,
@@ -60,6 +62,38 @@ describe('public and portal validation', () => {
         description: 'Dữ liệu đơn hàng chưa đồng bộ sau lần chạy gần nhất.',
       }).success,
     ).toBe(true)
+  })
+
+  it('validates admin-managed budget options and normalizes numeric order', () => {
+    const result = budgetOptionSchema.parse({
+      label: '  500-800 triệu  ',
+      sortOrder: '30',
+      active: true,
+    })
+
+    expect(result).toEqual({
+      label: '500-800 triệu',
+      sortOrder: 30,
+      active: true,
+    })
+    expect(budgetOptionUpdateSchema.safeParse({ active: false }).success).toBe(
+      true,
+    )
+    expect(budgetOptionUpdateSchema.safeParse({}).success).toBe(false)
+    expect(
+      budgetOptionSchema.safeParse({
+        label: 'Hợp lệ',
+        sortOrder: '',
+        active: true,
+      }).success,
+    ).toBe(false)
+    expect(
+      budgetOptionSchema.safeParse({
+        label: 'Hợp lệ',
+        sortOrder: null,
+        active: true,
+      }).success,
+    ).toBe(false)
   })
 
   it('does not accept weak or malformed login input', () => {

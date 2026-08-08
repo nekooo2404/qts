@@ -1,12 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleAlert, CircleCheck, Clock3, Send } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
+import {
+  BudgetOptionPicker,
+  DEFAULT_BUDGET_OPTIONS,
+  type BudgetOption,
+} from '@client/components/public/budget-option-picker'
+import { ConsentField } from '@client/components/public/consent-field'
 import { FieldMessage } from '@client/components/public/field-message'
 import {
   quoteSchema,
@@ -16,6 +21,7 @@ import {
 
 type QuoteRequestFormProps = {
   compact?: boolean
+  budgetOptions?: readonly BudgetOption[]
 }
 
 type FormStatus = { type: 'success' | 'error'; message: string } | null
@@ -24,7 +30,10 @@ type FormResponse = {
   errors?: Record<string, string[] | undefined>
 }
 
-export function QuoteRequestForm({ compact = false }: QuoteRequestFormProps) {
+export function QuoteRequestForm({
+  compact = false,
+  budgetOptions = DEFAULT_BUDGET_OPTIONS,
+}: QuoteRequestFormProps) {
   const [status, setStatus] = useState<FormStatus>(null)
   const fieldPrefix = compact ? 'quick' : 'quote'
   const {
@@ -204,21 +213,15 @@ export function QuoteRequestForm({ compact = false }: QuoteRequestFormProps) {
           </div>
         </>
       )}
-      <div className="field form-grid__full">
-        <label htmlFor={`${fieldPrefix}-budget`}>Ngân sách dự kiến</label>
-        <select
-          id={`${fieldPrefix}-budget`}
-          aria-invalid={Boolean(errors.budget)}
-          aria-describedby={`${fieldPrefix}-budget-error`}
-          {...register('budget')}
-        >
-          <option value="">Chọn khoảng ngân sách</option>
-          <option>Dưới 100 triệu</option>
-          <option>100-200 triệu</option>
-          <option>200-500 triệu</option>
-          <option>Trên 500 triệu</option>
-          <option>Cần QTS tư vấn</option>
-        </select>
+      <div className="form-grid__full">
+        <BudgetOptionPicker
+          idPrefix={fieldPrefix}
+          options={budgetOptions}
+          registration={register('budget')}
+          errorId={`${fieldPrefix}-budget-error`}
+          invalid={Boolean(errors.budget)}
+          compact={compact}
+        />
         <FieldMessage
           id={`${fieldPrefix}-budget-error`}
           message={errors.budget?.message}
@@ -254,21 +257,12 @@ export function QuoteRequestForm({ compact = false }: QuoteRequestFormProps) {
         />
       </div>
       <div className="form-grid__full">
-        <label className="checkbox-field">
-          <input
-            type="checkbox"
-            aria-invalid={Boolean(errors.consent)}
-            aria-describedby={`${fieldPrefix}-consent-error`}
-            {...register('consent')}
-          />
-          <span>
-            Tôi đồng ý QTS sử dụng thông tin này để phản hồi yêu cầu theo{' '}
-            <Link className="inline-link" href="/chinh-sach-bao-mat">
-              chính sách dữ liệu
-            </Link>
-            .
-          </span>
-        </label>
+        <ConsentField
+          id={`${fieldPrefix}-consent`}
+          errorId={`${fieldPrefix}-consent-error`}
+          registration={register('consent')}
+          invalid={Boolean(errors.consent)}
+        />
         <FieldMessage
           id={`${fieldPrefix}-consent-error`}
           message={errors.consent?.message}

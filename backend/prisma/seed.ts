@@ -46,6 +46,7 @@ async function resetDemoData() {
   await prisma.$transaction(async (tx) => {
     await tx.auditLog.deleteMany()
     await tx.siteSetting.deleteMany()
+    await tx.budgetOption.deleteMany()
     await tx.notification.deleteMany()
     await tx.ticketMessage.deleteMany()
     await tx.ticket.deleteMany()
@@ -647,6 +648,46 @@ async function seed() {
         label: 'Mô tả CTA cuối trang chủ',
         value:
           'Chia sẻ bài toán và bối cảnh hiện tại. QTS sẽ phản hồi để cùng xác định phạm vi trao đổi tiếp theo, chưa phải cam kết báo giá tự động.',
+      },
+    ],
+  })
+
+  await prisma.budgetOption.createMany({
+    data: [
+      {
+        id: 'budget-option-under-100-million',
+        label: 'Dưới 100 triệu',
+        normalizedLabel: 'dưới 100 triệu',
+        sortOrder: 10,
+        active: true,
+      },
+      {
+        id: 'budget-option-100-200-million',
+        label: '100-200 triệu',
+        normalizedLabel: '100-200 triệu',
+        sortOrder: 20,
+        active: true,
+      },
+      {
+        id: 'budget-option-200-500-million',
+        label: '200-500 triệu',
+        normalizedLabel: '200-500 triệu',
+        sortOrder: 30,
+        active: true,
+      },
+      {
+        id: 'budget-option-over-500-million',
+        label: 'Trên 500 triệu',
+        normalizedLabel: 'trên 500 triệu',
+        sortOrder: 40,
+        active: true,
+      },
+      {
+        id: 'budget-option-consultation',
+        label: 'Cần QTS tư vấn',
+        normalizedLabel: 'cần qts tư vấn',
+        sortOrder: 50,
+        active: true,
       },
     ],
   })

@@ -311,6 +311,40 @@ export const siteSettingSchema = z.object({
     .max(600),
 })
 
+const budgetOptionLabelSchema = z
+  .string()
+  .trim()
+  .min(2, 'Khoảng ngân sách phải có ít nhất 2 ký tự.')
+  .max(120, 'Khoảng ngân sách không được vượt quá 120 ký tự.')
+
+const budgetOptionSortOrderSchema = z.preprocess(
+  (value) => {
+    if (typeof value === 'string' && value.trim() !== '') return Number(value)
+    return value
+  },
+  z
+    .number()
+    .int('Thứ tự phải là số nguyên.')
+    .min(0, 'Thứ tự không được là số âm.')
+    .max(9999, 'Thứ tự không được vượt quá 9.999.'),
+)
+
+export const budgetOptionSchema = z.object({
+  label: budgetOptionLabelSchema,
+  sortOrder: budgetOptionSortOrderSchema,
+  active: z.boolean().default(true),
+})
+
+export const budgetOptionUpdateSchema = z
+  .object({
+    label: budgetOptionLabelSchema.optional(),
+    sortOrder: budgetOptionSortOrderSchema.optional(),
+    active: z.boolean().optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, {
+    message: 'Cần có ít nhất một trường để cập nhật.',
+  })
+
 export const notificationComposeSchema = z.object({
   userId: z.string().trim().min(1, 'Vui lòng chọn người nhận.'),
   title: z.string().trim().min(5, 'Tiêu đề phải có ít nhất 5 ký tự.').max(140),
@@ -356,5 +390,7 @@ export type ProfileInput = z.input<typeof profileSchema>
 export type PasswordChangeInput = z.input<typeof passwordChangeSchema>
 export type BlogPostInput = z.input<typeof blogPostSchema>
 export type BlogPostOutput = z.output<typeof blogPostSchema>
+export type BudgetOptionInput = z.input<typeof budgetOptionSchema>
+export type BudgetOptionOutput = z.output<typeof budgetOptionSchema>
 export type ContactFormValues = z.input<typeof contactSchema>
 export type QuoteFormValues = z.input<typeof quoteSchema>

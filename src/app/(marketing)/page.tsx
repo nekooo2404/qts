@@ -22,6 +22,7 @@ import {
   solutionTabs,
 } from '@client/config/marketing'
 import { db } from '@/lib/db'
+import { getActiveBudgetOptions } from '@/lib/budget-options'
 import { createMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
 
@@ -32,7 +33,7 @@ export const metadata: Metadata = createMetadata(
 )
 
 export default async function HomePage() {
-  const [caseStudies, posts, ctaSettings] = await Promise.all([
+  const [caseStudies, posts, ctaSettings, budgetOptions] = await Promise.all([
     db.caseStudy.findMany({
       where: { publishedAt: { not: null } },
       orderBy: [{ featured: 'desc' }, { publishedAt: 'desc' }],
@@ -58,6 +59,7 @@ export default async function HomePage() {
         },
       },
     }),
+    getActiveBudgetOptions(),
   ])
   const cta = Object.fromEntries(
     ctaSettings.map((setting) => [setting.key, setting.value]),
@@ -253,7 +255,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="contact-cta__form">
-            <QuoteRequestForm compact />
+            <QuoteRequestForm compact budgetOptions={budgetOptions} />
           </div>
         </div>
       </section>
