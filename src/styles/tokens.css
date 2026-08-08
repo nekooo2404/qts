@@ -89,10 +89,39 @@
   );
   --color-auth-stage-glow: color-mix(
     in srgb,
-    var(--color-data) 28%,
+    var(--color-brand) 30%,
     transparent
   );
-  --color-auth-panel: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  --color-auth-canvas: color-mix(
+    in srgb,
+    var(--color-canvas) 90%,
+    var(--color-brand-soft)
+  );
+  --color-auth-panel: color-mix(
+    in srgb,
+    var(--color-surface) 90%,
+    var(--color-brand-soft)
+  );
+  --color-auth-preview: color-mix(
+    in srgb,
+    var(--color-canvas) 88%,
+    var(--color-brand-soft)
+  );
+  --color-auth-preview-line: color-mix(
+    in srgb,
+    var(--color-line-strong) 76%,
+    var(--color-brand) 24%
+  );
+  --color-auth-stage: color-mix(
+    in srgb,
+    var(--color-dark-canvas) 92%,
+    var(--color-brand) 8%
+  );
+  --color-auth-stage-surface: color-mix(
+    in srgb,
+    var(--color-dark-surface) 86%,
+    var(--color-brand) 14%
+  );
   --shadow-auth-panel: 0 2rem 5rem
     color-mix(in srgb, var(--color-ink) 24%, transparent);
   --color-auth-space-glass: color-mix(

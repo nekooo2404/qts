@@ -9223,7 +9223,7 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   grid-template-columns: minmax(26rem, 0.83fr) minmax(0, 1.17fr);
   overflow: clip;
   isolation: isolate;
-  background: var(--color-canvas);
+  background: var(--color-auth-canvas);
 }
 
 .portal-auth-layout__form {
@@ -9233,7 +9233,7 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   min-width: 0;
   align-items: center;
   padding: clamp(var(--space-4), 4vw, var(--space-8));
-  background: var(--color-canvas);
+  background: var(--color-auth-canvas);
 }
 
 .portal-auth-layout__form::before {
@@ -9323,13 +9323,29 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   gap: var(--space-4);
   overflow: hidden;
   padding: clamp(var(--space-5), 3vw, var(--space-8));
-  background: var(--color-dark-canvas);
+  background: var(--color-auth-stage);
   color: var(--color-dark-ink);
   isolation: isolate;
 }
 
 .portal-auth-layout__visual .portal-preview {
+  border-color: var(--color-auth-preview-line);
+  background: var(--color-auth-preview);
   color: var(--color-ink);
+}
+
+.portal-auth-layout__visual .portal-preview__brand {
+  background: var(--color-brand);
+  color: var(--color-accent-ink);
+}
+
+.portal-auth-layout__visual .portal-preview__metrics,
+.portal-auth-layout__visual .portal-preview__milestones,
+.portal-auth-layout__visual .portal-preview__activity,
+.portal-auth-layout__visual .portal-preview__ticket,
+.portal-auth-layout__visual .portal-preview__notification {
+  border-color: var(--color-auth-preview-line);
+  background: var(--color-auth-preview);
 }
 
 .auth-space__grid,
@@ -9458,7 +9474,7 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: var(--radius-round);
-  background: var(--color-data);
+  background: var(--color-brand);
   box-shadow: 0 0 0 4px var(--color-auth-stage-glow);
 }
 
@@ -9496,7 +9512,7 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
 }
 
 .auth-space__signals svg {
-  color: var(--color-data);
+  color: var(--color-brand);
 }
 
 .auth-space__stage {
@@ -9574,7 +9590,7 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
   gap: var(--space-2);
   align-items: center;
   border: 1px solid var(--color-auth-stage-line);
-  background: var(--color-dark-surface);
+  background: var(--color-auth-stage-surface);
   padding: var(--space-2) var(--space-3);
   color: var(--color-dark-ink-muted);
   font-family: var(--font-mono);
@@ -9583,7 +9599,7 @@ main[data-scroll-reveal] [data-reveal-item][data-reveal-state='visible'] {
 }
 
 .auth-space__annotation svg {
-  color: var(--color-data);
+  color: var(--color-brand);
 }
 
 .auth-space__annotation strong {
