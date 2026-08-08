@@ -79,17 +79,17 @@
   --shadow-focus: 0 0 0 3px var(--color-brand-soft);
   --color-auth-stage-grid: color-mix(
     in srgb,
-    var(--color-dark-ink) 12%,
+    var(--color-brand) 11%,
     transparent
   );
   --color-auth-stage-line: color-mix(
     in srgb,
-    var(--color-dark-ink) 20%,
+    var(--color-brand) 24%,
     transparent
   );
   --color-auth-stage-glow: color-mix(
     in srgb,
-    var(--color-brand) 30%,
+    var(--color-brand) 34%,
     transparent
   );
   --color-auth-canvas: color-mix(
@@ -112,32 +112,28 @@
     var(--color-line-strong) 76%,
     var(--color-brand) 24%
   );
-  --color-auth-stage: color-mix(
-    in srgb,
-    var(--color-dark-canvas) 92%,
-    var(--color-brand) 8%
-  );
+  --color-auth-stage: var(--color-auth-canvas);
   --color-auth-stage-surface: color-mix(
     in srgb,
-    var(--color-dark-surface) 86%,
-    var(--color-brand) 14%
+    var(--color-brand-soft) 54%,
+    var(--color-surface-strong) 46%
   );
   --shadow-auth-panel: 0 2rem 5rem
     color-mix(in srgb, var(--color-ink) 24%, transparent);
   --color-auth-space-glass: color-mix(
     in srgb,
-    var(--color-dark-surface) 64%,
+    var(--color-surface) 70%,
     transparent
   );
   --color-auth-space-glass-line: color-mix(
     in srgb,
-    var(--color-dark-ink) 28%,
+    var(--color-brand) 28%,
     transparent
   );
   --shadow-auth-space-window: 0 2.5rem 5rem
-    color-mix(in srgb, var(--color-ink) 38%, transparent);
+    color-mix(in srgb, var(--color-ink) 22%, transparent);
   --shadow-auth-space-preview: 0 1.5rem 3rem
-    color-mix(in srgb, var(--color-ink) 34%, transparent);
+    color-mix(in srgb, var(--color-ink) 12%, transparent);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
