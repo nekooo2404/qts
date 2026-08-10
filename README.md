@@ -192,8 +192,8 @@ Prometheus scrape `/api/identity/metrics` (chỉ process/dependency gauges, khô
 
 ## Thay logo và nội dung công ty
 
-- Logo chữ hiện tại nằm trong `src/components/shared/qts-logo.tsx`.
-- Khi có logo chính thức, đặt file tại `public/qts-logo.png`, dùng `next/image` trong component trên và cung cấp biến thể đủ tương phản cho nền sáng/tối.
+- Logo chính thức đã được tách nền tại `public/brand/qts-shield.png` và được dùng bởi component dùng chung `src/components/shared/qts-logo.tsx`.
+- Nếu thay asset sau này, giữ PNG có alpha trong suốt và kiểm tra lại các biến thể nền sáng/tối trước khi cập nhật.
 - Nội dung điều hướng, sản phẩm và giải pháp nằm tại `src/config/marketing.ts`.
 - CTA có thể chỉnh trong Portal Admin hoặc bảng `SiteSetting`.
 - Giữ trống hoặc ẩn thông tin liên hệ chưa được xác minh; chỉ công bố dữ liệu thật sau khi đã duyệt.

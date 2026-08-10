@@ -10,7 +10,7 @@ The QTS expression is exact, calm, and service-oriented: a cool light canvas, da
 
 - Density: 5/10. Long-form and information-rich, but each section has one clear job.
 - Variance: 3/10. The centered hero is intentional and suited to the ecosystem overview.
-- Motion: 4/10. Functional feedback only; no perpetual loops or decorative parallax.
+- Motion: 5/10. Functional feedback leads; the spatial ecosystem uses one restrained five-second loop and controlled content rotation.
 - Voice: direct Vietnamese, specific about process and careful about unverified proof.
 
 ## Typography
@@ -35,12 +35,12 @@ The QTS expression is exact, calm, and service-oriented: a cool light canvas, da
 
 1. N10 morphing header with N11 grouped mega panels and a modal mobile drawer.
 2. H9 centered product hub with factual promise, benefits, two decisions, and a neutral QTS technology topology.
-3. Compact capability rule followed by a five-group Ecosystem Index.
+3. Compact capability rule followed by a scene-first Spatial Systems Atlas with three inline accordion states, then the five-group Ecosystem Index.
 4. Problem-led solution tabs, a technology operating model, and a six-stage implementation flow.
 5. Engineering principles, illustrative case studies, factual demo scope, and articles.
 6. FAQ, consultation form, then an Ft5 statement + Ft3 index footer with a genuine sitemap.
 
-The authenticated product keeps two distinct Workbench surfaces: `/portal` for operational workflows and `/admin` for governance. Both use a desktop rail, utility header, and dense permission-aware stage; the public root never renders an authenticated Portal preview or login action.
+The authenticated product keeps two distinct Workbench surfaces: `/portal` for operational workflows and `/admin` for governance. Both use a desktop rail, utility header, and dense permission-aware stage; the public root never renders an authenticated Portal preview or product content. A mobile utility drawer may link to `/portal/login` without blending the authenticated surface into the public page.
 
 ## Layout And Components
 
@@ -58,7 +58,7 @@ The authenticated product keeps two distinct Workbench surfaces: `/portal` for o
 - Mega menus open by pointer hover for fine pointers and by click/tap for coarse pointers; Escape restores focus to the trigger.
 - Tabs support arrows, Home, and End. Dialogs trap focus. FAQ disclosure buttons remain keyboard-operable.
 - Transitions use transform, opacity, background, border, or color with 140-360ms semantic timing tokens.
-- No `transition: all`, autoplay carousel, infinite decoration, or motion required to understand content.
+- No `transition: all`, uncontrolled autoplay, full-page infinite decoration, or motion required to understand content. Rotating proof pauses on hover/focus, exposes a persistent pause control, and stops under reduced motion.
 - `prefers-reduced-motion` reduces all nonessential transitions and animations.
 
 ## Content Integrity

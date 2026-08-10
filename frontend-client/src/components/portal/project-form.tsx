@@ -36,10 +36,12 @@ export function ProjectForm({
   organizations,
   projectId,
   defaultValues,
+  onSuccess,
 }: {
   organizations: OrganizationOption[]
   projectId?: string
   defaultValues?: ProjectInput
+  onSuccess?: () => void
 }) {
   const router = useRouter()
   const [feedback, setFeedback] = useState<FormFeedbackValue>(null)
@@ -70,6 +72,7 @@ export function ProjectForm({
     }
     setFeedback({ type: 'success', message: result.message })
     if (!projectId) reset(emptyProject)
+    onSuccess?.()
     router.refresh()
   }
 

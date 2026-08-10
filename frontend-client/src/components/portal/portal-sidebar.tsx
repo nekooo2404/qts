@@ -88,7 +88,6 @@ export function PortalSidebar({
       <div className="portal-sidebar__brand">
         <QtsLogo
           href={isAdminSurface ? '/admin' : '/portal/dashboard'}
-          inverse
           compact={collapsed && !mobile}
         />
         {onToggle && !mobile && (

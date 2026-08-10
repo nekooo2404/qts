@@ -67,7 +67,7 @@ test('homepage passes automated WCAG A/AA checks', async ({ page }) => {
   expect(results.violations).toEqual([])
 })
 
-test('homepage stays in-bounds and reveals its product surface', async ({
+test('homepage stays in-bounds after the hero visual is removed', async ({
   page,
 }) => {
   for (const viewport of viewports) {
@@ -91,15 +91,11 @@ test('homepage stays in-bounds and reveals its product surface', async ({
         })
         .filter(({ left, right }) => left < -1 || right > innerWidth + 1)
 
-      const visual = document
-        .querySelector('.home-hero__visual')
-        ?.getBoundingClientRect()
-
       return {
         documentWidth: document.documentElement.scrollWidth,
         viewportWidth: innerWidth,
         viewportHeight: innerHeight,
-        visualTop: visual?.top ?? Number.POSITIVE_INFINITY,
+        hasHeroVisual: Boolean(document.querySelector('.home-hero__visual')),
         overflow,
       }
     })
@@ -113,9 +109,9 @@ test('homepage stays in-bounds and reveals its product surface', async ({
       `${viewport.width}x${viewport.height} overflow`,
     ).toEqual([])
     expect(
-      geometry.visualTop,
-      `${viewport.width}x${viewport.height} product surface`,
-    ).toBeLessThan(geometry.viewportHeight)
+      geometry.hasHeroVisual,
+      `${viewport.width}x${viewport.height} hero visual should be absent`,
+    ).toBe(false)
   }
 })
 
@@ -124,6 +120,7 @@ test('landing page reveals related content items in a staged sequence', async ({
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   await page.goto('/')
+  await page.waitForTimeout(700)
 
   const groups = page.locator(
     'main[data-scroll-reveal] > section[data-reveal-group]',
@@ -182,6 +179,45 @@ test('landing page reveals related content items in a staged sequence', async ({
     'data-reveal-state',
     'visible',
   )
+})
+
+test('ecosystem accordion stays available without the spatial scene', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await page.goto('/')
+
+  const story = page.locator('#he-sinh-thai-tuong-tac')
+  await story.scrollIntoViewIfNeeded()
+
+  const triggers = story.locator('.ecosystem-story__tab')
+  const panels = story.locator('.ecosystem-story__panel')
+  expect(await triggers.count()).toBe(3)
+  await expect(triggers.nth(0)).toHaveAttribute('aria-expanded', 'true')
+  await expect(triggers.nth(1)).toHaveAttribute('aria-expanded', 'false')
+  await expect(panels.nth(0)).toHaveCSS('display', 'grid')
+  await expect
+    .poll(() =>
+      panels
+        .nth(1)
+        .evaluate((element) => element.getBoundingClientRect().height),
+    )
+    .toBe(0)
+
+  await triggers.nth(1).click()
+  await expect(triggers.nth(1)).toHaveAttribute('aria-expanded', 'true')
+  await expect(triggers.nth(0)).toHaveAttribute('aria-expanded', 'false')
+  await expect(story.locator('.ecosystem-story__scene')).toHaveCount(0)
+
+  await triggers.nth(2).focus()
+  await page.keyboard.press('ArrowLeft')
+  await expect(triggers.nth(1)).toBeFocused()
+
+  const pause = page.locator('.case-study-rotator__pause')
+  await pause.scrollIntoViewIfNeeded()
+  await pause.click()
+  await expect(pause).toHaveAttribute('aria-pressed', 'true')
+  await expect(pause).toHaveAccessibleName('Tiếp tục tự động chuyển tình huống')
 })
 
 test('landing page keeps reveal items visible with reduced motion', async ({
@@ -477,60 +513,30 @@ test('public routes stay within the viewport on compact mobile screens', async (
   }
 })
 
-test('hero keeps a meaningful technology topology inside the 1280x800 fold', async ({
+test('hero keeps its content and actions after the spatial visual is removed', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   await page.goto('/')
 
-  const preview = page.locator('.ecosystem-visual__topology')
-  await expect(preview).toBeVisible()
+  await expect(page.locator('.home-hero__visual')).toHaveCount(0)
+  await expect(page.locator('.home-hero__content h1')).toBeVisible()
+  await expect(page.locator('.home-hero__actions')).toBeVisible()
 
-  const geometry = await preview.evaluate((element) => {
+  const hero = await page.locator('.home-hero').evaluate((element) => {
     const rect = element.getBoundingClientRect()
-    const core = element.querySelector('.ecosystem-visual__core')
-    const nodes = element.querySelectorAll('.ecosystem-visual__node')
-    const visibleHeight = Math.max(
-      0,
-      Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0),
-    )
-
+    const content = element.querySelector('.home-hero__content')
+    const contentRect = content?.getBoundingClientRect()
     return {
-      top: rect.top,
-      bottom: rect.bottom,
       height: rect.height,
-      clientHeight: element.clientHeight,
-      scrollHeight: element.scrollHeight,
-      visibleRatio: rect.height ? visibleHeight / rect.height : 0,
-      coreHeight: core?.getBoundingClientRect().height ?? 0,
-      nodeCount: nodes.length,
+      contentWidth: contentRect?.width ?? 0,
+      viewportWidth: window.innerWidth,
     }
   })
 
-  expect(
-    geometry.top,
-    'hero topology starts too low in the first fold',
-  ).toBeLessThanOrEqual(540)
-  expect(
-    geometry.bottom,
-    'hero topology is clipped below the 1280x800 fold',
-  ).toBeLessThanOrEqual(801)
-  expect(
-    geometry.height,
-    'hero topology has no inspectable surface',
-  ).toBeGreaterThan(150)
-  expect(
-    geometry.scrollHeight,
-    'hero topology content overflows its frame',
-  ).toBeLessThanOrEqual(geometry.clientHeight)
-  expect(
-    geometry.visibleRatio,
-    'hero topology is mostly clipped',
-  ).toBeGreaterThanOrEqual(0.9)
-  expect(geometry.coreHeight, 'technology core is not visible').toBeGreaterThan(
-    0,
-  )
-  expect(geometry.nodeCount, 'technology nodes are not visible').toBe(4)
+  expect(hero.contentWidth).toBeGreaterThan(0)
+  expect(hero.contentWidth).toBeLessThanOrEqual(hero.viewportWidth)
+  expect(hero.height).toBeLessThan(800)
 })
 
 test('public marketing routes contain no unverified placeholders or invented metrics', async ({
@@ -707,22 +713,21 @@ test('dashboard-like marketing surfaces use readable text and tabular numerals',
   await page.goto('/')
 
   const typography = await page.evaluate(() => {
-    const surfaces = [
-      '.ecosystem-visual__core',
-      '.solution-tabs__visual',
-      '.stats-grid',
-    ]
+    const surfaces = ['.solution-tabs__visual', '.stats-grid']
     const surfaceVariants = surfaces.map((selector) =>
       [...document.querySelectorAll<HTMLElement>(selector)].map(
         (element) => window.getComputedStyle(element).fontVariantNumeric,
       ),
     )
     const readableSelectors = [
-      '.ecosystem-visual__core-label',
-      '.ecosystem-visual__core-intro strong',
-      '.ecosystem-visual__core-intro small',
-      '.ecosystem-visual__core-note strong',
-      '.ecosystem-visual__core-note span',
+      '.solution-tabs__category',
+      '.solution-tabs__focus strong',
+      '.solution-tabs__focus small',
+      '.solution-tabs__rows strong',
+      '.solution-tabs__rows small',
+      '.stat-counter strong',
+      '.stat-counter span',
+      '.stat-counter small',
     ]
     const fontSizes = readableSelectors.flatMap((selector) =>
       [...document.querySelectorAll<HTMLElement>(selector)]

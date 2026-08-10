@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Grid2X2, List, Plus, Search } from 'lucide-react'
+import { Grid2X2, List, Search } from 'lucide-react'
 
 import { DataTable } from '@client/components/portal/data-table'
 import { EmptyState } from '@client/components/portal/empty-state'
 import { Pagination } from '@client/components/portal/pagination'
 import { PortalPageHeader } from '@client/components/portal/portal-page-header'
 import { PriorityBadge } from '@client/components/portal/priority-badge'
-import { ProjectForm } from '@client/components/portal/project-form'
+import { ProjectCreateDialog } from '@client/components/portal/project-create-dialog'
 import { ProjectProgress } from '@client/components/portal/project-progress'
 import { StatusBadge } from '@client/components/portal/status-badge'
 import { buttonVariants } from '@/components/ui/button'
@@ -107,9 +107,7 @@ export default async function PortalProjectsPage({
         description="Theo dõi tiến độ, mốc bàn giao, thành viên và tài nguyên liên quan."
         actions={
           canCreateProjects ? (
-            <Link className={cn(buttonVariants())} href="#create-project">
-              <Plus size={17} aria-hidden /> Tạo dự án
-            </Link>
+            <ProjectCreateDialog organizations={organizations} />
           ) : undefined
         }
       />
@@ -281,21 +279,6 @@ export default async function PortalProjectsPage({
         pageCount={pageCount}
         params={{ q, status, sort, view }}
       />
-      {canCreateProjects && (
-        <details
-          className="portal-panel portal-create-panel"
-          id="create-project"
-        >
-          <summary>
-            <Plus size={18} aria-hidden /> Tạo dự án mới
-          </summary>
-          <div className="portal-create-panel__body">
-            <h2>Thông tin dự án</h2>
-            <p>Dự án do STAFF tạo sẽ tự gắn người tạo làm quản lý dự án.</p>
-            <ProjectForm organizations={organizations} />
-          </div>
-        </details>
-      )}
     </div>
   )
 }

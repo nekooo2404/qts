@@ -1,4 +1,4 @@
-/* Hallmark · macrostructure: Ecosystem Index · tone: modern-minimal · anchor hue: cobalt-blue */
+/* Hallmark · macrostructure: Spatial Systems Atlas · tone: modern-minimal · anchor hue: cobalt-blue */
 /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 */
 /* Hallmark · studied: yes · DNA-source: URL https://amis.misa.vn/ · hero: H9 Tier-A DOM product hub · nav: N10 + N11 · footer: Ft5 + Ft3 */
 /* Hallmark · validation: slop-test pass (58 gates) · contrast: pass (40-41) · mobile: pass (320-1920) */
@@ -161,4 +161,81 @@
   --sidebar-width: 16rem;
   --transition-fast: var(--dur-micro) var(--ease-out);
   --transition-base: var(--dur-base) var(--ease-out);
+}
+
+/* Spatial ecosystem layer: the warm note stays deliberately low-chroma so
+   the QTS cobalt decision color remains the only strong accent. */
+:root {
+  --color-peach-soft: oklch(97% 0.022 72);
+  --color-ecosystem-blue: color-mix(
+    in srgb,
+    var(--color-brand-soft) 72%,
+    var(--color-surface)
+  );
+  --color-ecosystem-peach: color-mix(
+    in srgb,
+    var(--color-peach-soft) 72%,
+    var(--color-surface)
+  );
+  --color-ecosystem-line: color-mix(
+    in srgb,
+    var(--color-surface) 84%,
+    transparent
+  );
+  --shadow-ecosystem: 0 1.5rem 3.5rem
+    color-mix(in srgb, var(--color-ink) 12%, transparent);
+
+  /* EcosystemHeroVisual palette: a cool, shared surface with restrained
+     cobalt, teal, violet, and amber signals. */
+  --color-ecosystem-bg: #f6f9ff;
+  --color-ecosystem-glow: #e8f1ff;
+  --color-ecosystem-ring: #356ae6;
+  --color-ecosystem-ring-highlight: #5b8cff;
+  --color-ecosystem-segment-1: #5278f2;
+  --color-ecosystem-segment-2: #27a89a;
+  --color-ecosystem-segment-3: #7668e8;
+  --color-ecosystem-segment-4: #e8a83a;
+  --color-ecosystem-center: #ffffff;
+  --color-ecosystem-center-surface: rgb(255 255 255 / 96%);
+  --color-ecosystem-center-border: rgb(53 106 230 / 15%);
+  --color-ecosystem-border: rgb(255 255 255 / 85%);
+  --color-ecosystem-text: #182235;
+  --color-ecosystem-text-muted: #667085;
+  --color-ecosystem-orbit: rgb(53 106 230 / 10%);
+  --color-ecosystem-chip-surface: rgb(255 255 255 / 72%);
+  --color-ecosystem-chip-surface-hover: rgb(255 255 255 / 88%);
+  --color-ecosystem-chip-surface-active: rgb(232 241 255 / 92%);
+  --color-ecosystem-chip-border: rgb(82 113 255 / 18%);
+  --color-ecosystem-chip-border-hover: rgb(82 113 255 / 38%);
+  --color-ecosystem-chip-border-active: rgb(53 106 230 / 60%);
+  --color-ecosystem-chip-text: #172033;
+  --color-ecosystem-chip-dot-default: rgb(198 210 230 / 90%);
+  --color-ecosystem-chip-dot: #4d83ff;
+  --color-ecosystem-chip-dot-active: #356ae6;
+  --color-ecosystem-chip-dot-glow: rgb(77 131 255 / 25%);
+  --color-ecosystem-surface-soft: rgb(255 255 255 / 78%);
+  --color-ecosystem-surface-highlight: rgb(255 255 255 / 92%);
+  --color-ecosystem-surface-primary: rgb(255 255 255 / 20%);
+  --color-ecosystem-shadow: rgb(24 34 53 / 10%);
+  --color-ecosystem-shadow-soft: rgb(24 34 53 / 8%);
+  --color-ecosystem-shadow-strong: rgb(24 34 53 / 14%);
+  --color-ecosystem-hover-shadow: rgb(53 106 230 / 16%);
+  --color-ecosystem-primary-shadow: rgb(53 106 230 / 24%);
+  --color-ecosystem-grid: rgb(53 106 230 / 6%);
+  --shadow-ecosystem-center:
+    0 0.625rem 1.875rem rgb(39 76 160 / 14%),
+    inset 0 1px 0 rgb(255 255 255 / 90%);
+  --shadow-ecosystem-chip: 0 0.375rem 1.25rem rgb(58 81 180 / 8%);
+  --shadow-ecosystem-chip-hover: 0 0.5rem 1.25rem rgb(58 81 180 / 12%);
+  --shadow-ecosystem-chip-active: 0 0.625rem 1.5rem rgb(53 106 230 / 16%);
+  --shadow-ecosystem-core: 0 0 2.8rem
+    color-mix(in srgb, var(--color-ecosystem-ring) 15%, transparent);
+  --size-ecosystem-center: clamp(4.25rem, 5.5vw, 4.75rem);
+  --size-ecosystem-chip-height: 2.75rem;
+  --size-ecosystem-chip-dot: 0.75rem;
+  --blur-ecosystem-chip: 0.75rem;
+  --dur-ecosystem-orbit-float: 8s;
+  --angle-ecosystem-orbit-float: 3deg;
+  --angle-ecosystem-orbit-counter-start: 3deg;
+  --angle-ecosystem-orbit-counter-end: -3deg;
 }

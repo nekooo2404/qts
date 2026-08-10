@@ -106,6 +106,14 @@ export function MobileNavigation() {
           <div className="mobile-nav__actions">
             <Dialog.Close asChild>
               <Link
+                className={cn(buttonVariants({ variant: 'secondary' }))}
+                href="/portal/login"
+              >
+                Đăng nhập Portal
+              </Link>
+            </Dialog.Close>
+            <Dialog.Close asChild>
+              <Link
                 className={cn(buttonVariants({ variant: 'primary' }))}
                 href="/lien-he"
               >

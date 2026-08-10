@@ -24,84 +24,104 @@ const REVEAL_ITEM_SELECTOR = [
   '.home-faq > .home-faq__item',
   '.contact-cta__copy',
   '.contact-cta__form',
+  '.ecosystem-story__copy',
+  '.ecosystem-story__scene-wrap',
+  '.ecosystem-story__item',
+  '.case-study-rotator',
 ].join(',')
 
 const REVEAL_THRESHOLD = 0.1
 const REVEAL_ROOT_MARGIN = '0px 0px -8% 0px'
-const MAX_STAGGER_DELAY_MS = 240
+const MAX_STAGGER_DELAY_MS = 500
 const STAGGER_STEP_MS = 60
 
 function getRevealMotion(item: HTMLElement) {
-  if (item.matches('.home-hero__visual, .solution-tabs, .contact-cta__form')) {
+  if (
+    item.matches(
+      '.home-hero__visual, .solution-tabs, .contact-cta__form, .ecosystem-story__scene-wrap',
+    )
+  ) {
     return 'from-right'
   }
 
   if (item.matches('.contact-cta__copy')) return 'from-left'
 
+  if (item.matches('.stats-grid > *, .blog-grid > *')) {
+    return 'zoom'
+  }
+
   return 'rise'
+}
+
+function observeRevealItem(observer: IntersectionObserver, item: HTMLElement) {
+  observer.observe(item)
 }
 
 export function LandingPageReveal({ children }: LandingPageRevealProps) {
   const rootRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const root = rootRef.current
-    if (!root) return () => undefined
+    // Effects run after the ref is attached to the rendered main element.
+    const root = rootRef.current!
 
-    const groups = Array.from(root.children).filter(
-      (element): element is HTMLElement =>
-        element instanceof HTMLElement && element.tagName === 'SECTION',
-    )
-    const items = groups.flatMap((group, groupIndex) => {
-      group.dataset.revealGroup = String(groupIndex + 1)
+    const items: HTMLElement[] = []
+    let groupIndex = 0
 
-      return Array.from(
-        group.querySelectorAll<HTMLElement>(REVEAL_ITEM_SELECTOR),
-      )
-        .filter((item) => item.closest('section[data-reveal-group]') === group)
-        .map((item, itemIndex) => {
-          item.dataset.revealItem = ''
-          item.dataset.revealOrder = String(itemIndex + 1)
-          item.dataset.revealMotion = getRevealMotion(item)
-          item.style.setProperty(
-            '--reveal-delay',
-            `${Math.min(itemIndex * STAGGER_STEP_MS, MAX_STAGGER_DELAY_MS)}ms`,
-          )
-          return item
-        })
-    })
+    for (const element of Array.from(root.children)) {
+      if (!(element instanceof HTMLElement) || element.tagName !== 'SECTION') {
+        continue
+      }
+
+      groupIndex += 1
+      element.dataset.revealGroup = String(groupIndex)
+      let itemIndex = 0
+
+      for (const item of Array.from(
+        element.querySelectorAll<HTMLElement>(REVEAL_ITEM_SELECTOR),
+      )) {
+        if (item.closest('section[data-reveal-group]') !== element) continue
+
+        item.dataset.revealItem = ''
+        itemIndex += 1
+        item.dataset.revealOrder = String(itemIndex)
+        item.dataset.revealMotion = getRevealMotion(item)
+        item.style.setProperty(
+          '--reveal-delay',
+          `${Math.min((itemIndex - 1) * STAGGER_STEP_MS, MAX_STAGGER_DELAY_MS)}ms`,
+        )
+        items.push(item)
+      }
+    }
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    let observer: IntersectionObserver | null = null
 
     const reveal = (item: HTMLElement) => {
       item.dataset.revealState = 'visible'
-      observer?.unobserve(item)
     }
     const revealAll = () => items.forEach(reveal)
-    const handleReducedMotion = (event: MediaQueryListEvent) => {
-      if (event.matches) {
-        observer?.disconnect()
-        revealAll()
-      }
+
+    if (typeof window.IntersectionObserver !== 'function') {
+      revealAll()
+      return
     }
 
-    reducedMotion.addEventListener('change', handleReducedMotion)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            reveal(entry.target as HTMLElement)
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      {
+        rootMargin: REVEAL_ROOT_MARGIN,
+        threshold: REVEAL_THRESHOLD,
+      },
+    )
 
-    if (reducedMotion.matches || !('IntersectionObserver' in window)) {
+    if (reducedMotion.matches) {
       revealAll()
     } else {
-      observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) reveal(entry.target as HTMLElement)
-          })
-        },
-        {
-          rootMargin: REVEAL_ROOT_MARGIN,
-          threshold: REVEAL_THRESHOLD,
-        },
-      )
-
       const initialRevealBoundary = window.innerHeight * 0.92
       const measuredItems = items.map((item) => ({
         bounds: item.getBoundingClientRect(),
@@ -113,15 +133,12 @@ export function LandingPageReveal({ children }: LandingPageRevealProps) {
           reveal(item)
         } else {
           item.dataset.revealState = 'pending'
-          observer?.observe(item)
+          observeRevealItem(observer, item)
         }
       })
     }
 
-    return () => {
-      reducedMotion.removeEventListener('change', handleReducedMotion)
-      observer?.disconnect()
-    }
+    return () => observer.disconnect()
   }, [])
 
   return (

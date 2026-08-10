@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
 
@@ -22,7 +23,13 @@ export function QtsLogo({
       aria-label="QTS Technology - Trang chủ"
     >
       <span className="qts-logo__mark" aria-hidden="true">
-        Q
+        <Image
+          className="qts-logo__mark-image"
+          src="/brand/qts-shield.png"
+          alt=""
+          width={40}
+          height={49}
+        />
       </span>
       <span className="qts-logo__word">
         QTS

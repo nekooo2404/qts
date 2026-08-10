@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import { LoaderCircle, Save } from 'lucide-react'
+import { Check, LoaderCircle, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -75,14 +75,21 @@ export function UserAccessForm({
           <option value="CUSTOMER">CUSTOMER</option>
         </select>
       </label>
-      <label className="compact-checkbox">
+      <label
+        className={`checkbox-field checkbox-field--custom compact-checkbox${
+          isSelf ? ' is-disabled' : ''
+        }`}
+      >
         <input
           type="checkbox"
           name="active"
           defaultChecked={active}
           disabled={isSelf}
-        />{' '}
-        Hoạt động
+        />
+        <span className="checkbox-field__box" aria-hidden="true">
+          <Check size={13} strokeWidth={3} />
+        </span>
+        <span className="checkbox-field__copy">Hoạt động</span>
       </label>
       <Button
         variant="ghost"

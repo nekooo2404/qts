@@ -4,7 +4,8 @@ import { ArrowRight } from 'lucide-react'
 
 import { AdvantagesGrid } from '@client/components/public/advantages-grid'
 import { BlogCard } from '@client/components/public/blog-card'
-import { CaseStudyCard } from '@client/components/public/case-study-card'
+import { CaseStudyRotator } from '@client/components/public/case-study-rotator'
+import { EcosystemStory } from '@client/components/public/ecosystem-story'
 import { HeroSection } from '@client/components/public/hero-section'
 import { HomeFaq } from '@client/components/public/home-faq'
 import { LandingPageReveal } from '@client/components/public/landing-page-reveal'
@@ -85,6 +86,8 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <EcosystemStory showScene={false} />
+
       <section
         id="he-sinh-thai"
         className="section platform-section"
@@ -162,11 +165,7 @@ export default async function HomePage() {
               description="Toàn bộ tên, bài toán và kết quả dưới đây là dữ liệu demo; case study thật chỉ được công bố khi có chấp thuận."
               id="case-study-title"
             />
-            <div className="case-study-grid">
-              {caseStudies.map((caseStudy) => (
-                <CaseStudyCard caseStudy={caseStudy} key={caseStudy.id} />
-              ))}
-            </div>
+            <CaseStudyRotator caseStudies={caseStudies} />
             <div className="section-action">
               <Link className="inline-link" href="/du-an">
                 Xem tất cả dự án mẫu <ArrowRight size={16} aria-hidden="true" />

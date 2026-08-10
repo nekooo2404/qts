@@ -10,6 +10,10 @@ import {
 } from '@/components/shared/form-feedback'
 import { Button } from '@/components/ui/button'
 import { apiMutation } from '@/lib/client/api'
+import { TaskStatusSelect } from '@client/components/portal/task-status-select'
+
+type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'REVIEW' | 'BLOCKED' | 'DONE'
+type TaskDraft = { status?: TaskStatus; progress?: number | '' }
 
 export function TaskUpdateForm({
   id,
@@ -21,12 +25,20 @@ export function TaskUpdateForm({
   progress: number
 }) {
   const router = useRouter()
-  const [nextStatus, setNextStatus] = useState(status)
-  const [nextProgress, setNextProgress] = useState(progress)
+  const [draft, setDraft] = useState<TaskDraft>({})
   const [pending, setPending] = useState(false)
   const [feedback, setFeedback] = useState<FormFeedbackValue>(null)
+  const nextStatus = draft.status ?? status
+  const nextProgress = draft.progress ?? progress
 
   async function save() {
+    if (typeof nextProgress !== 'number' || !Number.isFinite(nextProgress)) {
+      setFeedback({
+        type: 'error',
+        message: 'Nhập tiến độ từ 0 đến 100 trước khi lưu.',
+      })
+      return
+    }
     setPending(true)
     setFeedback(null)
     const result = await apiMutation(`/api/portal/tasks/${id}`, 'PATCH', {
@@ -43,19 +55,15 @@ export function TaskUpdateForm({
 
   return (
     <div className="task-inline-form">
-      <label>
+      <div className="task-status-field">
         <span className="sr-only">Trạng thái công việc</span>
-        <select
+        <TaskStatusSelect
           value={nextStatus}
-          onChange={(event) => setNextStatus(event.target.value)}
-        >
-          <option value="TODO">Cần làm</option>
-          <option value="IN_PROGRESS">Đang xử lý</option>
-          <option value="REVIEW">Đang duyệt</option>
-          <option value="BLOCKED">Đang vướng</option>
-          <option value="DONE">Hoàn tất</option>
-        </select>
-      </label>
+          onChange={(next) =>
+            setDraft((current) => ({ ...current, status: next }))
+          }
+        />
+      </div>
       <label>
         <span className="sr-only">Tiến độ</span>
         <input
@@ -63,7 +71,20 @@ export function TaskUpdateForm({
           min="0"
           max="100"
           value={nextProgress}
-          onChange={(event) => setNextProgress(Number(event.target.value))}
+          onChange={(event) => {
+            const rawValue = event.currentTarget.value
+            if (rawValue === '') {
+              setDraft((current) => ({ ...current, progress: '' }))
+              return
+            }
+            const parsedValue = event.currentTarget.valueAsNumber
+            if (Number.isFinite(parsedValue)) {
+              setDraft((current) => ({
+                ...current,
+                progress: parsedValue,
+              }))
+            }
+          }}
         />
       </label>
       <Button

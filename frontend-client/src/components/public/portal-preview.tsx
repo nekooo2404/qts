@@ -6,6 +6,7 @@ import {
   LifeBuoy,
   ListTodo,
 } from 'lucide-react'
+import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
 
@@ -21,7 +22,9 @@ export function PortalPreview({ compact = false }: PortalPreviewProps) {
       aria-label="Bố cục minh họa giao diện QTS Portal"
     >
       <aside className="portal-preview__sidebar" aria-hidden="true">
-        <span className="portal-preview__brand">Q</span>
+        <span className="portal-preview__brand">
+          <Image src="/brand/qts-shield.png" alt="" width={32} height={39} />
+        </span>
         {[BriefcaseBusiness, ListTodo, LifeBuoy, FileText].map(
           (Icon, index) => (
             <span className={index === 0 ? 'is-active' : undefined} key={index}>
